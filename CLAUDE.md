@@ -6,40 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **lisa-helps-ralph-loops** is a migration system that analyzes existing projects and structures them for [Gastown](https://github.com/steveyegge/gastown) — Steve Yegge's multi-agent workspace manager.
 
-> **Status:** Early development. Core Gastown migration features are planned but not yet implemented. Currently includes inherited roadmap generation functionality from [ralph-it-up](https://github.com/auge2u/ralph-it-up).
+**Current version:** 0.2.0 (see `.claude-plugin/marketplace.json`)
 
-**Current version:** 0.1.0 (see `.claude-plugin/marketplace.json`)
+## Commands
 
-## What's Implemented vs Planned
+### Gastown Migration Commands
 
-### Available Now (Inherited from ralph-it-up)
+| Command | Purpose |
+|---------|---------|
+| `/lisa-loops-memory:analyze` | Scan project, generate semantic memory |
+| `/lisa-loops-memory:beads` | Extract work items as Beads |
+| `/lisa-loops-memory:convoy` | Bundle Beads into Convoys |
+| `/lisa-loops-memory:migrate` | Full migration (analyze + beads + convoy) |
 
-These commands work today:
+### Roadmap Commands (inherited from ralph-it-up)
 
 | Command | Purpose |
 |---------|---------|
 | `/lisa-loops-memory:roadmap` | One-shot roadmap generation |
 | `/lisa-loops-memory:roadmap-native` | Native Claude Code loop with quality gates |
 | `/lisa-loops-memory:roadmap-orchestrated` | External orchestrator mode (ralph-orchestrator) |
-
-**Outputs:** Generates 6 markdown files in `./scopecraft/`:
-- `VISION_AND_STAGE_DEFINITION.md`
-- `ROADMAP.md`
-- `EPICS_AND_STORIES.md`
-- `RISKS_AND_DEPENDENCIES.md`
-- `METRICS_AND_PMF.md`
-- `OPEN_QUESTIONS.md`
-
-### Planned (Not Yet Implemented)
-
-These Gastown migration features are on the roadmap:
-
-| Command | Purpose | Status |
-|---------|---------|--------|
-| `/lisa-loops-memory:analyze` | Analyze project, generate memory | PLANNED |
-| `/lisa-loops-memory:migrate` | Generate Gastown Rig structure | PLANNED |
-| `/lisa-loops-memory:beads` | Extract work items as Beads | PLANNED |
-| `/lisa-loops-memory:convoy` | Create Convoy from Beads | PLANNED |
 
 ## Repository Structure
 
@@ -49,33 +35,37 @@ plugins/
   lisa-loops-memory/
     .claude-plugin/plugin.json     # Plugin manifest
     commands/
-      roadmap.md                   # One-shot roadmap (IMPLEMENTED)
-      roadmap-native.md            # Native loop (IMPLEMENTED)
-      roadmap-orchestrated.md      # Orchestrator mode (IMPLEMENTED)
+      analyze.md                   # Gastown: generate memory
+      beads.md                     # Gastown: extract work items
+      convoy.md                    # Gastown: bundle beads
+      migrate.md                   # Gastown: full migration
+      roadmap.md                   # Roadmap: one-shot
+      roadmap-native.md            # Roadmap: native loop
+      roadmap-orchestrated.md      # Roadmap: orchestrator mode
     agents/
-      product-owner.md             # Agent for roadmap (IMPLEMENTED)
-      roadmap-orchestrator.md      # Loop orchestrator (IMPLEMENTED)
+      gastown-migrator.md          # Migration specialist agent
+      product-owner.md             # Roadmap agent
+      roadmap-orchestrator.md      # Loop orchestrator agent
     skills/
-      roadmap-scopecraft/          # Core roadmap skill (IMPLEMENTED)
+      gastown-migration/           # Gastown migration skill
+        SKILL.md                   # Core logic, quality gates
+        templates/                 # Bead, convoy JSON templates
+      roadmap-scopecraft/          # Roadmap skill
         SKILL.md
         templates/
     hooks/
-      validate_quality_gates.py    # Python validator (IMPLEMENTED)
-      validate-gates-handler.sh    # Bash validator (IMPLEMENTED)
-    templates/
-      ralph.yml                    # ralph-orchestrator config
-      scratchpad.md
+      validate_gastown.py          # Gastown migration validator
+      validate_quality_gates.py    # Roadmap quality gates
+      validate-gates-handler.sh    # Bash validator
     examples/
-      scopecraft/                  # Sample outputs
+      gastown/                     # Sample Gastown outputs
+      scopecraft/                  # Sample roadmap outputs
 .gt/
-  memory/                          # Memory schema templates (DEFINED)
-    semantic.json
-    episodic.json
-    procedural.json
-  beads/                           # Placeholder (PLANNED)
-  convoys/                         # Placeholder (PLANNED)
-scripts/
-  bump-version.sh                  # Version management
+  memory/                          # Memory schema templates
+  beads/                           # Bead output directory
+  convoys/                         # Convoy output directory
+tests/
+  test_validate_quality_gates.py   # Quality gate tests
 ```
 
 ## Gastown Concepts
@@ -85,14 +75,14 @@ scripts/
 | **Mayor** | Primary AI coordinator with full workspace context |
 | **Town** | Root workspace directory (~/gt/) containing all projects |
 | **Rig** | Project container wrapping a git repository |
-| **Polecat** | Ephemeral worker agent (spawn -> work -> disappear) |
+| **Polecat** | Ephemeral worker agent (spawn → work → disappear) |
 | **Hook** | Git worktree for persistent state surviving restarts |
 | **Convoy** | Work-tracking unit bundling multiple beads |
 | **Bead** | Individual work item with alphanumeric ID (e.g., gt-abc12) |
 
-## Target Architecture (Planned)
+## Output Structure
 
-When Gastown migration features are implemented, projects will have:
+After migration, projects have a `.gt/` directory:
 
 ```
 project/
@@ -102,36 +92,80 @@ project/
 │   │   ├── episodic.json      # Decisions with TTL (~30 days)
 │   │   └── procedural.json    # Learned patterns
 │   ├── beads/
-│   │   └── gt-*.json          # Individual work items
+│   │   ├── gt-abc12.json      # Individual work items
+│   │   └── ...
 │   └── convoys/
-│       └── convoy-*.json      # Bundled work assignments
+│       └── convoy-001.json    # Bundled work assignments
 └── [existing project files]
 ```
 
-## Quality Gates (Implemented)
+## Quality Gates
 
-For the roadmap commands, these gates must pass before `LOOP_COMPLETE`:
+### Gastown Migration Gates
+
+| Gate | Requirement |
+|------|-------------|
+| `semantic_valid_json` | semantic.json is valid JSON |
+| `project_identified` | project.name is populated |
+| `tech_stack_detected` | At least 2 tech_stack fields |
+| `beads_extracted` | At least 1 bead created |
+| `beads_have_criteria` | All beads have acceptance criteria |
+| `convoy_created` | At least 1 convoy created |
+| `convoy_size_valid` | Convoys have 3-7 beads |
+
+### Roadmap Quality Gates
 
 | Gate | Requirement |
 |------|-------------|
 | `all_outputs_exist` | 6 `.md` files in scopecraft/ |
-| `phases_in_range` | 3-5 `## Phase \d` headers in ROADMAP.md |
-| `stories_have_acceptance_criteria` | 5+ "Acceptance Criteria" sections |
+| `phases_in_range` | 3-5 phases in ROADMAP.md |
+| `stories_have_acceptance_criteria` | 5+ acceptance criteria sections |
 | `risks_documented` | 3+ risk table rows |
-| `metrics_defined` | "North Star Metric" section exists |
+| `metrics_defined` | North Star Metric section exists |
 | `no_todo_placeholders` | Zero `[TODO]`/`[TBD]`/`[PLACEHOLDER]` markers |
 
-### Validation
+## Validation
 
 ```bash
-# Native bash validator (zero dependencies, recommended)
-./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh
+# Gastown migration validation
+python plugins/lisa-loops-memory/hooks/validate_gastown.py
+python plugins/lisa-loops-memory/hooks/validate_gastown.py --phase analyze
 
-# Python validator (more features)
+# Roadmap validation
+./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh
 python plugins/lisa-loops-memory/hooks/validate_quality_gates.py
 ```
 
 Exit codes: `0`=pass, `1`=blocker failed, `2`=warning, `3`=security error
+
+## Running Tests
+
+```bash
+pytest tests/ -v
+```
+
+## Quality Standards
+
+### Beads Must Have
+
+- Clear, actionable title
+- At least 1 acceptance criterion
+- Evidence linking to source file
+- Valid complexity estimate (XS/S/M/L/XL)
+- Unique ID in `gt-xxxxx` format
+
+### Convoys Must Have
+
+- 3-7 beads (optimal batch size)
+- Coherent theme (epic, skill, or dependency chain)
+- All referenced beads exist
+
+### Memory Must Have
+
+- Valid JSON structure
+- Non-null project.name
+- At least 2 tech_stack fields populated
+- Evidence with files_analyzed list
 
 ## Development Roadmap
 
@@ -140,26 +174,11 @@ Exit codes: `0`=pass, `1`=blocker failed, `2`=warning, `3`=security error
 - [x] Define Gastown integration architecture
 - [x] Create memory schema templates (.gt/memory/)
 - [x] Add path security validation to hooks
-- [ ] **Implement project analyzer** (scan code, docs, PRDs)
-- [ ] **Implement bead extraction** (tasks -> beads)
-- [ ] **Implement convoy generation** (bundle beads)
-- [ ] **Implement .gt/ structure output**
+- [x] Add test coverage for quality gates
+- [x] Implement analyze command (project scanning)
+- [x] Implement beads command (work item extraction)
+- [x] Implement convoy command (bead bundling)
+- [x] Implement migrate command (full migration)
+- [x] Add Gastown migration validator
 - [ ] Integrate with Gastown Mayor API
 - [ ] Add memory persistence across sessions
-- [ ] Add test coverage
-
-## Quality Standards
-
-For future Gastown features:
-- Beads must have acceptance criteria
-- Beads must reference evidence (file paths)
-- Memory must be valid JSON
-- Convoys should have 3-7 beads (optimal batch size)
-- Complexity estimates: S/M/L/XL
-
-For current roadmap features:
-- Commands must be deterministic and file-output driven
-- Quality gates must pass before LOOP_COMPLETE
-- Prefer outcomes/KRs over feature lists
-- Roadmap phases limited to 3-5 max
-- All outputs reference repo evidence where possible

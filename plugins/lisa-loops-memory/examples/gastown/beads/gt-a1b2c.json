@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-a1b2c",
+  "title": "Implement user authentication with Firebase",
+  "type": "feature",
+  "complexity": "L",
+  "priority": "high",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "User can sign up with email and password",
+    "User can sign in with Google OAuth",
+    "User can sign out from any page",
+    "Session persists across browser refresh",
+    "Unauthorized users are redirected to login"
+  ],
+  "evidence": {
+    "source": "docs/PRD-v1.md",
+    "line": 42,
+    "extracted": "2026-01-27T10:00:00Z"
+  },
+  "metadata": {
+    "epic": "User Management",
+    "labels": ["auth", "security", "mvp"]
+  }
+}

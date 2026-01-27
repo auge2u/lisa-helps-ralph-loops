@@ -1,0 +1,25 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-j7k8l",
+  "title": "Add task assignment functionality",
+  "type": "feature",
+  "complexity": "S",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": ["gt-d3e4f", "gt-a1b2c"],
+  "acceptance_criteria": [
+    "Team leads can assign tasks to members",
+    "Assignee dropdown shows team members",
+    "Email notification sent on assignment",
+    "Task shows assignee avatar"
+  ],
+  "evidence": {
+    "source": "docs/PRD-v1.md",
+    "line": 112,
+    "extracted": "2026-01-27T10:00:00Z"
+  },
+  "metadata": {
+    "epic": "Task Management",
+    "labels": ["collaboration", "notifications"]
+  }
+}

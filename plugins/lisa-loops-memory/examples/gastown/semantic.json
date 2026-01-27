@@ -1,0 +1,53 @@
+{
+  "$schema": "semantic-memory-v1",
+  "project": {
+    "name": "task-tracker",
+    "type": "web-application",
+    "primary_language": "TypeScript",
+    "description": "A collaborative task management app for distributed teams"
+  },
+  "tech_stack": {
+    "runtime": "Node.js 20",
+    "framework": "Next.js 14",
+    "database": "Neon PostgreSQL",
+    "auth": "Firebase Auth",
+    "deployment": "Vercel",
+    "styling": "Tailwind CSS",
+    "testing": "Vitest + Playwright"
+  },
+  "personas": [
+    {
+      "name": "Team Lead",
+      "needs": ["assign tasks to team members", "track sprint progress", "generate reports"]
+    },
+    {
+      "name": "Developer",
+      "needs": ["see my assigned tasks", "update task status", "log time spent"]
+    },
+    {
+      "name": "Product Owner",
+      "needs": ["prioritize backlog", "view team velocity", "plan releases"]
+    }
+  ],
+  "constraints": [
+    "Must work offline with sync on reconnect",
+    "Sub-100ms response time for task operations",
+    "GDPR compliant data handling for EU users"
+  ],
+  "non_goals": [
+    "Native mobile app (web PWA for MVP)",
+    "Enterprise SSO (future phase)",
+    "Real-time video collaboration"
+  ],
+  "evidence": {
+    "last_scan": "2026-01-27T10:00:00Z",
+    "files_analyzed": [
+      "package.json",
+      "README.md",
+      "docs/PRD-v1.md",
+      "docs/architecture.md",
+      ".firebaserc",
+      "vercel.json"
+    ]
+  }
+}

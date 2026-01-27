@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-g5h6i",
+  "title": "Build task list UI component",
+  "type": "feature",
+  "complexity": "M",
+  "priority": "high",
+  "status": "pending",
+  "dependencies": ["gt-d3e4f"],
+  "acceptance_criteria": [
+    "Display tasks in a sortable list",
+    "Show task title, status, and assignee",
+    "Click task to open detail view",
+    "Drag-and-drop to reorder tasks",
+    "Filter tasks by status"
+  ],
+  "evidence": {
+    "source": "docs/PRD-v1.md",
+    "line": 95,
+    "extracted": "2026-01-27T10:00:00Z"
+  },
+  "metadata": {
+    "epic": "Task Management",
+    "labels": ["frontend", "ui", "mvp"]
+  }
+}

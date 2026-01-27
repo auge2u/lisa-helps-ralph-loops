@@ -1,7 +1,7 @@
 {
   "name": "lisa-loops-memory",
   "description": "Migration system for Gastown. Analyzes projects, extracts Beads, creates Convoys, generates .gt/ structure for multi-agent execution.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "auge2u" },
   "license": "MIT",
   "homepage": "https://github.com/auge2u/lisa-helps-ralph-loops",

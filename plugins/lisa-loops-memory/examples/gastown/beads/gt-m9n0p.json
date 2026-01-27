@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-m9n0p",
+  "title": "Implement offline support with sync",
+  "type": "feature",
+  "complexity": "XL",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": ["gt-d3e4f"],
+  "acceptance_criteria": [
+    "App works without internet connection",
+    "Changes queue locally when offline",
+    "Sync triggers automatically on reconnect",
+    "Conflict resolution shows user choice dialog",
+    "Sync status indicator in UI"
+  ],
+  "evidence": {
+    "source": "docs/architecture.md",
+    "line": 45,
+    "extracted": "2026-01-27T10:00:00Z"
+  },
+  "metadata": {
+    "epic": "Infrastructure",
+    "labels": ["offline", "sync", "pwa"]
+  }
+}

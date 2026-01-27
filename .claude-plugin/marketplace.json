@@ -9,7 +9,7 @@
     {
       "name": "lisa-loops-memory",
       "description": "Analyze projects, extract work items as Beads, create Convoys, and generate Gastown-compatible .gt/ structure.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": { "name": "auge2u" },
       "source": "./plugins/lisa-loops-memory",
       "category": "productivity",

@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-d3e4f",
+  "title": "Create task CRUD API endpoints",
+  "type": "feature",
+  "complexity": "M",
+  "priority": "high",
+  "status": "pending",
+  "dependencies": ["gt-a1b2c"],
+  "acceptance_criteria": [
+    "POST /api/tasks creates a new task",
+    "GET /api/tasks returns user's tasks",
+    "PUT /api/tasks/:id updates task fields",
+    "DELETE /api/tasks/:id soft-deletes task",
+    "All endpoints require authentication"
+  ],
+  "evidence": {
+    "source": "docs/PRD-v1.md",
+    "line": 78,
+    "extracted": "2026-01-27T10:00:00Z"
+  },
+  "metadata": {
+    "epic": "Task Management",
+    "labels": ["api", "backend", "mvp"]
+  }
+}

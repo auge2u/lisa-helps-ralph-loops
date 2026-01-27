@@ -1,0 +1,20 @@
+{
+  "$schema": "convoy-v1",
+  "id": "convoy-001",
+  "name": "MVP Core Features",
+  "description": "Essential features for minimum viable product: authentication, task CRUD, and basic UI",
+  "beads": [
+    "gt-a1b2c",
+    "gt-d3e4f",
+    "gt-g5h6i",
+    "gt-j7k8l"
+  ],
+  "assigned_to": null,
+  "status": "pending",
+  "created": "2026-01-27T10:00:00Z",
+  "metadata": {
+    "epic": "MVP Launch",
+    "estimated_days": 10,
+    "priority": "critical"
+  }
+}

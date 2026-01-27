@@ -1,0 +1,14 @@
+{
+  "$schema": "convoy-v1",
+  "id": "convoy-000",
+  "name": "",
+  "description": "",
+  "beads": [],
+  "assigned_to": null,
+  "status": "pending",
+  "created": "",
+  "metadata": {
+    "epic": null,
+    "estimated_days": null
+  }
+}
