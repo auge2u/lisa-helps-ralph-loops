@@ -10,7 +10,7 @@
 #   ./scripts/bump-version.sh 2.0.0 --tag
 #
 # This script updates:
-#   - plugins/ralph-it-up-roadmap/.claude-plugin/plugin.json
+#   - plugins/lisa-loops-memory/.claude-plugin/plugin.json
 #   - .claude-plugin/marketplace.json
 #   - CHANGELOG.md (moves [Unreleased] to new version with today's date)
 #
@@ -29,7 +29,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Files to update
-PLUGIN_JSON="$PROJECT_ROOT/plugins/ralph-it-up-roadmap/.claude-plugin/plugin.json"
+PLUGIN_JSON="$PROJECT_ROOT/plugins/lisa-loops-memory/.claude-plugin/plugin.json"
 MARKETPLACE_JSON="$PROJECT_ROOT/.claude-plugin/marketplace.json"
 CHANGELOG="$PROJECT_ROOT/CHANGELOG.md"
 

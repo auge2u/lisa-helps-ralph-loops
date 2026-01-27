@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quality Gates Validator for ralph-it-up-roadmap
+Quality Gates Validator for lisa-loops-memory
 
 Validates scopecraft outputs against quality gate definitions.
 Can be run standalone or as a ralph-orchestrator hook.
@@ -12,10 +12,12 @@ Exit codes:
     0 - All gates passed
     1 - Blocker gates failed
     2 - Warning gates failed (but no blockers)
+    3 - Security error (invalid paths)
 """
 
 import argparse
 import glob
+import os
 import re
 import sys
 from dataclasses import dataclass
@@ -27,6 +29,55 @@ try:
     HAS_YAML = True
 except ImportError:
     HAS_YAML = False
+
+
+# Security: Allowed directories for file operations
+ALLOWED_OUTPUT_DIRS = {".", "scopecraft", "./scopecraft", ".gt", "./.gt", ".agent", "./.agent"}
+ALLOWED_SCRATCHPAD_PATTERNS = {".agent/scratchpad.md", ".gt/scratchpad.md", "scratchpad.md"}
+
+
+def validate_path_security(path: str, allowed_patterns: set, param_name: str) -> Path:
+    """Validate that a path is within allowed patterns to prevent path traversal attacks.
+
+    Args:
+        path: The path to validate
+        allowed_patterns: Set of allowed path patterns/prefixes
+        param_name: Name of the parameter for error messages
+
+    Returns:
+        Resolved Path object
+
+    Raises:
+        SystemExit: If path validation fails
+    """
+    # Resolve to absolute path and check for traversal
+    resolved = Path(path).resolve()
+    cwd = Path.cwd().resolve()
+
+    # Check if path is within current working directory
+    try:
+        resolved.relative_to(cwd)
+    except ValueError:
+        print(f"Security error: {param_name} '{path}' resolves outside working directory", file=sys.stderr)
+        print(f"  Resolved path: {resolved}", file=sys.stderr)
+        print(f"  Working directory: {cwd}", file=sys.stderr)
+        sys.exit(3)
+
+    # Check against allowed patterns
+    path_str = str(Path(path))
+    is_allowed = any(
+        path_str == pattern or
+        path_str.startswith(pattern.rstrip('/') + '/') or
+        path_str.startswith('./' + pattern)
+        for pattern in allowed_patterns
+    )
+
+    if not is_allowed and path_str not in {".", "./"}:
+        # For output-dir, also allow if it's a subdirectory we expect
+        if param_name == "--output-dir" and (path_str.startswith("scopecraft") or path_str.startswith(".gt")):
+            is_allowed = True
+
+    return resolved
 
 
 @dataclass
@@ -164,7 +215,7 @@ class QualityGateValidator:
                 message=f"File not found: {gate['path']}"
             )
 
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             lines = len(f.readlines())
 
         min_lines = gate.get("min", 0)
@@ -198,7 +249,7 @@ class QualityGateValidator:
         total_count = 0
 
         for file_path in files:
-            with open(file_path, "r") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
                 matches = regex.findall(content)
                 total_count += len(matches)
@@ -244,7 +295,7 @@ class QualityGateValidator:
                 message=f"File not found: {gate['path']}"
             )
 
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         regex = re.compile(gate["pattern"], re.MULTILINE)
@@ -269,7 +320,7 @@ def load_gates_from_config(config_path: Path) -> list:
     if not config_path.exists():
         return None
 
-    with open(config_path, "r") as f:
+    with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     return config.get("quality_gates")
@@ -358,19 +409,24 @@ def generate_markdown_report(results: list[GateResult]) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate quality gates for ralph-it-up-roadmap")
+    parser = argparse.ArgumentParser(description="Validate quality gates for lisa-loops-memory")
     parser.add_argument("--config", "-c", default="ralph.yml", help="Path to ralph.yml config")
     parser.add_argument("--output-dir", "-o", default=".", help="Base directory for outputs")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show all gate details")
     parser.add_argument("--markdown", "-m", action="store_true", help="Output markdown report")
-    parser.add_argument("--scratchpad", "-s", help="Append results to scratchpad file")
+    parser.add_argument("--scratchpad", "-s", help="Append results to scratchpad file (must be in .agent/ or .gt/)")
     args = parser.parse_args()
+
+    # Security: Validate output directory path
+    output_dir = Path(args.output_dir)
+    if args.output_dir != ".":
+        validate_path_security(args.output_dir, ALLOWED_OUTPUT_DIRS, "--output-dir")
 
     # Load gates from config or use defaults
     gates = load_gates_from_config(Path(args.config))
 
     # Run validation
-    validator = QualityGateValidator(Path(args.output_dir), gates)
+    validator = QualityGateValidator(output_dir, gates)
     results = validator.validate_all()
 
     if args.markdown:
@@ -378,14 +434,39 @@ def main():
     else:
         blockers, warnings = print_results(results, args.verbose)
 
-        # Optionally append to scratchpad
+        # Optionally append to scratchpad (with security validation)
         if args.scratchpad:
+            # Security: Validate scratchpad path
+            scratchpad_str = args.scratchpad
+            is_allowed_scratchpad = any(
+                scratchpad_str == pattern or
+                scratchpad_str.endswith("/" + pattern.split("/")[-1]) or
+                "scratchpad" in scratchpad_str.lower()
+                for pattern in ALLOWED_SCRATCHPAD_PATTERNS
+            )
+
+            if not is_allowed_scratchpad:
+                print(f"Security error: --scratchpad must be a scratchpad file in .agent/ or .gt/", file=sys.stderr)
+                print(f"  Provided: {scratchpad_str}", file=sys.stderr)
+                print(f"  Allowed patterns: {ALLOWED_SCRATCHPAD_PATTERNS}", file=sys.stderr)
+                sys.exit(3)
+
             scratchpad_path = Path(args.scratchpad)
+
+            # Additional check: must be within working directory
+            try:
+                scratchpad_path.resolve().relative_to(Path.cwd().resolve())
+            except ValueError:
+                print(f"Security error: --scratchpad path is outside working directory", file=sys.stderr)
+                sys.exit(3)
+
             if scratchpad_path.exists():
-                with open(scratchpad_path, "a") as f:
+                with open(scratchpad_path, "a", encoding="utf-8") as f:
                     f.write("\n\n")
                     f.write(generate_markdown_report(results))
                 print(f"\nResults appended to {args.scratchpad}")
+            else:
+                print(f"Warning: Scratchpad file not found: {args.scratchpad}", file=sys.stderr)
 
         # Exit code
         if blockers > 0:
