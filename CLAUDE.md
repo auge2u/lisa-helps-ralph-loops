@@ -126,14 +126,18 @@ project/
 
 ## Validation
 
+Two independent validators exist for the two different workflows:
+
 ```bash
-# Gastown migration validation
+# Gastown migration validator (validates .gt/ structure)
 python plugins/lisa-loops-memory/hooks/validate_gastown.py
 python plugins/lisa-loops-memory/hooks/validate_gastown.py --phase analyze
+python plugins/lisa-loops-memory/hooks/validate_gastown.py --json  # JSON output
 
-# Roadmap validation
-./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh
+# Roadmap quality gates validator (validates scopecraft/ outputs)
 python plugins/lisa-loops-memory/hooks/validate_quality_gates.py
+python plugins/lisa-loops-memory/hooks/validate_quality_gates.py --markdown  # Markdown report
+./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh  # Bash wrapper
 ```
 
 Exit codes: `0`=pass, `1`=blocker failed, `2`=warning, `3`=security error
@@ -141,7 +145,15 @@ Exit codes: `0`=pass, `1`=blocker failed, `2`=warning, `3`=security error
 ## Running Tests
 
 ```bash
+# Run all tests
 pytest tests/ -v
+
+# Run single test file
+pytest tests/test_validate_quality_gates.py -v
+
+# Run specific test class or method
+pytest tests/test_validate_quality_gates.py::TestPathSecurity -v
+pytest tests/test_validate_quality_gates.py::TestPathSecurity::test_path_traversal_blocked -v
 ```
 
 ## Quality Standards
@@ -167,18 +179,23 @@ pytest tests/ -v
 - At least 2 tech_stack fields populated
 - Evidence with files_analyzed list
 
-## Development Roadmap
+## Architecture Notes
 
-- [x] Fork from ralph-it-up v1.2.0
-- [x] Rename plugin to lisa-loops-memory
-- [x] Define Gastown integration architecture
-- [x] Create memory schema templates (.gt/memory/)
-- [x] Add path security validation to hooks
-- [x] Add test coverage for quality gates
-- [x] Implement analyze command (project scanning)
-- [x] Implement beads command (work item extraction)
-- [x] Implement convoy command (bead bundling)
-- [x] Implement migrate command (full migration)
-- [x] Add Gastown migration validator
-- [ ] Integrate with Gastown Mayor API
-- [ ] Add memory persistence across sessions
+### Two Distinct Workflows
+
+1. **Gastown Migration** (`/lisa-loops-memory:analyze`, `beads`, `convoy`, `migrate`)
+   - Outputs to `.gt/` directory
+   - Validated by `validate_gastown.py`
+   - Memory stored in JSON files (semantic, episodic, procedural)
+
+2. **Roadmap Generation** (`/lisa-loops-memory:roadmap`, `roadmap-native`, `roadmap-orchestrated`)
+   - Outputs to `scopecraft/` directory
+   - Validated by `validate_quality_gates.py`
+   - Produces 6 markdown files (VISION, ROADMAP, EPICS, RISKS, METRICS, QUESTIONS)
+
+### Plugin Architecture
+
+- **Commands** (`commands/*.md`) — User-facing slash commands, define workflow entry points
+- **Skills** (`skills/*/SKILL.md`) — Detailed procedures and quality gates
+- **Agents** (`agents/*.md`) — Specialized AI personas for different tasks
+- **Hooks** (`hooks/*.py`) — Python validators run after outputs generated
