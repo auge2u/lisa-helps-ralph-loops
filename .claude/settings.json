@@ -11,11 +11,12 @@
       "Bash(git commit*)",
       "Bash(ls*)",
       "Bash(find*:*.md)",
+      "Bash(find*:*.json)",
       "Bash(grep*:scopecraft/*)",
-      "Bash(grep*:.agent/*)",
+      "Bash(grep*:.gt/*)",
       "Bash(wc*)",
       "Bash(cat*:scopecraft/*)",
-      "Bash(cat*:.agent/*)",
+      "Bash(cat*:.gt/*)",
       "Bash(head*:scopecraft/*)",
       "Bash(tail*:scopecraft/*)"
     ],
@@ -27,9 +28,9 @@
     ]
   },
   "commit": {
-    "template": "chore(memory): {summary}\n\n{body}\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+    "template": "chore(gastown): {summary}\n\n{body}\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
   },
   "pr": {
-    "template": "## Summary\n\n{summary}\n\n## Changes\n\n{changes}\n\n## Quality Gates\n\n- [ ] All 6 scopecraft files validated\n- [ ] Quality gates pass (`./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh`)\n- [ ] Memory files valid JSON\n\n---\n🤖 Generated with [Claude Code](https://claude.ai/code)"
+    "template": "## Summary\n\n{summary}\n\n## Changes\n\n{changes}\n\n## Quality Gates\n\n- [ ] Beads have acceptance criteria\n- [ ] Memory files valid JSON\n- [ ] Convoys have 3-7 beads\n\n---\n🤖 Generated with [Claude Code](https://claude.ai/code)"
   }
 }

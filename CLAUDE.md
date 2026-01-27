@@ -4,158 +4,176 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**lisa-helps-ralph-loops** extends the Ralph Loop pattern with **memory persistence** for multi-agent autonomous coding workflows. It transforms stateless iterations into cumulative, learning systems.
+**lisa-helps-ralph-loops** is a migration system that analyzes existing projects and structures them for [Gastown](https://github.com/steveyegge/gastown) — Steve Yegge's multi-agent workspace manager.
 
 **Current version:** 0.1.0 (see `.claude-plugin/marketplace.json`)
 
-**Forked from:** [ralph-it-up v1.2.0](https://github.com/auge2u/ralph-it-up)
+**Target platform:** [Gastown](https://github.com/steveyegge/gastown) multi-agent workspace
 
-**Inspired by:** [multi-agent-ralph-loop](https://github.com/alfredolopez80/multi-agent-ralph-loop)
+## What This Does
+
+1. **Analyzes existing projects** — Scans codebase, docs, PRDs, architecture decisions
+2. **Extracts work units** — Identifies tasks, TODOs, issues, technical debt as Beads
+3. **Structures for Gastown** — Generates `.gt/` directory with memory, beads, convoys
+4. **Preserves context** — Creates semantic memory so Gastown agents understand project history
+
+## Gastown Concepts
+
+| Term | Description |
+|------|-------------|
+| **Mayor** | Primary AI coordinator with full workspace context |
+| **Town** | Root workspace directory (~/gt/) containing all projects |
+| **Rig** | Project container wrapping a git repository |
+| **Polecat** | Ephemeral worker agent (spawn → work → disappear) |
+| **Hook** | Git worktree for persistent state surviving restarts |
+| **Convoy** | Work-tracking unit bundling multiple beads |
+| **Bead** | Individual work item with alphanumeric ID (e.g., gt-abc12) |
 
 ## Repository Structure
 
 ```
-.claude-plugin/marketplace.json    # Marketplace registry (version, plugins list)
+.claude-plugin/marketplace.json    # Marketplace registry
 plugins/
   lisa-loops-memory/
-    .claude-plugin/plugin.json     # Plugin manifest (name, version, license)
+    .claude-plugin/plugin.json     # Plugin manifest
     commands/
-      roadmap.md                   # One-shot slash command
-      roadmap-native.md            # Native Claude Code loop with memory
-      roadmap-orchestrated.md      # Loop mode (ralph-orchestrator compatible)
+      analyze.md                   # Analyze project, generate memory
+      migrate.md                   # Generate Gastown Rig structure
+      beads.md                     # Extract work items as Beads
+      convoy.md                    # Create Convoy from Beads
     agents/
-      product-owner.md             # Agent persona for one-shot mode
-      roadmap-orchestrator.md      # Native loop orchestrator agent
+      project-analyzer.md          # Understands existing projects
+      bead-extractor.md            # Extracts work items
+      gastown-migrator.md          # Structures for Gastown
     skills/
-      roadmap-scopecraft/
-        SKILL.md                   # Core skill logic, quality gates, discovery
-        templates/                 # Output format templates
-    templates/                     # ralph-orchestrator v2 templates
-    hooks/
-      validate_quality_gates.py    # Quality gate validation (Python 3)
-      validate-gates-handler.sh    # Native bash validation
-    examples/
-      scopecraft/                  # Sample outputs for reference
+      project-analysis/            # Core analysis logic
+      bead-extraction/             # Work item extraction
+      gastown-migration/           # Gastown structure generation
+    templates/
+      bead.json                    # Bead template
+      convoy.json                  # Convoy template
+      memory/                      # Memory templates
+```
+
+## Output Structure
+
+After migration, projects have a `.gt/` directory:
+
+```
+project/
+├── .gt/
+│   ├── memory/
+│   │   ├── semantic.json      # Permanent facts (tech stack, constraints)
+│   │   ├── episodic.json      # Decisions with TTL (~30 days)
+│   │   └── procedural.json    # Learned patterns
+│   ├── beads/
+│   │   ├── gt-abc12.json      # Individual work items
+│   │   ├── gt-def34.json
+│   │   └── ...
+│   └── convoys/
+│       └── convoy-001.json    # Bundled work assignments
+└── [existing project files]
 ```
 
 ## Memory Architecture
 
-The core differentiator from ralph-it-up is the **three-tier memory system**:
-
-```
-.agent/
-├── memory/
-│   ├── semantic.json      # Permanent facts (project, tech stack, personas)
-│   ├── episodic.json      # Decisions with timestamps and expiry (~30 days)
-│   └── procedural.json    # Learned patterns and heuristics
-├── scratchpad.md          # Cross-iteration working memory
-└── validation-results.json
-```
-
 ### Semantic Memory (Facts)
 
-Permanent knowledge about the project that persists forever:
+Permanent knowledge about the project:
 - Project identity (name, type, language)
 - Tech stack (database, auth, deployment)
-- User personas and priorities
-- Architectural constraints
+- Constraints and non-goals
+- User personas
 
 ### Episodic Memory (Decisions)
 
-Decisions and rationale with timestamps and expiry:
+Decisions with timestamps and expiry:
 - What was decided
-- Why it was decided (rationale)
-- Context (session, iteration)
-- Expiry date (~30 days default)
+- Why (rationale)
+- Context (who, when)
+- Expiry (~30 days default)
 
 ### Procedural Memory (Patterns)
 
-Learned heuristics that evolve over time:
-- Complexity patterns (e.g., "auth stories are L/XL")
-- Success patterns (e.g., "stories with acceptance criteria ship faster")
-- Failure patterns (e.g., "dependencies on X team often block")
+Learned heuristics:
+- Complexity patterns
+- Risk factors
+- Success/failure patterns
+
+## Bead Structure
+
+```json
+{
+  "id": "gt-abc12",
+  "title": "Add user authentication",
+  "type": "feature",
+  "complexity": "L",
+  "priority": "high",
+  "dependencies": ["gt-xyz99"],
+  "acceptance_criteria": [
+    "User can sign up with email",
+    "User can sign in with Google OAuth"
+  ],
+  "evidence": {
+    "source": "docs/PRD-auth.md",
+    "line": 42
+  }
+}
+```
+
+## Convoy Structure
+
+```json
+{
+  "id": "convoy-001",
+  "name": "Authentication Sprint",
+  "description": "Implement core auth features",
+  "beads": ["gt-abc12", "gt-def34", "gt-ghi56"],
+  "assigned_to": null,
+  "status": "pending",
+  "created": "2026-01-27T10:00:00Z"
+}
+```
 
 ## Commands
 
-Users invoke plugins via:
-- `/lisa-loops-memory:roadmap` — One-shot roadmap generation
-- `/lisa-loops-memory:roadmap-native` — Native Claude Code loop with memory
-- `/lisa-loops-memory:roadmap-orchestrated` — External orchestrator mode
+| Command | Purpose |
+|---------|---------|
+| `/lisa-loops-memory:analyze` | Analyze project, generate memory |
+| `/lisa-loops-memory:migrate` | Generate Gastown `.gt/` structure |
+| `/lisa-loops-memory:beads` | Extract work items as Beads |
+| `/lisa-loops-memory:convoy` | Create Convoy from Beads |
 
-## Quality Gates
+## Migration Workflow
 
-Inherited from ralph-it-up, must pass before `LOOP_COMPLETE`:
+1. **Analyze** — Scan `/docs`, README, code for project understanding
+2. **Extract Memory** — Create semantic facts, capture decisions
+3. **Extract Beads** — Convert TODOs, issues, PRD items to Beads
+4. **Create Convoys** — Bundle related Beads into work assignments
+5. **Output `.gt/`** — Write Gastown-compatible structure
 
-| Gate | Requirement |
-|------|-------------|
-| `all_outputs_exist` | 6 `.md` files in scopecraft/ |
-| `phases_in_range` | 3-5 `## Phase \d` headers in ROADMAP.md |
-| `stories_have_acceptance_criteria` | 5+ "Acceptance Criteria" sections |
-| `risks_documented` | 3+ risk table rows with Technical/Product/GTM types |
-| `metrics_defined` | "North Star Metric" section exists |
-| `no_todo_placeholders` | Zero `[TODO]`/`[TBD]`/`[PLACEHOLDER]` markers |
+## Integration with Gastown
 
-### Validation
+After migration, the Mayor can:
+1. Read `.gt/memory/` for project context
+2. Read `.gt/beads/` for available work items
+3. Create/assign convoys to Polecats
+4. Polecats read beads and execute in Hooks
 
-```bash
-# Native bash validator
-./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh
+## Quality Standards
 
-# JSON output
-./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh --json
-
-# Python validator
-python plugins/lisa-loops-memory/hooks/validate_quality_gates.py
-```
-
-## How Memory Enhances the Loop
-
-### Without Memory (ralph-it-up)
-
-```
-Iteration 1 → Discover project → Generate roadmap
-Iteration 2 → Discover project (again) → Generate roadmap
-Iteration 3 → Discover project (again) → Generate roadmap
-```
-
-### With Memory (lisa-helps-ralph-loops)
-
-```
-Iteration 1 → Discover project → Store facts → Generate roadmap → Store decisions
-Iteration 2 → Load facts + decisions → Refine roadmap → Update decisions
-Iteration 3 → Load facts + decisions → Learn patterns → Finalize roadmap
-```
-
-## Memory Protocol
-
-### On Iteration Start
-
-1. Load `.agent/memory/semantic.json` for project facts
-2. Load `.agent/memory/episodic.json` for recent decisions (filter expired)
-3. Load `.agent/memory/procedural.json` for learned patterns
-4. Read `.agent/scratchpad.md` for working context
-
-### On Iteration End
-
-1. Extract new facts → Update `semantic.json`
-2. Record decisions made → Append to `episodic.json`
-3. Observe patterns → Update confidence in `procedural.json`
-4. Update scratchpad with progress
+- Beads must have acceptance criteria
+- Beads must reference evidence (file paths)
+- Memory must be valid JSON
+- Convoys should have 3-7 beads (optimal batch size)
+- Complexity estimates: S/M/L/XL
 
 ## Roadmap
 
 - [x] Fork from ralph-it-up v1.2.0
-- [ ] Implement semantic memory store
-- [ ] Implement episodic memory with TTL
-- [ ] Implement procedural memory learning
-- [ ] Add memory-aware agents
-- [ ] Multi-model consensus (future)
-
-## Quality Standards
-
-- Memory files must be valid JSON
-- Semantic facts require evidence (file paths, commit SHAs)
-- Episodic decisions require rationale
-- Procedural patterns require confidence scores
-- Quality gates must pass before `LOOP_COMPLETE`
-- Scratchpad must track memory state between iterations
+- [x] Define Gastown integration architecture
+- [ ] Implement project analyzer
+- [ ] Implement bead extraction
+- [ ] Implement convoy generation
+- [ ] Implement `.gt/` structure output
+- [ ] Test with Gastown Mayor

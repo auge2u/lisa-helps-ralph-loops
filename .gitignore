@@ -18,6 +18,6 @@ Thumbs.db
 # Local settings
 .claude/settings.local.json
 
-# Runtime memory (keep templates, ignore user data)
-# Note: .agent/memory/*.json templates are tracked
-# User-specific memory data should be in project root .agent/
+# Gastown runtime data (keep templates, ignore user data)
+# Note: .gt/memory/*.json templates are tracked in this repo
+# User-specific beads and convoys are generated per-project
