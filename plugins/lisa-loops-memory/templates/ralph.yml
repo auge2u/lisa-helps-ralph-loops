@@ -1,0 +1,120 @@
+# ralph-orchestrator v2.2.0 configuration for ralph-it-up-roadmap
+# https://github.com/mikeyobrien/ralph-orchestrator
+
+cli:
+  # Supported backends (v2.2.0):
+  #   claude    - Claude Code CLI (default)
+  #   gemini    - Gemini CLI
+  #   codex     - OpenAI Codex
+  #   qchat     - AWS Q Chat
+  #   aider     - Aider
+  #   opencode  - OpenCode (added v2.0.9)
+  #   copilot   - GitHub Copilot CLI (added v2.0.8)
+  backend: "claude"
+
+event_loop:
+  completion_promise: "LOOP_COMPLETE"
+  max_iterations: 15
+  max_runtime_seconds: 3600  # 1 hour max
+
+# Scratchpad for cross-iteration memory
+scratchpad: ".agent/scratchpad.md"
+
+# =============================================================================
+# HAT-BASED ORCHESTRATION
+# =============================================================================
+# The product-owner hat handles roadmap generation with quality gates
+# embedded in instructions (v2 pattern).
+
+hats:
+  product_owner:
+    name: "🎯 Product Owner"
+    triggers: ["task.start", "iteration.continue"]
+    publishes: ["roadmap.complete"]
+
+    instructions: |
+      You are a **product owner** generating a comprehensive roadmap for this repository.
+
+      ## Objective
+
+      Scan the codebase and documentation to produce a complete maturity roadmap
+      that moves the project from its current stage (MVP/early release) to the
+      next major stage.
+
+      ## Instructions
+
+      1. **Scratchpad Protocol**
+         - Read `.agent/scratchpad.md` at start of each iteration
+         - Update scratchpad with progress after each iteration
+         - Track: completed items, remaining work, blockers, decisions
+
+      2. **Discovery Phase**
+         - Scan `/docs` for PRDs (initial + historical)
+         - Review `README`, `CHANGELOG`, ADRs, architecture docs
+         - Inventory open TODOs, issues, backlog files
+         - Identify current maturity stage
+
+      3. **Output Phase**
+         Create the following files under `./scopecraft/`:
+         - `VISION_AND_STAGE_DEFINITION.md`
+         - `ROADMAP.md` (3-5 phases max)
+         - `EPICS_AND_STORIES.md`
+         - `RISKS_AND_DEPENDENCIES.md`
+         - `METRICS_AND_PMF.md`
+         - `OPEN_QUESTIONS.md`
+
+      4. **Quality Standards**
+         - Be explicit, practical, senior-engineer-friendly
+         - Optimize for PMF and delivery feasibility
+         - Include acceptance criteria for all stories
+         - Reference repo evidence (file paths) where possible
+
+      ## Quality Gates (MUST PASS before LOOP_COMPLETE)
+
+      Before completing, validate ALL of these conditions:
+
+      | Gate | Requirement |
+      |------|-------------|
+      | all_outputs_exist | 6 files in scopecraft/ |
+      | phases_in_range | 3-5 `## Phase` headers in ROADMAP.md |
+      | epics_have_stories | 5+ `#### Story` headers |
+      | stories_have_acceptance_criteria | 5+ "Acceptance Criteria" sections |
+      | risks_documented | 3+ risk table rows with Technical/Product/GTM |
+      | metrics_defined | "North Star Metric" section exists |
+      | no_todo_placeholders | Zero `[TODO]`, `[TBD]`, `[PLACEHOLDER]` markers |
+
+      ### Self-Validation Checklist
+
+      Run through this checklist before each completion attempt:
+      ```
+      [ ] scopecraft/ has exactly 6 .md files
+      [ ] ROADMAP.md has 3-5 "## Phase N" sections
+      [ ] EPICS_AND_STORIES.md has 5+ "#### Story" sections
+      [ ] Each story has "Acceptance Criteria:" section
+      [ ] RISKS_AND_DEPENDENCIES.md has 3+ table rows with risk types
+      [ ] METRICS_AND_PMF.md has "North Star Metric" section
+      [ ] No [TODO], [TBD], or [PLACEHOLDER] markers anywhere
+      ```
+
+      If ANY check fails -> continue iterating, update scratchpad with failures.
+
+      ## Completion
+
+      When all outputs exist, are internally consistent, and ALL quality gates pass:
+
+      ```
+      LOOP_COMPLETE
+      ```
+
+      **DO NOT issue LOOP_COMPLETE if any quality gate fails.**
+
+# =============================================================================
+# LEGACY v1.x FIELDS (for reference, not used in v2)
+# =============================================================================
+# These fields were used in ralph-orchestrator v1.x:
+#   agent: claude
+#   prompt_file: PROMPT.md
+#   max_tokens: 500000
+#   max_cost: 25.0
+#   checkpoint_interval: 3
+#   quality_gates: [...]  # Now embedded in hat instructions

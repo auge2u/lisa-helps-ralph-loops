@@ -1,0 +1,20 @@
+{
+  "name": "lisa-helps-ralph-loops",
+  "description": "Multi-agent orchestration with memory persistence for autonomous coding workflows. Extends Ralph Loop with semantic, episodic, and procedural memory.",
+  "owner": {
+    "name": "auge2u",
+    "email": "auge2u@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "lisa-loops-memory",
+      "description": "Memory-persistent roadmap generation with semantic facts, episodic decisions, and cross-session learning.",
+      "version": "0.1.0",
+      "author": { "name": "auge2u" },
+      "source": "./plugins/lisa-loops-memory",
+      "category": "productivity",
+      "tags": ["memory", "multi-agent", "orchestration", "roadmap", "persistence", "semantic", "episodic"],
+      "keywords": ["memory", "ralph-loop", "multi-agent", "persistence", "learning", "orchestration"]
+    }
+  ]
+}

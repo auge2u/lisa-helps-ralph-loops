@@ -1,0 +1,5 @@
+{
+  "$schema": "episodic-memory-v1",
+  "default_ttl_days": 30,
+  "decisions": []
+}

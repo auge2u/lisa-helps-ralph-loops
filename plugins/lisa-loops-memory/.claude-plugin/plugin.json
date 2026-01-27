@@ -1,0 +1,9 @@
+{
+  "name": "lisa-loops-memory",
+  "description": "Memory-persistent multi-agent orchestration. Semantic facts persist forever, episodic decisions expire, procedural rules evolve.",
+  "version": "0.1.0",
+  "author": { "name": "auge2u" },
+  "license": "MIT",
+  "homepage": "https://github.com/auge2u/lisa-helps-ralph-loops",
+  "repository": "https://github.com/auge2u/lisa-helps-ralph-loops"
+}
