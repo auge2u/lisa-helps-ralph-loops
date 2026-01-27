@@ -1,0 +1,20 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-xxxxx",
+  "title": "",
+  "type": "feature",
+  "complexity": "M",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [],
+  "evidence": {
+    "source": "",
+    "line": null,
+    "extracted": ""
+  },
+  "metadata": {
+    "epic": null,
+    "labels": []
+  }
+}

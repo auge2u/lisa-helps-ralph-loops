@@ -1,0 +1,227 @@
+# Quality Gates Configuration for Lisa
+# Single source of truth for all validation rules across 4 stages
+# Used by: plugins/lisa/hooks/validate.py
+
+version: "1.0"
+
+# Check types:
+# - file_exists: Check if file exists
+# - file_count: Count files matching glob pattern
+# - json_valid: Validate JSON structure
+# - json_field_present: Check JSON field is not null/empty
+# - json_field_count: Count items in JSON array/object
+# - pattern_exists: Check regex pattern exists in file
+# - pattern_count: Count regex pattern matches (supports min/max)
+# - cross_reference: Verify references between files exist
+
+stages:
+  # Stage 0: Research (Archaeological Rescue)
+  # For lost projects where context needs reconstruction
+  research:
+    description: "Rescue lost context from abandoned projects"
+    output_dir: ".gt/research"
+    gates:
+      - id: timeline_constructed
+        name: "Project timeline constructed"
+        check: file_exists
+        path: ".gt/research/timeline.json"
+        severity: blocker
+
+      - id: mission_clarified
+        name: "Project mission clarified"
+        check: json_field_present
+        path: ".gt/research/rescue.json"
+        field: "mission.statement"
+        severity: blocker
+
+      - id: drift_analyzed
+        name: "Scope drift documented"
+        check: json_field_present
+        path: ".gt/research/rescue.json"
+        field: "drift.factors"
+        severity: warning
+
+      - id: recommendation_made
+        name: "Rescue recommendation provided"
+        check: json_field_present
+        path: ".gt/research/rescue.json"
+        field: "recommendation.action"
+        severity: blocker
+
+      - id: evidence_gathered
+        name: "Evidence files listed"
+        check: json_field_count
+        path: ".gt/research/rescue.json"
+        field: "evidence.files_analyzed"
+        min: 3
+        severity: warning
+
+  # Stage 1: Discover (Semantic Memory)
+  # Extract project facts, tech stack, constraints
+  discover:
+    description: "Generate semantic memory from project analysis"
+    output_dir: ".gt/memory"
+    gates:
+      - id: semantic_valid
+        name: "Semantic memory is valid JSON"
+        check: json_valid
+        path: ".gt/memory/semantic.json"
+        severity: blocker
+
+      - id: project_identified
+        name: "Project name identified"
+        check: json_field_present
+        path: ".gt/memory/semantic.json"
+        field: "project.name"
+        severity: blocker
+
+      - id: tech_stack_detected
+        name: "Tech stack detected (2+ fields)"
+        check: json_field_count
+        path: ".gt/memory/semantic.json"
+        field: "tech_stack"
+        min: 2
+        count_non_null: true
+        severity: blocker
+
+      - id: evidence_recorded
+        name: "Evidence files recorded"
+        check: json_field_count
+        path: ".gt/memory/semantic.json"
+        field: "evidence.files_analyzed"
+        min: 1
+        severity: warning
+
+  # Stage 2: Plan (Roadmap Generation)
+  # Create strategic roadmap with epics, risks, metrics
+  plan:
+    description: "Generate product roadmap and planning artifacts"
+    output_dir: "scopecraft"
+    gates:
+      - id: outputs_exist
+        name: "All required outputs exist (6 files)"
+        check: file_count
+        path: "scopecraft/*.md"
+        expect: 6
+        severity: blocker
+
+      - id: phases_valid
+        name: "Roadmap has 3-5 phases"
+        check: pattern_count
+        path: "scopecraft/ROADMAP.md"
+        pattern: "^## Phase \\d"
+        min: 3
+        max: 5
+        severity: blocker
+
+      - id: stories_have_criteria
+        name: "Stories have acceptance criteria (5+)"
+        check: pattern_count
+        path: "scopecraft/EPICS_AND_STORIES.md"
+        pattern: "Acceptance Criteria"
+        min: 5
+        severity: blocker
+
+      - id: risks_documented
+        name: "Risk register has entries (3+)"
+        check: pattern_count
+        path: "scopecraft/RISKS_AND_DEPENDENCIES.md"
+        pattern: "\\| .+ \\| (Technical|Product|GTM)"
+        min: 3
+        severity: blocker
+
+      - id: north_star_defined
+        name: "North star metric defined"
+        check: pattern_exists
+        path: "scopecraft/METRICS_AND_PMF.md"
+        pattern: "North Star Metric"
+        severity: blocker
+
+      - id: no_placeholders
+        name: "No TODO/TBD placeholders remain"
+        check: pattern_count
+        path: "scopecraft/*.md"
+        pattern: "\\[TODO\\]|\\[TBD\\]|\\[PLACEHOLDER\\]"
+        max: 0
+        severity: blocker
+
+  # Stage 3: Structure (Beads + Convoys)
+  # Create Gastown-compatible work items
+  structure:
+    description: "Extract and bundle work items as Beads and Convoys"
+    output_dir: ".gt"
+    gates:
+      - id: beads_extracted
+        name: "Beads extracted (1+ required)"
+        check: file_count
+        path: ".gt/beads/gt-*.json"
+        min: 1
+        severity: blocker
+
+      - id: beads_have_criteria
+        name: "All beads have acceptance criteria"
+        check: json_field_present
+        path: ".gt/beads/*.json"
+        field: "acceptance_criteria"
+        all_files: true
+        severity: blocker
+
+      - id: beads_have_sources
+        name: "All beads have evidence source"
+        check: json_field_present
+        path: ".gt/beads/*.json"
+        field: "evidence.source"
+        all_files: true
+        severity: warning
+
+      - id: beads_valid_ids
+        name: "Bead IDs match gt-xxxxx pattern"
+        check: pattern_exists
+        path: ".gt/beads/*.json"
+        json_field: "id"
+        pattern: "^gt-[a-z0-9]{5}$"
+        all_files: true
+        severity: warning
+
+      - id: convoy_created
+        name: "Convoy created (1+ required)"
+        check: file_count
+        path: ".gt/convoys/convoy-*.json"
+        min: 1
+        severity: blocker
+
+      - id: convoy_size_valid
+        name: "Convoys have 3-7 beads"
+        check: json_field_count
+        path: ".gt/convoys/*.json"
+        field: "beads"
+        min: 3
+        max: 7
+        all_files: true
+        severity: warning
+
+      - id: convoy_beads_exist
+        name: "All convoy beads exist"
+        check: cross_reference
+        source_path: ".gt/convoys/*.json"
+        source_field: "beads"
+        target_dir: ".gt/beads"
+        target_pattern: "{id}.json"
+        severity: blocker
+
+# Workflow definitions
+workflows:
+  migrate:
+    description: "Standard migration (discover + plan + structure)"
+    stages: [discover, plan, structure]
+
+  rescue:
+    description: "Full rescue for lost projects"
+    stages: [research, discover, plan, structure]
+
+# Exit codes
+exit_codes:
+  pass: 0
+  blocker_failed: 1
+  warning_failed: 2
+  security_error: 3

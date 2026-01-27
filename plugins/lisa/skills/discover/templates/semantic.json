@@ -1,0 +1,26 @@
+{
+  "$schema": "semantic-memory-v1",
+  "project": {
+    "name": null,
+    "type": null,
+    "primary_language": null,
+    "description": null
+  },
+  "tech_stack": {
+    "runtime": null,
+    "framework": null,
+    "database": null,
+    "auth": null,
+    "deployment": null,
+    "styling": null,
+    "testing": null,
+    "orm": null
+  },
+  "personas": [],
+  "constraints": [],
+  "non_goals": [],
+  "evidence": {
+    "last_scan": null,
+    "files_analyzed": []
+  }
+}

@@ -6,67 +6,79 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **lisa-helps-ralph-loops** is a migration system that analyzes existing projects and structures them for [Gastown](https://github.com/steveyegge/gastown) — Steve Yegge's multi-agent workspace manager.
 
-**Current version:** 0.2.0 (see `.claude-plugin/marketplace.json`)
+**Current version:** 0.3.0 (see `.claude-plugin/marketplace.json`)
 
-## Commands
+## Commands (v0.3.0 - Lisa Plugin)
 
-### Gastown Migration Commands
+### Primary Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/lisa-loops-memory:analyze` | Scan project, generate semantic memory |
-| `/lisa-loops-memory:beads` | Extract work items as Beads |
-| `/lisa-loops-memory:convoy` | Bundle Beads into Convoys |
-| `/lisa-loops-memory:migrate` | Full migration (analyze + beads + convoy) |
+| Command | Stage | Purpose |
+|---------|-------|---------|
+| `/lisa:research` | 0 | Archaeological rescue for lost/abandoned projects |
+| `/lisa:discover` | 1 | Extract semantic memory from project analysis |
+| `/lisa:plan` | 2 | Generate roadmap with epics, risks, metrics |
+| `/lisa:structure` | 3 | Create Beads and Convoys for Gastown |
+| `/lisa:migrate` | 1-3 | Full pipeline (discover + plan + structure) |
+| `/lisa:rescue` | 0-3 | Full rescue pipeline for abandoned projects |
+| `/lisa:status` | — | Show progress and quality gate results |
 
-### Roadmap Commands (inherited from ralph-it-up)
+### Deprecated Commands (will be removed in v0.4.0)
 
-| Command | Purpose |
-|---------|---------|
-| `/lisa-loops-memory:roadmap` | One-shot roadmap generation |
-| `/lisa-loops-memory:roadmap-native` | Native Claude Code loop with quality gates |
-| `/lisa-loops-memory:roadmap-orchestrated` | External orchestrator mode (ralph-orchestrator) |
+| Old Command | Replacement |
+|-------------|-------------|
+| `/lisa:analyze` | `/lisa:discover` |
+| `/lisa:beads` | `/lisa:structure` |
+| `/lisa:convoy` | `/lisa:structure` |
+| `/lisa:roadmap` | `/lisa:plan` |
+| `/lisa:roadmap-native` | `/lisa:plan` |
+| `/lisa:roadmap-orchestrated` | `/lisa:plan` |
 
 ## Repository Structure
 
 ```
 .claude-plugin/marketplace.json    # Marketplace registry
 plugins/
-  lisa-loops-memory/
+  lisa/                            # v0.3.0 plugin (primary)
     .claude-plugin/plugin.json     # Plugin manifest
+    gates.yaml                     # Quality gates configuration
     commands/
-      analyze.md                   # Gastown: generate memory
-      beads.md                     # Gastown: extract work items
-      convoy.md                    # Gastown: bundle beads
-      migrate.md                   # Gastown: full migration
-      roadmap.md                   # Roadmap: one-shot
-      roadmap-native.md            # Roadmap: native loop
-      roadmap-orchestrated.md      # Roadmap: orchestrator mode
+      research.md                  # Stage 0: Archaeological rescue
+      discover.md                  # Stage 1: Semantic memory
+      plan.md                      # Stage 2: Roadmap generation
+      structure.md                 # Stage 3: Beads + Convoys
+      migrate.md                   # Stages 1-3 pipeline
+      rescue.md                    # Stages 0-3 pipeline
+      status.md                    # Progress display
+      _deprecated/                 # Deprecated commands
     agents/
-      gastown-migrator.md          # Migration specialist agent
-      product-owner.md             # Roadmap agent
-      roadmap-orchestrator.md      # Loop orchestrator agent
+      archaeologist.md             # Stage 0 specialist
+      migrator.md                  # Stages 1-3 specialist
     skills/
-      gastown-migration/           # Gastown migration skill
-        SKILL.md                   # Core logic, quality gates
-        templates/                 # Bead, convoy JSON templates
-      roadmap-scopecraft/          # Roadmap skill
-        SKILL.md
-        templates/
+      research/                    # Stage 0 skill
+      discover/                    # Stage 1 skill
+      plan/                        # Stage 2 skill
+      structure/                   # Stage 3 skill
     hooks/
-      validate_gastown.py          # Gastown migration validator
-      validate_quality_gates.py    # Roadmap quality gates
-      validate-gates-handler.sh    # Bash validator
-    examples/
-      gastown/                     # Sample Gastown outputs
-      scopecraft/                  # Sample roadmap outputs
-.gt/
-  memory/                          # Memory schema templates
-  beads/                           # Bead output directory
-  convoys/                         # Convoy output directory
+      validate.py                  # Unified validator
+  lisa-loops-memory/               # v0.2.0 plugin (legacy)
+    ...
 tests/
   test_validate_quality_gates.py   # Quality gate tests
 ```
+
+## Staged Architecture (v0.3.0)
+
+| Stage | Command | Purpose | Output |
+|-------|---------|---------|--------|
+| 0 | `research` | Rescue lost context | `.gt/research/` |
+| 1 | `discover` | Extract project facts | `.gt/memory/` |
+| 2 | `plan` | Generate roadmap | `scopecraft/` |
+| 3 | `structure` | Create work items | `.gt/beads/`, `.gt/convoys/` |
+
+### Workflows
+
+- **migrate** (Stages 1-3): For active projects with intact context
+- **rescue** (Stages 0-3): For abandoned projects needing context reconstruction
 
 ## Gastown Concepts
 
@@ -75,7 +87,7 @@ tests/
 | **Mayor** | Primary AI coordinator with full workspace context |
 | **Town** | Root workspace directory (~/gt/) containing all projects |
 | **Rig** | Project container wrapping a git repository |
-| **Polecat** | Ephemeral worker agent (spawn → work → disappear) |
+| **Polecat** | Ephemeral worker agent (spawn -> work -> disappear) |
 | **Hook** | Git worktree for persistent state surviving restarts |
 | **Convoy** | Work-tracking unit bundling multiple beads |
 | **Bead** | Individual work item with alphanumeric ID (e.g., gt-abc12) |
@@ -87,6 +99,9 @@ After migration, projects have a `.gt/` directory:
 ```
 project/
 ├── .gt/
+│   ├── research/              # Stage 0 output (rescue only)
+│   │   ├── timeline.json
+│   │   └── rescue.json
 │   ├── memory/
 │   │   ├── semantic.json      # Permanent facts (tech stack, constraints)
 │   │   ├── episodic.json      # Decisions with TTL (~30 days)
@@ -96,48 +111,80 @@ project/
 │   │   └── ...
 │   └── convoys/
 │       └── convoy-001.json    # Bundled work assignments
+├── scopecraft/                # Stage 2 output
+│   ├── VISION_AND_STAGE_DEFINITION.md
+│   ├── ROADMAP.md
+│   ├── EPICS_AND_STORIES.md
+│   ├── RISKS_AND_DEPENDENCIES.md
+│   ├── METRICS_AND_PMF.md
+│   └── OPEN_QUESTIONS.md
 └── [existing project files]
 ```
 
 ## Quality Gates
 
-### Gastown Migration Gates
+### Stage 0: Research
 
 | Gate | Requirement |
 |------|-------------|
-| `semantic_valid_json` | semantic.json is valid JSON |
+| `timeline_constructed` | timeline.json exists |
+| `mission_clarified` | mission.statement populated |
+| `drift_analyzed` | drift.factors has entries |
+| `recommendation_made` | recommendation.action set |
+| `evidence_gathered` | 3+ files analyzed |
+
+### Stage 1: Discover
+
+| Gate | Requirement |
+|------|-------------|
+| `semantic_valid` | semantic.json is valid JSON |
 | `project_identified` | project.name is populated |
 | `tech_stack_detected` | At least 2 tech_stack fields |
-| `beads_extracted` | At least 1 bead created |
-| `beads_have_criteria` | All beads have acceptance criteria |
-| `convoy_created` | At least 1 convoy created |
-| `convoy_size_valid` | Convoys have 3-7 beads |
+| `evidence_recorded` | At least 1 file analyzed |
 
-### Roadmap Quality Gates
+### Stage 2: Plan
 
 | Gate | Requirement |
 |------|-------------|
-| `all_outputs_exist` | 6 `.md` files in scopecraft/ |
-| `phases_in_range` | 3-5 phases in ROADMAP.md |
-| `stories_have_acceptance_criteria` | 5+ acceptance criteria sections |
+| `outputs_exist` | 6 files in scopecraft/ |
+| `phases_valid` | 3-5 phases in ROADMAP.md |
+| `stories_have_criteria` | 5+ acceptance criteria sections |
 | `risks_documented` | 3+ risk table rows |
-| `metrics_defined` | North Star Metric section exists |
-| `no_todo_placeholders` | Zero `[TODO]`/`[TBD]`/`[PLACEHOLDER]` markers |
+| `north_star_defined` | North Star Metric section exists |
+| `no_placeholders` | Zero `[TODO]`/`[TBD]`/`[PLACEHOLDER]` |
+
+### Stage 3: Structure
+
+| Gate | Requirement |
+|------|-------------|
+| `beads_extracted` | At least 1 bead created |
+| `beads_have_criteria` | All beads have acceptance criteria |
+| `beads_have_sources` | All beads have evidence |
+| `beads_valid_ids` | IDs match `gt-[a-z0-9]{5}` |
+| `convoy_created` | At least 1 convoy created |
+| `convoy_size_valid` | Convoys have 3-7 beads |
+| `convoy_beads_exist` | All referenced beads exist |
 
 ## Validation
 
-Two independent validators exist for the two different workflows:
+Unified validator supporting all stages:
 
 ```bash
-# Gastown migration validator (validates .gt/ structure)
-python plugins/lisa-loops-memory/hooks/validate_gastown.py
-python plugins/lisa-loops-memory/hooks/validate_gastown.py --phase analyze
-python plugins/lisa-loops-memory/hooks/validate_gastown.py --json  # JSON output
+# Validate specific stage
+python plugins/lisa/hooks/validate.py --stage discover
+python plugins/lisa/hooks/validate.py --stage plan
+python plugins/lisa/hooks/validate.py --stage structure
 
-# Roadmap quality gates validator (validates scopecraft/ outputs)
-python plugins/lisa-loops-memory/hooks/validate_quality_gates.py
-python plugins/lisa-loops-memory/hooks/validate_quality_gates.py --markdown  # Markdown report
-./plugins/lisa-loops-memory/hooks/validate-gates-handler.sh  # Bash wrapper
+# Validate all stages
+python plugins/lisa/hooks/validate.py --stage all
+
+# Validate workflow
+python plugins/lisa/hooks/validate.py --workflow migrate
+python plugins/lisa/hooks/validate.py --workflow rescue
+
+# Output formats
+python plugins/lisa/hooks/validate.py --format json
+python plugins/lisa/hooks/validate.py --format markdown
 ```
 
 Exit codes: `0`=pass, `1`=blocker failed, `2`=warning, `3`=security error
@@ -153,7 +200,6 @@ pytest tests/test_validate_quality_gates.py -v
 
 # Run specific test class or method
 pytest tests/test_validate_quality_gates.py::TestPathSecurity -v
-pytest tests/test_validate_quality_gates.py::TestPathSecurity::test_path_traversal_blocked -v
 ```
 
 ## Quality Standards
@@ -181,21 +227,33 @@ pytest tests/test_validate_quality_gates.py::TestPathSecurity::test_path_travers
 
 ## Architecture Notes
 
-### Two Distinct Workflows
+### Staged Pipeline
 
-1. **Gastown Migration** (`/lisa-loops-memory:analyze`, `beads`, `convoy`, `migrate`)
-   - Outputs to `.gt/` directory
-   - Validated by `validate_gastown.py`
-   - Memory stored in JSON files (semantic, episodic, procedural)
+The v0.3.0 architecture introduces a 4-stage pipeline:
 
-2. **Roadmap Generation** (`/lisa-loops-memory:roadmap`, `roadmap-native`, `roadmap-orchestrated`)
-   - Outputs to `scopecraft/` directory
-   - Validated by `validate_quality_gates.py`
-   - Produces 6 markdown files (VISION, ROADMAP, EPICS, RISKS, METRICS, QUESTIONS)
+1. **Research (Stage 0)**: Archaeological rescue for lost projects
+   - Git archaeology, timeline reconstruction
+   - Mission extraction, drift analysis
+   - Rescue recommendation (revive/pivot/archive)
+
+2. **Discover (Stage 1)**: Extract semantic memory
+   - Tech stack detection from package files
+   - Service detection from configs
+   - Constraints and non-goals from docs
+
+3. **Plan (Stage 2)**: Generate strategic roadmap
+   - Vision and stage definition
+   - Phased roadmap (3-5 phases)
+   - Epics, risks, metrics
+
+4. **Structure (Stage 3)**: Create Gastown work items
+   - Extract beads from multiple sources
+   - Bundle beads into convoys
 
 ### Plugin Architecture
 
-- **Commands** (`commands/*.md`) — User-facing slash commands, define workflow entry points
-- **Skills** (`skills/*/SKILL.md`) — Detailed procedures and quality gates
-- **Agents** (`agents/*.md`) — Specialized AI personas for different tasks
-- **Hooks** (`hooks/*.py`) — Python validators run after outputs generated
+- **Commands** (`commands/*.md`) — User-facing slash commands
+- **Skills** (`skills/*/SKILL.md`) — Detailed procedures
+- **Agents** (`agents/*.md`) — Specialized AI personas
+- **Hooks** (`hooks/*.py`) — Python validators
+- **Gates** (`gates.yaml`) — Quality gate definitions
