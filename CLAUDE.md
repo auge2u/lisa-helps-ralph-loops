@@ -42,7 +42,7 @@ The marketplace registry at `.claude-plugin/marketplace.json` lists both; `lisa-
 
 ## Plugin Architecture
 
-The `lisa` plugin uses a 4-stage pipeline. Each stage has corresponding files:
+The `lisa` plugin uses a 5-stage pipeline. Each stage has corresponding files:
 
 | Stage | Command | Skill | Agent | Output |
 |-------|---------|-------|-------|--------|
@@ -50,6 +50,7 @@ The `lisa` plugin uses a 4-stage pipeline. Each stage has corresponding files:
 | 1 | `discover.md` | `discover/SKILL.md` | `migrator.md` | `.gt/memory/` |
 | 2 | `plan.md` | `plan/SKILL.md` | `migrator.md` | `scopecraft/` |
 | 3 | `structure.md` | `structure/SKILL.md` | `migrator.md` | `.gt/beads/`, `.gt/convoys/` |
+| 5 | `reconcile.md` | `reconcile/SKILL.md` | `migrator.md` | `scopecraft/` (alignment) |
 
 Composite commands run multiple stages sequentially:
 - **`migrate.md`** — Stages 1-3 (discover + plan + structure)
@@ -68,7 +69,8 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 
 ### Key Files
 
-- **`gates.yaml`** — Defines all 22 quality gates across 4 stages. Edit this to change validation rules.
+- **`gates.yaml`** — Defines all 22 quality gates across 4 stages. Edit this to change validation rules. (Stage 5 uses manual checklist for now.)
+- **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths for reconcile (Stage 5). Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Requires PyYAML. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location.
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
 
@@ -80,7 +82,7 @@ All commands use this YAML frontmatter structure:
 description: Brief description
 skill: skill-name          # Must exist in skills/
 agent: agent-name          # Must exist in agents/
-stage: 0-3                 # Pipeline stage number (omitted for composite commands)
+stage: 0-3|5               # Pipeline stage number (omitted for composite commands)
 ---
 ```
 
