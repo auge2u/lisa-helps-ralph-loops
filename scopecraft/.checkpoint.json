@@ -1,12 +1,13 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T22:30:00Z",
-    "version": "2.3.0",
-    "previous_version": "2.2.0",
+    "timestamp": "2026-02-06T23:00:00Z",
+    "version": "2.4.0",
+    "previous_version": "2.3.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "git remote (fresh pull from Carlos + Conductor)"
+    "data_source": "git remote (Conductor Cycle 2 pulled — commit 04caab3)",
+    "trigger": "Conductor pushed Cycle 2 reconcile with 3 new steering questions"
   },
   "projects": {
     "lisa": {
@@ -18,178 +19,94 @@
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-06T18:00:00Z",
-        "project_name": "lisa",
-        "role": "pipeline-and-memory",
-        "tech_stack_fields": 5,
-        "skills": 5,
-        "pipeline_stages": [0, 1, 2, 3, 5],
-        "files_analyzed": 25,
         "unchanged_since": "v2.1.0"
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
         "version": "1.0",
         "gates": 22,
-        "stages": 4
+        "stages": 4,
+        "note": "Reconcile stage not yet in gates.yaml (manual checklist, bead gt-e4q8b pending)"
       },
-      "scopecraft": {
-        "exists": true,
-        "files": [
-          "VISION_AND_STAGE_DEFINITION.md",
-          "ROADMAP.md",
-          "EPICS_AND_STORIES.md",
-          "RISKS_AND_DEPENDENCIES.md",
-          "METRICS_AND_PMF.md",
-          "OPEN_QUESTIONS.md",
-          "ALIGNMENT_REPORT.md",
-          "PERSPECTIVES.md",
-          ".checkpoint.json"
-        ],
-        "level": "ecosystem"
-      },
-      "structure": {
-        "beads": 9,
-        "convoys": 3,
-        "bead_ids": ["gt-n7h3f", "gt-t2v5j", "gt-a1s6m", "gt-e4q8b", "gt-r6d2k", "gt-cg7ya", "gt-w5y2c", "gt-k3m8n", "gt-x9p4w"],
-        "convoy_ids": ["convoy-001", "convoy-002", "convoy-003"],
-        "created": "2026-02-06T19:00:00Z"
-      },
-      "quality_gates": {
-        "discover": {"passed": 4, "failed": 0, "status": "pass"},
-        "plan": {"passed": 5, "failed": 1, "status": "warn", "note": "outputs_exist expects 6 .md files, found 8 (includes reconcile outputs)"}
-      },
-      "alignment": "aligned"
+      "alignment": "aligned",
+      "external_score": {
+        "conductor_cycle_2": 85,
+        "factual_corrections_needed": 4
+      }
     },
     "carlos": {
       "path": "~/github/auge2u/carlos",
       "status": "found",
-      "source": "git remote (pulled)",
+      "source": "local filesystem (remote up to date)",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
         "schema": "semantic-memory-v1",
-        "last_scan": "2026-02-06T19:00:00Z",
-        "project_name": "carlos",
-        "role": "specialist-fixer",
-        "tech_stack_fields": 7,
-        "files_analyzed": 42,
-        "changed_since_v2_2": true,
-        "changes": [
-          "test_count: 401 -> 435",
-          "python_loc: 10655 -> 11200",
-          "gates_yaml loading priority added",
-          "discovery cache feature added",
-          "quality_gates.source references gates.yaml"
-        ]
+        "last_scan": "2026-02-06T19:00:00Z"
       },
       "gates_yaml": {
         "path": "plugins/carlos/gates.yaml",
         "version": "1.0",
         "gates": 9,
         "stages": 1,
-        "schema_compatible": "lisa v1.0",
-        "created_by": "bead gt-cg7ya (commit 7adbda0)"
+        "schema_compatible": "lisa v1.0"
       },
-      "scopecraft": {
-        "exists": true,
-        "files": [
-          "EPICS_AND_STORIES.md",
-          "METRICS_AND_PMF.md",
-          "OPEN_QUESTIONS.md",
-          "RISKS_AND_DEPENDENCIES.md",
-          "ROADMAP.md",
-          "VISION_AND_STAGE_DEFINITION.md",
-          "ALIGNMENT_REPORT.md",
-          "PERSPECTIVES.md",
-          ".checkpoint.json"
-        ],
-        "level": "project",
-        "has_own_reconcile": true
-      },
-      "assigned_convoys": ["convoy-002"],
-      "assigned_beads": ["gt-r6d2k", "gt-cg7ya"],
       "bead_status": {
-        "gt-cg7ya": {"status": "complete", "commit": "7adbda0", "tests_added": 14},
-        "gt-r6d2k": {"status": "complete", "commit": "ccec69f", "tests_added": 20}
+        "gt-cg7ya": "complete",
+        "gt-r6d2k": "complete"
       },
       "alignment": "aligned",
-      "previous_alignment": "mostly-aligned",
-      "misalignments_cleared": ["M1: Quality gates now use gates.yaml"]
+      "external_score": {
+        "conductor_cycle_2": 95,
+        "note": "Conductor doesn't know about gates.yaml migration"
+      },
+      "local_changes": "uncommitted edits to .gitignore and CLAUDE.md"
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
       "status": "found",
-      "source": "git remote (pulled)",
+      "source": "git remote (pulled commit 04caab3)",
       "semantic_json": {
         "exists": true,
         "version": "0.1.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-06T12:00:00Z",
-        "project_name": "conductor",
-        "role": "orchestration-and-oversight",
-        "has_ecosystem_role": true,
-        "has_integration_points": true,
-        "has_non_goals": true,
-        "packages": 10,
-        "llm_providers": 4,
-        "supported_agents": 6,
-        "total_tests": 1100,
-        "changed_since_v2_2": true,
-        "changes": [
-          "project.status: early-development -> alpha"
-        ]
+        "project_status": "alpha"
       },
       "gates_yaml": {
         "path": "scopecraft/gates.yaml",
         "version": "1.1",
-        "type": "ecosystem overlay",
-        "extends": "lisa/gates.yaml",
-        "adds": "reconcile stage (6 gates), carlos enrichments (3 gates)"
+        "type": "ecosystem overlay"
       },
-      "scopecraft": {
-        "exists": true,
-        "files": [
-          "EPICS_AND_STORIES.md",
-          "MARKET_FIT_AUDIT.md",
-          "METRICS_AND_PMF.md",
-          "OPEN_QUESTIONS.md",
-          "RISKS_AND_DEPENDENCIES.md",
-          "ROADMAP.md",
-          "TECH_AUDIT_REPORT.md",
-          "VISION_AND_STAGE_DEFINITION.md",
-          "ALIGNMENT_REPORT.md",
-          "PERSPECTIVES.md",
-          ".checkpoint.json",
-          "gates.yaml"
-        ],
-        "level": "project + ecosystem overlay",
-        "has_own_reconcile": true
-      },
-      "open_queries": [
-        {"id": "OQ-1", "question": "When does Conductor consume .gt/beads/?", "lisa_response": "Tracked as gt-k3m8n, recommend Phase 1"},
-        {"id": "OQ-2", "question": "Who builds Lisa3?", "lisa_response": "ANSWERED: Lisa3 IS auge2u/lisa3, exists as 5-stage pipeline plugin"},
-        {"id": "OQ-3", "question": "How should context rollover work?", "lisa_response": "Tracked as gt-x9p4w + spike gt-w5y2c"},
-        {"id": "OQ-4", "question": "Shared quality gate format?", "lisa_response": "PARTIALLY RESOLVED: All 3 projects have gates.yaml now"}
+      "reconcile_cycle": 2,
+      "new_steering_questions": [
+        {"id": "sq-c2-01", "question": "Align checkpoint schema with Lisa3?", "response": "Option C: Document schema tolerance. No Conductor change."},
+        {"id": "sq-c2-02", "question": "Merge reconcile gate definitions?", "response": "Option A: Lisa3 canonical when gt-e4q8b implemented. Conductor overlay is input."},
+        {"id": "sq-c2-03", "question": "Should Carlos migrate to gates.yaml?", "response": "Already done (commit 7adbda0). Conductor Cycle 2 is stale."}
       ],
-      "assigned_convoys": ["convoy-003"],
-      "assigned_beads": ["gt-w5y2c", "gt-k3m8n", "gt-x9p4w"],
-      "alignment": "aligned",
-      "previous_alignment": "aligned"
+      "open_queries_updated": {
+        "OQ-1": "open — recommend Phase 1",
+        "OQ-2": "refined — Lisa3 is plugin-first, validate.py works standalone for CI",
+        "OQ-3": "open — tracked as gt-w5y2c + gt-x9p4w",
+        "OQ-4": "further resolved — Carlos already migrated, schema converging"
+      },
+      "factual_corrections": [
+        {"id": "C1", "claim": "Lisa3 version 1.1.0", "actual": "0.3.0", "cause": "Reading marketplace copy, not repo"},
+        {"id": "C2", "claim": "29 gates across 5 stages", "actual": "22 gates across 4 stages", "cause": "Reconcile stage not in gates.yaml yet"},
+        {"id": "C3", "claim": "No semantic.json", "actual": "semantic.json exists since v2.1.0", "cause": "Reading wrong path"},
+        {"id": "C4", "claim": "Carlos should migrate to gates.yaml", "actual": "Already done (commit 7adbda0)", "cause": "Cycle 2 predates Carlos convoy-002"}
+      ],
+      "alignment": "aligned"
     }
   },
   "alignment_summary": {
     "total_projects": 3,
     "found": 3,
-    "missing": 0,
     "aligned": 3,
-    "mostly_aligned": 0,
-    "divergent": 0,
     "alignments": 16,
     "misalignments": 1,
     "gaps": 0,
-    "resolved_since_v2_2": 1,
-    "new_since_v2_2": 1,
-    "deferred_gaps": 1
+    "unchanged_from": "v2.3.0"
   },
   "work_structure": {
     "total_beads": 9,
@@ -198,140 +115,37 @@
     "total_convoys": 3,
     "convoys_complete": 1,
     "convoys": [
-      {
-        "id": "convoy-001",
-        "name": "Lisa Pipeline Hardening",
-        "owner": "lisa",
-        "beads": 4,
-        "beads_complete": 0,
-        "phase": "1-2",
-        "estimated_days": 3,
-        "status": "pending",
-        "blocks": []
-      },
-      {
-        "id": "convoy-002",
-        "name": "Carlos Interface Alignment",
-        "owner": "carlos",
-        "beads": 2,
-        "beads_complete": 2,
-        "phase": "2",
-        "estimated_days": 5,
-        "status": "complete",
-        "completed_at": "2026-02-06",
-        "blocks": ["convoy-003"]
-      },
-      {
-        "id": "convoy-003",
-        "name": "Conductor Ecosystem Integration",
-        "owner": "conductor",
-        "beads": 3,
-        "beads_complete": 0,
-        "phase": "3",
-        "estimated_days": 14,
-        "status": "unblocked",
-        "previously_blocked_by": ["gt-cg7ya (convoy-002)"],
-        "unblocked_at": "2026-02-06"
-      }
-    ],
-    "critical_path": "convoy-003: decide OQ-1 -> gt-k3m8n (bead consumption) -> gt-x9p4w (rollover)"
+      {"id": "convoy-001", "name": "Lisa Pipeline Hardening", "status": "pending", "beads_complete": 0},
+      {"id": "convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
+      {"id": "convoy-003", "name": "Conductor Ecosystem Integration", "status": "unblocked", "beads_complete": 0}
+    ]
   },
   "misalignments": [
     {
       "id": "M5",
       "severity": "medium",
-      "description": "Convoy naming collision: ecosystem convoys (convoy-001..003) overlap with Carlos project convoys (convoy-001..007)",
-      "affects": ["carlos", "lisa"],
-      "suggested_resolution": "Prefix ecosystem convoys with eco- (e.g., eco-convoy-002)",
+      "description": "Convoy naming collision: ecosystem convoys overlap with project convoys",
       "status": "needs-decision"
     }
   ],
-  "resolved": [
-    {
-      "id": "M1",
-      "was": "Quality gate dual source: Lisa uses gates.yaml, Carlos uses hardcoded gates",
-      "now": "Carlos created plugins/carlos/gates.yaml in Lisa-compatible schema v1.0. Conductor drafted scopecraft/gates.yaml v1.1 extending Lisa format.",
-      "resolved_in": "v2.3.0",
-      "resolved_by": "bead gt-cg7ya (commit 7adbda0)"
-    },
-    {
-      "id": "M2",
-      "was": "Conductor repository does not exist",
-      "now": "Conductor exists on GitHub with 10-package monorepo",
-      "resolved_in": "v1.1.0"
-    },
-    {
-      "id": "G2",
-      "was": "No checkpoint schema defined",
-      "now": "Checkpoint exists with reconcile-checkpoint-v1 schema",
-      "resolved_in": "v1.1.0"
-    },
-    {
-      "id": "M3",
-      "was": "Reconcile not implemented as Lisa pipeline stage",
-      "now": "Stage 5 reconcile implemented with command, skill, and ecosystem config",
-      "resolved_in": "v2.0.0"
-    },
-    {
-      "id": "M4",
-      "was": "Conductor uses different semantic.json schema, missing ecosystem fields",
-      "now": "Conductor adopted semantic-memory-v1 with full ecosystem_role, integration_points, non_goals",
-      "resolved_in": "v2.0.0"
-    },
-    {
-      "id": "G1",
-      "was": "No reconcile skill implementation",
-      "now": "skills/reconcile/SKILL.md created with 6-step procedure",
-      "resolved_in": "v2.0.0"
-    },
-    {
-      "id": "G4",
-      "was": "Ecosystem project paths not configurable",
-      "now": "~/.lisa/ecosystem.json created with ecosystem-config-v1 schema",
-      "resolved_in": "v2.0.0"
-    },
-    {
-      "id": "G5",
-      "was": "Conductor not cloned locally",
-      "now": "Conductor cloned at ~/github/habitusnet/conductor/",
-      "resolved_in": "v2.0.0"
-    },
-    {
-      "id": "G6",
-      "was": "Lisa semantic.json missing Stage 5 in pipeline/skills",
-      "now": "semantic.json updated with reconcile skill, Stage 5 pipeline, migrator stages [1,2,3,5]",
-      "resolved_in": "v2.1.0"
-    }
-  ],
   "decisions": {
-    "resolved_date": "2026-02-06",
-    "steering_questions": [
-      {"id": "SQ1", "question": "Conductor timeline", "answer": "After Phase 1", "impact": "Conductor blocked until Lisa+Carlos foundation complete"},
-      {"id": "SQ2", "question": "Quality gate alignment", "answer": "Each plugin owns gates.yaml, same schema, reconcile validates", "impact": "M1 resolved"},
-      {"id": "SQ3", "question": "Reconcile implementation", "answer": "Lightweight: command + skill only", "impact": "M3 resolved"},
-      {"id": "SQ4", "question": "Project path config", "answer": "~/.lisa/ecosystem.json", "impact": "G4 resolved"},
-      {"id": "SQ5", "question": "Conductor repo location", "answer": "habitusnet org", "impact": "Cloned at ~/github/habitusnet/conductor/"},
-      {"id": "SQ6", "question": "Schema alignment approach", "answer": "Conductor adopted semantic-memory-v1", "impact": "M4 resolved"},
-      {"id": "SQ7", "question": "Conductor ecosystem fields", "answer": "Added to existing semantic.json", "impact": "M4 resolved"}
-    ],
     "open_questions": [
-      {"id": "SQ8", "question": "Convoy naming convention", "context": "Ecosystem vs project convoy numbering collision (M5)"},
-      {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "context": "Stale post-Convoy-002, needs /lisa:discover"},
-      {"id": "SQ10", "question": "Conductor bead consumption timing (OQ-1)", "context": "convoy-003 now unblocked, recommend Phase 1"}
+      {"id": "SQ8", "question": "Convoy naming convention", "status": "needs-decision"},
+      {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "status": "needs-decision"},
+      {"id": "SQ10", "question": "Conductor bead consumption timing", "status": "needs-decision"}
+    ],
+    "conductor_questions_answered": [
+      {"id": "sq-c2-01", "answer": "Document schema tolerance in SKILL.md"},
+      {"id": "sq-c2-02", "answer": "Lisa3 canonical when gt-e4q8b implemented"},
+      {"id": "sq-c2-03", "answer": "Already done (Carlos commit 7adbda0)"}
     ]
   },
-  "conductor_open_queries": {
-    "OQ-1": {"status": "tracked", "bead": "gt-k3m8n", "recommendation": "Phase 1 (Dashboard MVP)"},
-    "OQ-2": {"status": "answered", "answer": "Lisa3 IS auge2u/lisa3 — exists as Claude Code plugin with 5-stage pipeline, 8 commands, gates.yaml, ecosystem scopecraft/"},
-    "OQ-3": {"status": "tracked", "beads": ["gt-w5y2c", "gt-x9p4w"], "note": "Spike needed first"},
-    "OQ-4": {"status": "partially-resolved", "note": "All 3 projects have gates.yaml. Schema converging (Lisa v1.0, Carlos v1.0, Conductor v1.1 overlay)."}
-  },
   "next_reconcile_triggers": [
-    "Carlos semantic.json refreshed (SQ9 resolved)",
+    "Conductor pulls this v2.4.0 and corrects Lisa3 data sources (C1-C4)",
+    "Carlos semantic.json refreshed (SQ9)",
     "Convoy naming convention decided (M5/SQ8)",
-    "Any convoy-001 or convoy-003 bead starts implementation",
-    "Any plugin ships a new version",
-    "Conductor pulls this reconcile and updates OQ-2 response"
+    "Any convoy-001 or convoy-003 bead starts",
+    "Any plugin version ship"
   ],
   "context_recovery": {
     "read_order": [
@@ -343,14 +157,14 @@
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "M1 RESOLVED: All three projects have gates.yaml files in compatible schema",
-      "convoy-002 COMPLETE: Carlos implemented both beads (gt-cg7ya, gt-r6d2k)",
-      "convoy-003 UNBLOCKED: Conductor ecosystem integration can now proceed",
-      "Conductor status upgraded to alpha, has own scopecraft/ with ecosystem reconcile",
-      "Carlos: 435 tests, 11,200 LOC, discovery cache active, gates.yaml loading",
-      "One misalignment: M5 (convoy naming collision, needs convention decision)",
-      "Conductor OQ-2 answered: Lisa3 IS auge2u/lisa3, not a missing project",
-      "3 open steering questions: SQ8 (naming), SQ9 (Carlos refresh), SQ10 (bead consumption timing)"
+      "M1 RESOLVED (v2.3.0): All three have gates.yaml in compatible schema",
+      "convoy-002 COMPLETE, convoy-003 UNBLOCKED",
+      "Conductor Cycle 2 includes Lisa3 for first time (85% score)",
+      "4 factual corrections needed: Conductor reads marketplace copy not repo",
+      "3 Conductor steering questions answered (schema tolerance, Lisa canonical, Carlos already done)",
+      "OQ-2 refined: Lisa3 is plugin-first, validate.py standalone for CI",
+      "1 misalignment: M5 (convoy naming collision)",
+      "3 open steering questions: SQ8 (naming), SQ9 (Carlos refresh), SQ10 (bead consumption)"
     ]
   }
 }
