@@ -1,15 +1,17 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T00:00:00Z",
-    "version": "1.0.0",
+    "timestamp": "2026-02-06T12:00:00Z",
+    "version": "1.1.0",
+    "previous_version": "1.0.0",
     "ecosystem_root": "lisa3",
-    "method": "manual (reconcile skill not yet implemented as pipeline stage)"
+    "method": "cross-project reconcile from Carlos repo (manual, via /lisa:reconcile command spec)"
   },
   "projects": {
     "lisa": {
       "path": "~/github/auge2u/lisa3",
       "status": "found",
+      "source": "local filesystem",
       "semantic_json": {
         "exists": true,
         "version": "0.3.0",
@@ -44,6 +46,7 @@
     "carlos": {
       "path": "~/github/auge2u/carlos",
       "status": "found",
+      "source": "local filesystem",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
@@ -55,9 +58,21 @@
         "files_analyzed": 28
       },
       "scopecraft": {
-        "exists": false,
-        "note": "Carlos generates scopecraft/ on target projects, not on itself"
+        "exists": true,
+        "files": [
+          "EPICS_AND_STORIES.md",
+          "METRICS_AND_PMF.md",
+          "OPEN_QUESTIONS.md",
+          "RISKS_AND_DEPENDENCIES.md",
+          "ROADMAP.md",
+          "VISION_AND_STAGE_DEFINITION.md"
+        ],
+        "level": "project",
+        "note": "Carlos generates scopecraft/ for itself and target projects"
       },
+      "recent_commits": [
+        {"hash": "92f74a0", "message": "docs: Add ecosystem architecture design and update semantic memory"}
+      ],
       "alignment": "mostly-aligned",
       "misalignments": [
         "M1: Quality gates hardcoded instead of reading gates.yaml"
@@ -65,29 +80,50 @@
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
-      "status": "missing",
+      "status": "found",
+      "source": "GitHub API (not cloned locally)",
+      "github": {
+        "repo": "habitusnet/conductor",
+        "description": "Multi-LLM orchestration framework for autonomous agent coordination",
+        "last_push": "2026-02-06T00:51:48Z",
+        "default_branch": "main"
+      },
       "semantic_json": {
-        "exists": false
+        "exists": true,
+        "version": "1.0.0",
+        "schema": "https://gastown.dev/schemas/semantic-memory.json",
+        "last_scan": "2026-02-05T15:35:00Z",
+        "project_name": "Conductor",
+        "role": "Multi-LLM orchestration framework",
+        "has_ecosystem_role": false,
+        "has_integration_points": false,
+        "has_non_goals": false,
+        "packages": 8,
+        "llm_providers": 3,
+        "supported_agents": 6
       },
       "scopecraft": {
         "exists": false
       },
-      "alignment": "missing",
+      "alignment": "divergent",
       "misalignments": [
-        "M2: Repository does not exist"
+        "M4: Uses different semantic.json schema than Lisa/Carlos",
+        "M4: Missing ecosystem_role, integration_points, non_goals fields",
+        "G5: Not cloned locally"
       ]
     }
   },
   "alignment_summary": {
     "total_projects": 3,
-    "found": 2,
-    "missing": 1,
+    "found": 3,
+    "missing": 0,
     "aligned": 1,
     "mostly_aligned": 1,
-    "misaligned": 0,
-    "alignments": 8,
+    "divergent": 1,
+    "alignments": 9,
     "misalignments": 3,
-    "gaps": 4
+    "gaps": 4,
+    "resolved_since_v1": 2
   },
   "misalignments": [
     {
@@ -95,21 +131,39 @@
       "severity": "high",
       "description": "Quality gate dual source: Lisa uses gates.yaml, Carlos uses hardcoded gates",
       "affects": ["carlos"],
-      "resolution": "Phase 2 Story 7: Carlos reads gates.yaml format"
-    },
-    {
-      "id": "M2",
-      "severity": "medium",
-      "description": "Conductor repository does not exist",
-      "affects": ["conductor"],
-      "resolution": "Create conductor repo with minimal semantic.json"
+      "resolution": "Phase 2 Story 7: Carlos reads gates.yaml format",
+      "status": "unchanged"
     },
     {
       "id": "M3",
       "severity": "medium",
       "description": "Reconcile not implemented as Lisa pipeline stage",
       "affects": ["lisa"],
-      "resolution": "Implement reconcile as Stage 5 with command, skill, and gates"
+      "resolution": "Implement reconcile as Stage 5 with command, skill, and gates",
+      "status": "unchanged"
+    },
+    {
+      "id": "M4",
+      "severity": "high",
+      "description": "Conductor uses different semantic.json schema, missing ecosystem fields",
+      "affects": ["conductor"],
+      "resolution": "Add ecosystem_role, integration_points, non_goals to Conductor semantic.json",
+      "status": "new"
+    }
+  ],
+  "resolved": [
+    {
+      "id": "M2",
+      "was": "Conductor repository does not exist",
+      "now": "Conductor exists on GitHub with 8-package monorepo and full semantic.json",
+      "resolved_in": "v1.1.0"
+    },
+    {
+      "id": "G2",
+      "was": "No checkpoint schema defined",
+      "now": "Checkpoint exists with reconcile-checkpoint-v1 schema",
+      "resolved_in": "v1.1.0",
+      "partial": true
     }
   ],
   "decisions": {
@@ -120,12 +174,17 @@
       {"id": "SQ3", "question": "Reconcile implementation", "answer": "Lightweight: command + skill only", "impact": "M3 resolution: no agent or quality gates yet"},
       {"id": "SQ4", "question": "Project path config", "answer": "~/.lisa/ecosystem.json", "impact": "G4 resolution"},
       {"id": "SQ5", "question": "Conductor repo location", "answer": "habitusnet org", "impact": "Path: ~/github/habitusnet/conductor/"}
+    ],
+    "open_questions": [
+      {"id": "SQ6", "question": "Schema alignment approach", "options": ["Conductor adopts semantic-memory-v1", "Reconcile handles multiple schemas"]},
+      {"id": "SQ7", "question": "Conductor ecosystem fields", "options": ["Add to existing semantic.json", "Separate ecosystem file"]}
     ]
   },
   "next_reconcile_triggers": [
-    "Conductor repo created at habitusnet",
+    "Conductor cloned locally and ecosystem_role added",
     "Carlos gates.yaml created (same schema as Lisa)",
     "Lisa reconcile command + skill implemented",
-    "Any plugin ships a new version"
+    "Any plugin ships a new version",
+    "SQ6 and SQ7 decisions made"
   ]
 }

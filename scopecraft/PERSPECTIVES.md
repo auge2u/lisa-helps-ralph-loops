@@ -2,8 +2,9 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06
-**Projects scanned:** 3 attempted, 2 found, 1 missing
+**Generated:** 2026-02-06 (reconcile v1.1.0)
+**Projects scanned:** 3 attempted, 3 found
+**Reconcile source:** Carlos repo (cross-project)
 
 ---
 
@@ -11,12 +12,13 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 | Field | Lisa | Carlos | Conductor |
 |-------|------|--------|-----------|
-| **Status** | Found | Found | MISSING (repo does not exist) |
-| **Version** | 0.3.0 | 1.2.0 | N/A |
-| **Stage** | alpha | beta | pre-development |
-| **Type** | claude-code-plugin | claude-code-plugin | N/A |
-| **Language** | Python | Python | N/A |
-| **Last scan** | 2026-02-06 | 2026-02-06 | N/A |
+| **Status** | Found (local) | Found (local) | Found (GitHub only, not cloned) |
+| **Version** | 0.3.0 | 1.2.0 | 1.0.0 |
+| **Stage** | alpha | beta | early development |
+| **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
+| **Language** | Python | Python | TypeScript |
+| **Last scan** | 2026-02-06 | 2026-02-06 | 2026-02-05 |
+| **Schema** | semantic-memory-v1 | semantic-memory-v1 | gastown semantic-memory (different) |
 
 ---
 
@@ -74,47 +76,97 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 ## Conductor Self-Report
 
-**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json`
+**Source:** `habitusnet/conductor` on GitHub (`.gt/memory/semantic.json`)
 
-**STATUS: MISSING** — The conductor repo does not exist at `~/github/habitusnet/conductor/`.
+| Attribute | Value |
+|-----------|-------|
+| Name | Conductor |
+| Role | Multi-LLM orchestration framework |
+| Description | Enables autonomous agents (Claude Code, Codex CLI, Gemini CLI) to coordinate on shared codebases via MCP |
+| Type | TypeScript monorepo (Turborepo) |
+| Runtime | Node.js >= 20.0.0 |
+| Database | SQLite (local) / PostgreSQL via Neon (production) |
+| ORM | Drizzle ORM 0.38.3 |
+| Frontend | Next.js 15.1.0 + React 19 + Tailwind |
+| Testing | Vitest 4.0.16 |
+| MCP | @modelcontextprotocol/sdk 1.0.0 |
+| Sandbox | E2B (e2b, @e2b/code-interpreter) |
+| CLI | Commander.js 12.1.0 + Ink 5.1.0 |
 
-**Expected role (from ecosystem architecture doc):**
-- Orchestration & Oversight
-- Multi-project awareness
-- Agent lifecycle management (heartbeat, reassignment, handoff)
-- Context exhaustion detection and rollover
-- Personality curation
-- Conflict resolution
-- MCP tools: conductor_claim_task, conductor_complete_task, conductor_heartbeat, conductor_lock_file
+**Packages (8):**
+- `@conductor/core` — Zod schemas, types, agent profiles, conflict detection
+- `@conductor/state` — SQLite state store (legacy)
+- `@conductor/db` — Drizzle ORM for SQLite/PostgreSQL
+- `@conductor/mcp-server` — MCP server exposing tools to agents
+- `@conductor/cli` — Commander.js CLI
+- `@conductor/e2b-runner` — E2B sandbox integration
+- `@conductor/connectors` — GitHub, LLM provider integrations
+- `@conductor/dashboard` — Next.js oversight dashboard
+
+**Key patterns:**
+- CLI-First: Subscription-based CLI agents, not API orchestration
+- MCP Coordination: All agents connect via MCP for task management
+- Oversight Agent: Dedicated CLI agent monitors others
+- API Fallback: API orchestration only for emergencies
+
+**Supported agents:** Claude (Opus 4), Claude Sonnet 4, Claude Haiku, Gemini 2.0 Flash, Codex, GPT-4o
+
+**Does NOT have:** `ecosystem_role` field in semantic.json (uses different schema)
 
 ---
 
 ## Ecosystem Role Comparison
 
-| Responsibility | Lisa claims | Carlos claims | Conductor expected | Conflict? |
-|----------------|-------------|---------------|-------------------|-----------|
+| Responsibility | Lisa claims | Carlos claims | Conductor has | Conflict? |
+|----------------|-------------|---------------|---------------|-----------|
 | Pipeline ownership | Yes | No | No | None |
-| .gt/ schema ownership | Yes | No (reads only) | No (reads only) | None |
-| Semantic memory | Yes (generates) | Yes (reads) | Expected (reads) | None |
+| .gt/ schema ownership | Yes | No (reads only) | No (not referenced) | **GAP**: Conductor doesn't reference .gt/ |
+| Semantic memory | Yes (generates) | Yes (reads) | No (own schema) | **GAP**: Different schemas |
 | Bead/convoy creation | Yes | No | No | None |
 | Quality gate definition | Yes (gates.yaml) | Yes (hardcoded) | No | MISALIGNMENT: dual source |
-| Quality gate enforcement | Yes (validate.py) | Yes (validate_quality_gates.py) | Expected (routes to Carlos) | MISALIGNMENT: dual enforcement |
+| Quality gate enforcement | Yes (validate.py) | Yes (validate_quality_gates.py) | No | MISALIGNMENT: dual enforcement |
 | Roadmap generation | Yes (plan stage) | Yes (roadmap command) | No | OK: complementary |
 | scopecraft/ output | Yes (writes) | Yes (writes) | No | OK: shared format |
 | Discovery engine | Yes (skill-based) | Yes (Python-based, richer) | No | OK: Carlos enriches |
-| Model routing | No | Yes (model_router.py) | Expected | None |
-| Agent tracking | No | No | Expected | None |
-| Context rollover | No | No | Expected | None |
+| Model routing | No | Yes (model_router.py) | No | None |
+| Agent tracking | No | No | Yes (full lifecycle) | None |
+| Task management | No | No | Yes (MCP tools) | None |
+| Context rollover | No | No | Expected (design doc) | **GAP**: Not yet visible in Conductor code |
+| File locking | No | No | Yes | None |
+| E2B sandbox | No | No | Yes | None |
+| Conflict resolution | No | No | Expected | **GAP**: Not yet visible |
 | Reconciliation | Yes (ecosystem root) | No | No | None |
 
 ---
 
 ## Interface Agreement Check
 
-| Interface | Lisa says | Carlos says | Match? |
-|-----------|-----------|-------------|--------|
-| `.gt/memory/semantic.json` | "I write, others read" | "I read if exists, skip re-discovery" | Yes |
-| `scopecraft/` | "Stage 2 output" | "Roadmap output (shared format)" | Yes |
-| `gates.yaml` | "Single source of truth (22 gates)" | "Should align with Lisa gates.yaml" | PARTIAL: Carlos acknowledges but hasn't aligned yet |
-| `.gt/beads/*.json` | "Stage 3 output, I own" | "I read to validate/analyze" | Yes |
-| `ecosystem_root` | "This repo" | "lisa3 (hosts reconcile)" | Yes |
+| Interface | Lisa says | Carlos says | Conductor says | Match? |
+|-----------|-----------|-------------|----------------|--------|
+| `.gt/memory/semantic.json` | "I write, others read" | "I read if exists" | Not referenced | **PARTIAL**: Conductor doesn't know about .gt/ |
+| `scopecraft/` | "Stage 2 output" | "Roadmap output (shared)" | Not referenced | **PARTIAL**: Conductor doesn't produce scopecraft/ |
+| `gates.yaml` | "Single source of truth" | "Should align" | Not referenced | **PARTIAL**: Carlos acknowledges but hasn't aligned |
+| `.gt/beads/*.json` | "Stage 3 output, I own" | "I read to validate" | Not referenced | **PARTIAL**: Conductor should consume beads |
+| `ecosystem_root` | "This repo" | "lisa3 (hosts reconcile)" | Not referenced | **PARTIAL**: Conductor doesn't declare |
+| MCP tools | Not referenced | Not referenced | Yes (MCP server) | **GAP**: Lisa/Carlos don't reference MCP |
+| Task queue | Not referenced | Not referenced | Yes (full workflow) | OK: Conductor's domain |
+| File locks | Not referenced | Not referenced | Yes (TTL-based) | OK: Conductor's domain |
+
+---
+
+## Schema Divergence Note
+
+Conductor uses a different semantic.json schema (`https://gastown.dev/schemas/semantic-memory.json`) than Lisa/Carlos (`semantic-memory-v1`). Key differences:
+
+| Field | Lisa/Carlos | Conductor |
+|-------|-------------|-----------|
+| `$schema` | `"semantic-memory-v1"` | `"https://gastown.dev/schemas/semantic-memory.json"` |
+| `ecosystem_role` | Present (role, reads_from, writes_to, does_not_own) | **Missing** |
+| `non_goals` | Present | **Missing** |
+| `integration_points` | Present (lisa/conductor/ralph references) | **Missing** |
+| `architecture` | Not detailed | Full monorepo package map |
+| `domain_concepts` | Not present | Full domain model (orgs, projects, agents, tasks, file locks) |
+| `llm_integrations` | Not present | Full provider + model list |
+| `deployment` | Not present | Local + production configs |
+
+This is the **most important reconciliation finding**: Conductor's semantic.json doesn't yet describe its ecosystem role, what it reads/writes from the shared `.gt/` state, or how it relates to Lisa and Carlos. It describes itself as a standalone framework, not as an ecosystem participant.
