@@ -2,9 +2,9 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06 (reconcile v1.1.0)
-**Projects scanned:** 3 attempted, 3 found
-**Reconcile source:** Carlos repo (cross-project)
+**Generated:** 2026-02-06 (reconcile v2.0.0)
+**Projects scanned:** 3 attempted, 3 found (all local)
+**Reconcile method:** Lisa Stage 5 skill
 
 ---
 
@@ -12,13 +12,14 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 | Field | Lisa | Carlos | Conductor |
 |-------|------|--------|-----------|
-| **Status** | Found (local) | Found (local) | Found (GitHub only, not cloned) |
-| **Version** | 0.3.0 | 1.2.0 | 1.0.0 |
-| **Stage** | alpha | beta | early development |
+| **Status** | Found (local) | Found (local) | Found (local) |
+| **Version** | 0.3.0 | 1.2.0 | 0.1.0 |
+| **Stage** | alpha | beta | early-development |
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
 | **Language** | Python | Python | TypeScript |
-| **Last scan** | 2026-02-06 | 2026-02-06 | 2026-02-05 |
-| **Schema** | semantic-memory-v1 | semantic-memory-v1 | gastown semantic-memory (different) |
+| **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
+| **Last scan** | 2026-02-06 | 2026-02-06 | 2026-02-06 |
+| **License** | MIT | MIT | MIT |
 
 ---
 
@@ -35,13 +36,15 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | Ecosystem root | Yes (hosts reconcile and ecosystem scopecraft/) |
 | Commands | 8 (research, discover, plan, structure, status, migrate, rescue, reconcile) |
 | Agents | 2 (archaeologist, migrator) |
-| Skills | 4 (research, discover, plan, structure) |
+| Skills | 4 listed (research, discover, plan, structure) + reconcile (implemented but not in semantic.json yet) |
 | Quality gates | 22 across 4 stages |
 | Gate source | gates.yaml (declarative) |
 
-**Reads from:** target project files, carlos semantic.json, conductor semantic.json
+**Reads from:** target project files, Carlos semantic.json, Conductor semantic.json
 **Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, .checkpoint.json, ALIGNMENT_REPORT.md
 **Does not own:** Carlos analysis reports, Conductor state
+
+**Constraints:** Works offline, local files only, Python 3.10+, graceful degradation when partners absent, output directories restricted to `.`, `.gt`, `scopecraft`
 
 ---
 
@@ -59,8 +62,8 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | Commands | 4 (roadmap, roadmap-orchestrated, verify, check-imports) |
 | Agents | 3 (product-owner/opus, tech-auditor/sonnet, market-fit-auditor/sonnet) |
 | Skills | 1 (roadmap-scopecraft) |
-| Python modules | 13 (10,655 LOC) |
-| Tests | 400 (6,621 LOC) + 94 security tests |
+| Python modules | 14 (10,655 LOC) |
+| Tests | 401 (7,686 LOC) + 95 security tests |
 | Quality gates | 6 blockers (hardcoded in validate_quality_gates.py) |
 
 **Reads from:** .gt/memory/semantic.json, .gt/beads/*.json, scopecraft/*.md
@@ -71,71 +74,69 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 - Multi-agent workflow: ingest_scope -> [tech_audit, market_fit_audit] -> synthesis
 - Model routing: haiku/sonnet/opus tiers targeting 60-70% savings
 - Discovery engine: detects 10 package managers, 8 frameworks, 6 databases, 4 CI systems
+- Security: CWE-22 path traversal, CWE-1333 ReDoS, CWE-78 shell injection protections
 
 ---
 
 ## Conductor Self-Report
 
-**Source:** `habitusnet/conductor` on GitHub (`.gt/memory/semantic.json`)
+**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json`
 
 | Attribute | Value |
 |-----------|-------|
-| Name | Conductor |
-| Role | Multi-LLM orchestration framework |
-| Description | Enables autonomous agents (Claude Code, Codex CLI, Gemini CLI) to coordinate on shared codebases via MCP |
-| Type | TypeScript monorepo (Turborepo) |
-| Runtime | Node.js >= 20.0.0 |
-| Database | SQLite (local) / PostgreSQL via Neon (production) |
-| ORM | Drizzle ORM 0.38.3 |
-| Frontend | Next.js 15.1.0 + React 19 + Tailwind |
-| Testing | Vitest 4.0.16 |
-| MCP | @modelcontextprotocol/sdk 1.0.0 |
-| Sandbox | E2B (e2b, @e2b/code-interpreter) |
-| CLI | Commander.js 12.1.0 + Ink 5.1.0 |
+| Name | conductor |
+| Role | orchestration-and-oversight |
+| Description | Multi-project, multi-agent tracking for CLI-based agents. Handles task assignment, context rollover, conflict resolution, personality curation, and autonomous oversight. |
+| Standalone command | conductor CLI + MCP server |
+| Ecosystem root | No (lisa3 hosts) |
+| Packages | 10 (core, state, db, secrets, mcp-server, connectors, cli, e2b-runner, observer, dashboard) |
+| Total src files | 148 |
+| Total test files | 51 |
+| Total tests | 1,100 |
+| MCP tools | 19 (8 task management + 5 coordination + 6 oversight) |
+| Observer patterns | 9 detection types, 4 autonomy levels, 7 autonomous actions |
+| LLM providers | 4 (Anthropic, Google, OpenAI, Z.ai) |
+| Supported agents | 6 (Claude Opus/Sonnet/Haiku, Gemini Flash, Codex, GPT-4o) |
 
-**Packages (8):**
-- `@conductor/core` — Zod schemas, types, agent profiles, conflict detection
-- `@conductor/state` — SQLite state store (legacy)
-- `@conductor/db` — Drizzle ORM for SQLite/PostgreSQL
-- `@conductor/mcp-server` — MCP server exposing tools to agents
-- `@conductor/cli` — Commander.js CLI
-- `@conductor/e2b-runner` — E2B sandbox integration
-- `@conductor/connectors` — GitHub, LLM provider integrations
-- `@conductor/dashboard` — Next.js oversight dashboard
+**Reads from:** .gt/beads/*.json, .gt/convoys/*.json, .gt/memory/semantic.json, scopecraft/
+**Writes to:** Task queue state, file locks, cost events, agent lifecycle state, escalation queue
+**Does not own:** .gt/ directory schema, scopecraft/ format, quality gate definitions, semantic memory generation, specialist analysis
 
 **Key patterns:**
-- CLI-First: Subscription-based CLI agents, not API orchestration
-- MCP Coordination: All agents connect via MCP for task management
-- Oversight Agent: Dedicated CLI agent monitors others
+- CLI-First: Subscription-based CLI tools are primary workers, not API orchestration
+- MCP Coordination: All agents connect via MCP for task/lock/heartbeat management
+- Oversight Agent: Dedicated CLI-based observer monitors others with pattern detection
 - API Fallback: API orchestration only for emergencies
+- Two DB layers: SQLite (simple) + Drizzle ORM (production PostgreSQL)
 
-**Supported agents:** Claude (Opus 4), Claude Sonnet 4, Claude Haiku, Gemini 2.0 Flash, Codex, GPT-4o
-
-**Does NOT have:** `ecosystem_role` field in semantic.json (uses different schema)
+**Constraints:** CLI-first (not API orchestrator), subscription-based billing, self-coordinating agents, Node.js >= 20.0.0, ESM only
 
 ---
 
 ## Ecosystem Role Comparison
 
-| Responsibility | Lisa claims | Carlos claims | Conductor has | Conflict? |
-|----------------|-------------|---------------|---------------|-----------|
+| Responsibility | Lisa claims | Carlos claims | Conductor claims | Conflict? |
+|----------------|-------------|---------------|------------------|-----------|
 | Pipeline ownership | Yes | No | No | None |
-| .gt/ schema ownership | Yes | No (reads only) | No (not referenced) | **GAP**: Conductor doesn't reference .gt/ |
-| Semantic memory | Yes (generates) | Yes (reads) | No (own schema) | **GAP**: Different schemas |
-| Bead/convoy creation | Yes | No | No | None |
-| Quality gate definition | Yes (gates.yaml) | Yes (hardcoded) | No | MISALIGNMENT: dual source |
-| Quality gate enforcement | Yes (validate.py) | Yes (validate_quality_gates.py) | No | MISALIGNMENT: dual enforcement |
+| .gt/ schema ownership | Yes | No (reads only) | No (reads only, explicitly disowns) | None |
+| Semantic memory | Yes (generates) | Yes (reads) | Yes (reads for context bundles) | None |
+| Bead/convoy creation | Yes | No | No (reads for task assignment) | None |
+| Quality gate definition | Yes (gates.yaml) | Yes (hardcoded) | No (disowns) | **M1: Dual source** |
+| Quality gate enforcement | Yes (validate.py) | Yes (validate_quality_gates.py) | No | **M1: Dual enforcement** |
 | Roadmap generation | Yes (plan stage) | Yes (roadmap command) | No | OK: complementary |
-| scopecraft/ output | Yes (writes) | Yes (writes) | No | OK: shared format |
+| scopecraft/ output | Yes (writes) | Yes (writes) | Yes (reads) | OK: shared format |
 | Discovery engine | Yes (skill-based) | Yes (Python-based, richer) | No | OK: Carlos enriches |
 | Model routing | No | Yes (model_router.py) | No | None |
 | Agent tracking | No | No | Yes (full lifecycle) | None |
 | Task management | No | No | Yes (MCP tools) | None |
-| Context rollover | No | No | Expected (design doc) | **GAP**: Not yet visible in Conductor code |
-| File locking | No | No | Yes | None |
+| Context rollover | No | No | Planned (roadmap_status) | None |
+| File locking | No | No | Yes (TTL-based) | None |
 | E2B sandbox | No | No | Yes | None |
-| Conflict resolution | No | No | Expected | **GAP**: Not yet visible |
+| Conflict resolution | No | No | Yes (zone, lock, merge, review strategies) | None |
+| Autonomous oversight | No | No | Yes (observer agent) | None |
 | Reconciliation | Yes (ecosystem root) | No | No | None |
+| Secrets management | No | No | Yes (multi-provider) | None |
+| Personality curation | No | No | Yes (maps tasks to agent tiers) | None |
 
 ---
 
@@ -143,30 +144,32 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 | Interface | Lisa says | Carlos says | Conductor says | Match? |
 |-----------|-----------|-------------|----------------|--------|
-| `.gt/memory/semantic.json` | "I write, others read" | "I read if exists" | Not referenced | **PARTIAL**: Conductor doesn't know about .gt/ |
-| `scopecraft/` | "Stage 2 output" | "Roadmap output (shared)" | Not referenced | **PARTIAL**: Conductor doesn't produce scopecraft/ |
-| `gates.yaml` | "Single source of truth" | "Should align" | Not referenced | **PARTIAL**: Carlos acknowledges but hasn't aligned |
-| `.gt/beads/*.json` | "Stage 3 output, I own" | "I read to validate" | Not referenced | **PARTIAL**: Conductor should consume beads |
-| `ecosystem_root` | "This repo" | "lisa3 (hosts reconcile)" | Not referenced | **PARTIAL**: Conductor doesn't declare |
-| MCP tools | Not referenced | Not referenced | Yes (MCP server) | **GAP**: Lisa/Carlos don't reference MCP |
+| `.gt/memory/semantic.json` | "I write, others read" | "I read if exists" | "I read for context bundles" | **FULL MATCH** |
+| `scopecraft/` | "Stage 2 output" | "Roadmap output (shared)" | "I read for roadmap context" | **FULL MATCH** |
+| `gates.yaml` | "Single source of truth" | "Should align" | "Does not own" | **PARTIAL**: Carlos acknowledges but hasn't aligned |
+| `.gt/beads/*.json` | "Stage 3 output, I own" | "I read to validate" | "I read for task assignment" | **FULL MATCH** |
+| `.gt/convoys/*.json` | "Stage 3 output, I own" | Not explicitly referenced | "I read for task assignment" | **FULL MATCH** |
+| `ecosystem_root` | "This repo" | "lisa3 (hosts reconcile)" | "lisa3 (hosts reconcile)" | **FULL MATCH** |
+| MCP tools | Not referenced | Not referenced | Yes (19 tools) | OK: Conductor's domain |
 | Task queue | Not referenced | Not referenced | Yes (full workflow) | OK: Conductor's domain |
 | File locks | Not referenced | Not referenced | Yes (TTL-based) | OK: Conductor's domain |
+| Agent personas | Not referenced | "Can be called as specialist" | "Routes to Carlos personas" | **FULL MATCH** (Carlos <> Conductor) |
 
 ---
 
-## Schema Divergence Note
+## Roadmap Status Comparison
 
-Conductor uses a different semantic.json schema (`https://gastown.dev/schemas/semantic-memory.json`) than Lisa/Carlos (`semantic-memory-v1`). Key differences:
+| Area | Lisa | Carlos | Conductor |
+|------|------|--------|-----------|
+| Core functionality | Stages 0-3 implemented, Stage 5 implemented | All commands working | Core, DB, MCP, CLI, connectors, observer, secrets done |
+| In progress | — | — | Dashboard UI |
+| Planned / Next | Templates for reconcile, gates.yaml for Stage 5 | gates.yaml alignment | WebSocket notifications, auction system, Lisa bead consumption, Carlos specialist routing, context rollover |
 
-| Field | Lisa/Carlos | Conductor |
-|-------|-------------|-----------|
-| `$schema` | `"semantic-memory-v1"` | `"https://gastown.dev/schemas/semantic-memory.json"` |
-| `ecosystem_role` | Present (role, reads_from, writes_to, does_not_own) | **Missing** |
-| `non_goals` | Present | **Missing** |
-| `integration_points` | Present (lisa/conductor/ralph references) | **Missing** |
-| `architecture` | Not detailed | Full monorepo package map |
-| `domain_concepts` | Not present | Full domain model (orgs, projects, agents, tasks, file locks) |
-| `llm_integrations` | Not present | Full provider + model list |
-| `deployment` | Not present | Local + production configs |
+---
 
-This is the **most important reconciliation finding**: Conductor's semantic.json doesn't yet describe its ecosystem role, what it reads/writes from the shared `.gt/` state, or how it relates to Lisa and Carlos. It describes itself as a standalone framework, not as an ecosystem participant.
+## Notable Changes From v1.1.0
+
+1. **Conductor growth**: 8 packages -> 10 packages (added observer, secrets). 148 src files, 1,100 tests. Significant maturation.
+2. **Schema unification**: All three projects now use `semantic-memory-v1`. Direct comparison is fully possible.
+3. **Ecosystem awareness**: All three projects now declare ecosystem_role, integration_points, non_goals. The "who reads what" chain is complete.
+4. **Lisa Stage 5**: This reconcile was run through the implemented pipeline for the first time.

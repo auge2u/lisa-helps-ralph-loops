@@ -1,66 +1,81 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-06 (reconcile v1.1.0)
-**Previous reconcile:** 2026-02-06 v1.0.0
+**Generated:** 2026-02-06 (reconcile v2.0.0)
+**Previous reconcile:** 2026-02-06 v1.1.0
 **Ecosystem root:** lisa3 (this repo)
-**Reconcile source:** Carlos repo (cross-project reconcile)
-**Projects:** Lisa (found local), Carlos (found local), Conductor (found GitHub)
+**Reconcile method:** Lisa Stage 5 skill (first run via implemented pipeline)
+**Projects:** Lisa (local), Carlos (local), Conductor (local)
 
 ---
 
 ## Summary
 
-| Status | Count | Change from v1.0.0 |
+| Status | Count | Change from v1.1.0 |
 |--------|-------|---------------------|
-| Aligned | 9 | +1 (Conductor exists) |
-| Misaligned | 2 | -1 (M2 resolved: Conductor found) |
-| New findings | 2 | Schema divergence, ecosystem awareness gap |
-| Gaps | 3 | -1 (checkpoint format exists now) |
+| Aligned | 12 | +3 (Conductor ecosystem fields, schema alignment, local clone) |
+| Misaligned | 1 | -2 (M3 resolved: Stage 5 implemented; M4 resolved: Conductor schema aligned) |
+| Gaps | 2 | -2 (G4 resolved: ecosystem.json exists; G5 resolved: Conductor cloned) |
 
-**Overall assessment:** Significant progress since v1.0.0. The biggest correction: **Conductor exists on GitHub with a comprehensive semantic.json and 8-package monorepo**. Previous reconcile incorrectly stated it was missing. However, Conductor doesn't yet describe itself as an ecosystem participant — its semantic.json uses a different schema and lacks `ecosystem_role`, `integration_points`, and `.gt/` references. The Lisa+Carlos foundation remains solid and aligned.
+**Overall assessment:** The ecosystem is in its best alignment state yet. Three of five prior reconcile triggers have fired: Conductor is cloned locally, Conductor adopted `semantic-memory-v1` with full ecosystem fields, and Lisa's reconcile is now a proper pipeline stage. The remaining misalignment (M1: Carlos quality gate dual source) is well-understood with a clear resolution path. Both open steering questions (SQ6, SQ7) are now resolved by Conductor's adoption of `semantic-memory-v1`.
 
 ---
 
-## Changes Since v1.0.0
+## Changes Since v1.1.0
 
-| Item | v1.0.0 | v1.1.0 | Impact |
+| Item | v1.1.0 | v2.0.0 | Impact |
 |------|--------|--------|--------|
-| Conductor status | "Repository does not exist" | Exists on GitHub, full semantic.json, 8 packages | **M2 resolved** — Phase 3 unblocked |
-| Conductor local clone | Missing | Still not cloned | Action needed |
-| Carlos design doc | Not committed | Committed (`92f74a0`) | Architecture documented in Carlos repo |
-| Checkpoint format | "No schema defined" | Checkpoint exists (v1.0.0 format) | **G2 partially resolved** |
-| Conductor schema | N/A | Different from Lisa/Carlos | **New finding: M4** |
+| Reconcile method | Manual (from Carlos repo) | Lisa Stage 5 skill | **M3 resolved** — reconcile is repeatable |
+| Conductor clone | GitHub API only | Cloned locally | **G5 resolved** — local filesystem access |
+| Conductor schema | `gastown semantic-memory.json` (different) | `semantic-memory-v1` (aligned) | **M4 resolved** — direct comparison possible |
+| Conductor ecosystem fields | Missing (ecosystem_role, integration_points, non_goals) | Present and detailed | **SQ6+SQ7 resolved** — adopted same schema |
+| Conductor version | 1.0.0 | 0.1.0 (reset for early-development) | Version recalibrated |
+| Conductor packages | 8 | 10 (+observer, +secrets) | Significant capability growth |
+| Lisa pipeline | Stage 5 not implemented | Stage 5 reconcile implemented | **G1 resolved** |
+| Ecosystem config | Did not exist | `~/.lisa/ecosystem.json` created | **G4 resolved** |
+| Lisa semantic.json | Does not reference Stage 5 skill | Still missing reconcile skill reference | Minor drift — see G6 |
 
 ---
 
 ## Alignments (What's Working)
 
 ### A1: Role separation is clear and agreed
-Lisa claims pipeline + memory. Carlos claims specialist-fixer. Neither claims the other's territory. Both reference the same ecosystem architecture.
+Lisa claims pipeline + memory. Carlos claims specialist-fixer. Conductor claims orchestration-and-oversight. All three now use `semantic-memory-v1` and explicitly declare their `ecosystem_role`. No role overlap.
 
 ### A2: .gt/ schema ownership is unambiguous
-Lisa writes `.gt/` state. Carlos reads it. No write conflicts.
+Lisa writes `.gt/` state. Carlos reads it. Conductor now explicitly declares it reads `.gt/beads/*.json` and `.gt/convoys/*.json` and does not own the `.gt/` directory schema.
 
 ### A3: scopecraft/ is a shared output format
-Both Lisa (plan stage) and Carlos (roadmap command) write to `scopecraft/`. Design doc designates this as shared. No conflict.
+Lisa (plan stage) and Carlos (roadmap command) write to `scopecraft/`. Conductor reads it for project roadmap context. All three agree this is shared.
 
 ### A4: Ecosystem root agreement
-Both Lisa and Carlos independently identify `lisa3` as the ecosystem root.
+All three projects independently identify `lisa3` as the ecosystem root hosting reconcile and ecosystem `scopecraft/`.
 
 ### A5: Standalone-first principle upheld
-Lisa works without Carlos. Carlos works without Lisa. Conductor works standalone. All self-reports confirm independent operation.
+All three self-reports confirm independent operation with `standalone: true`. Lisa: `/lisa:migrate`. Carlos: `/carlos:roadmap`. Conductor: CLI + MCP server.
 
 ### A6: Discovery handoff planned
-Carlos's semantic.json explicitly states it reads `.gt/memory/semantic.json` to skip re-discovery.
+Carlos reads `.gt/memory/semantic.json` to skip re-discovery. Conductor reads it for project context in context bundles. Lisa generates it. Chain is clear.
 
-### A7: Interface contracts match (Lisa ↔ Carlos)
-Both plugins agree on what they read and write. No contradictions.
+### A7: Interface contracts match (Lisa <> Carlos)
+Lisa provides `.gt/memory/semantic.json`, `gates.yaml` schema, `scopecraft/` format. Carlos reads all three. No contradictions.
 
-### A8: Gastown concepts shared
-Lisa defines bead/convoy schemas. Carlos references them as read-only. Format ownership is clear.
+### A8: Interface contracts match (Lisa <> Conductor)
+Lisa provides `.gt/beads/*.json` and `.gt/convoys/*.json`. Conductor declares it reads both for task assignment. Lisa provides `.gt/memory/semantic.json`. Conductor reads it for personality curation. No contradictions.
 
-### A9: Conductor capabilities match design doc expectations (NEW)
-The design doc specified Conductor should have: MCP tools, CLI agent tracking, e2b integration, file locks, dashboard. Conductor's semantic.json confirms **all of these exist** as packages in the monorepo.
+### A9: Interface contracts match (Carlos <> Conductor)
+Conductor routes to Carlos agent personas (tech-auditor, market-fit-auditor, product-owner). Carlos confirms it can be called as specialist. Conductor receives quality gate validation from Carlos. No contradictions.
+
+### A10: Non-goals are complementary (NEW)
+Each project explicitly lists what it does NOT do, and those responsibilities map to another project:
+- Lisa non-goals -> Carlos (specialist analysis) + Conductor (orchestration)
+- Carlos non-goals -> Lisa (pipeline) + Conductor (orchestration)
+- Conductor non-goals -> Lisa (pipeline, semantic memory, roadmap) + Carlos (quality gates, specialist analysis)
+
+### A11: Conductor schema aligned (NEW — was M4)
+Conductor now uses `semantic-memory-v1` schema with full `ecosystem_role`, `integration_points`, `non_goals`, and `evidence` sections. Direct comparison is possible across all three projects.
+
+### A12: All projects locally accessible (NEW — was G5)
+All three repos are cloned locally. No GitHub API fallback needed for reconcile.
 
 ---
 
@@ -68,82 +83,64 @@ The design doc specified Conductor should have: MCP tools, CLI agent tracking, e
 
 ### M1: Quality Gate Dual Source (PRIORITY: HIGH) — UNCHANGED
 **Lisa's view:** `gates.yaml` is "single source of truth" with 22 gates across 4 stages
-**Carlos's view:** Hardcoded 6 blocker gates, acknowledges "should align with gates.yaml"
+**Carlos's view:** Hardcoded 6 blocker gates in `validate_quality_gates.py`, acknowledges "should align with gates.yaml"
+**Conductor's view:** No quality gates (lists Lisa/Carlos gates as "does not own")
 
-**Impact:** Gate definitions can drift.
-**Resolution:** Phase 2, Story 7 — Carlos reads Lisa's `gates.yaml` format, falls back to hardcoded if not found.
-**Status:** Acknowledged by Carlos (in semantic.json), not yet implemented.
-
-### M3: Reconcile Not Yet Wired as Lisa Pipeline Stage (PRIORITY: MEDIUM) — UNCHANGED
-**Expected:** `/lisa:reconcile` implemented as Stage 5 with skill, agent, quality gates
-**Actual:** Reconcile command spec exists but no skill implementation. This reconcile was run manually from Carlos.
-
-**Impact:** Reconciliation is not repeatable via Lisa's pipeline.
-**Resolution:** Implement reconcile as Stage 5 in Lisa.
-**Status:** Design exists, implementation pending.
-
-### M4: Conductor Schema Divergence (PRIORITY: HIGH) — NEW
-**Expected:** Conductor uses `semantic-memory-v1` schema with `ecosystem_role`, `integration_points`, `non_goals`
-**Actual:** Conductor uses `https://gastown.dev/schemas/semantic-memory.json` — a different schema without ecosystem fields
-
-**Impact:** Lisa's reconcile cannot directly compare Conductor's self-report against Lisa/Carlos. Conductor doesn't declare what it reads from `.gt/`, what it writes, or its ecosystem boundaries.
-**Resolution:** Add `ecosystem_role`, `integration_points`, and `non_goals` fields to Conductor's semantic.json (can keep existing fields too — additive change).
-**Status:** Not yet acknowledged by Conductor.
-
-**Details (see PERSPECTIVES.md for full comparison):**
-- Missing: `ecosystem_role.reads_from` (should reference `.gt/beads/*.json`, `.gt/convoys/*.json`)
-- Missing: `ecosystem_role.writes_to` (task status, file locks, cost events)
-- Missing: `ecosystem_role.does_not_own` (`.gt/` schema, `scopecraft/`, quality gates)
-- Missing: `integration_points.lisa` and `integration_points.carlos`
+**Impact:** Gate definitions can drift between Lisa and Carlos.
+**Resolution:** Phase 2, Story 7 — Carlos creates own `gates.yaml` following same schema. Reconcile validates consistency.
+**Status:** Unchanged. Carlos still uses hardcoded gates.
 
 ---
 
 ## Gaps (Remaining)
 
-### G1: No reconcile skill implementation — UNCHANGED
-The `skills/reconcile/SKILL.md` file doesn't exist in Lisa. Reconcile was run from Carlos following the command spec.
+### G3: No reconcile output templates — UNCHANGED
+Reconcile has no templates for its outputs (ALIGNMENT_REPORT.md, PERSPECTIVES.md) unlike the plan stage which has 6 templates. Output format is defined in the skill procedure but not as reusable templates.
 
-### G3: No PERSPECTIVES template — UNCHANGED
-Reconcile has no templates for its outputs unlike plan stage which has 6.
-
-### G4: Ecosystem project paths not configurable — UNCHANGED
-Reconcile needs `~/.lisa/ecosystem.json` to know where Carlos and Conductor repos live.
-
-### G5: Conductor not cloned locally — NEW
-Conductor exists on GitHub (`habitusnet/conductor`) but isn't cloned to `~/github/habitusnet/conductor/`. Reconcile had to use GitHub API to read its semantic.json.
+### G6: Lisa semantic.json stale on Stage 5 (NEW)
+Lisa's `.gt/memory/semantic.json` does not reference the reconcile skill in `capabilities.skills`, and `pipeline.stages` only lists stages 0-3. The `capabilities.commands` list does include `/lisa:reconcile` but the skill and pipeline sections are incomplete.
 
 ---
 
 ## Resolved Items
 
-### ~~M2: Conductor Does Not Exist~~ — RESOLVED
-**v1.0.0 said:** "Repository does not exist. No `.gt/` state, no semantic.json, no code."
-**v1.1.0 finding:** Repository exists at `habitusnet/conductor` on GitHub. Has comprehensive semantic.json (8 packages, full domain model, multiple LLM integrations). Pushed 2026-02-06.
-**Resolution:** Clone locally and add `ecosystem_role` fields.
+### ~~M3: Reconcile Not a Lisa Pipeline Stage~~ — RESOLVED
+**v1.1.0 said:** "Reconcile was run manually from Carlos."
+**v2.0.0 finding:** Stage 5 reconcile implemented with command (`commands/reconcile.md`), skill (`skills/reconcile/SKILL.md`), and ecosystem config (`~/.lisa/ecosystem.json`).
+**Resolution:** This reconcile is the first run through the implemented pipeline.
 
-### ~~G2: No checkpoint schema defined~~ — PARTIALLY RESOLVED
-**v1.0.0 said:** "No schema exists."
-**v1.1.0 finding:** `.checkpoint.json` exists with `reconcile-checkpoint-v1` schema. Contains project state, alignment summary, misalignments, decisions, and next triggers.
-**Remaining:** Schema not formally documented (but the checkpoint itself serves as the de facto spec).
+### ~~M4: Conductor Schema Divergence~~ — RESOLVED
+**v1.1.0 said:** "Uses `gastown semantic-memory.json` schema, missing ecosystem_role, integration_points, non_goals"
+**v2.0.0 finding:** Conductor now uses `semantic-memory-v1` with full ecosystem fields. Previous scan noted as `2026-02-05T15:35:00Z (v1.0.0, gastown schema, no ecosystem fields)`.
+**Resolution:** SQ6 answered (Conductor adopted `semantic-memory-v1`). SQ7 answered (added to existing `semantic.json`).
+
+### ~~G1: No reconcile skill implementation~~ — RESOLVED
+**v1.1.0 said:** "skills/reconcile/SKILL.md doesn't exist"
+**v2.0.0 finding:** Skill file created with 6-step procedure, output schemas, and error handling.
+
+### ~~G4: Ecosystem project paths not configurable~~ — RESOLVED
+**v1.1.0 said:** "Reconcile needs ~/.lisa/ecosystem.json"
+**v2.0.0 finding:** `~/.lisa/ecosystem.json` created with `ecosystem-config-v1` schema.
+
+### ~~G5: Conductor not cloned locally~~ — RESOLVED
+**v1.1.0 said:** "Reconcile had to use GitHub API."
+**v2.0.0 finding:** Conductor cloned at `~/github/habitusnet/conductor/`.
 
 ---
 
-## Steering Questions — RESOLVED (carried from v1.0.0)
+## Steering Questions — All Previously Open Questions RESOLVED
 
 | # | Question | Decision |
 |---|----------|----------|
 | 1 | Conductor timeline | **After Phase 1** — Focus on Lisa + Carlos foundation first |
 | 2 | Quality gate alignment | **Each plugin gets own `gates.yaml`** following same schema |
-| 3 | Reconcile implementation | **Lightweight** — command + skill now; defer agent and quality gates |
-| 4 | Project path configuration | **Config file** at `~/.lisa/ecosystem.json` |
-| 5 | Conductor repo location | **habitusnet org** — `~/github/habitusnet/conductor/` |
+| 3 | Reconcile implementation | **Lightweight** — command + skill (implemented) |
+| 4 | Project path configuration | **Config file** at `~/.lisa/ecosystem.json` (implemented) |
+| 5 | Conductor repo location | **habitusnet org** — `~/github/habitusnet/conductor/` (cloned) |
+| 6 | Schema alignment approach | **RESOLVED:** Conductor adopted `semantic-memory-v1` |
+| 7 | Conductor ecosystem fields | **RESOLVED:** Added to existing `semantic.json` |
 
-### New Steering Questions (v1.1.0)
-
-| # | Question | Options |
-|---|----------|---------|
-| 6 | Schema alignment approach | Should Conductor adopt `semantic-memory-v1` schema, or should reconcile handle multiple schemas? |
-| 7 | Conductor ecosystem fields | Should `ecosystem_role` be added to Conductor's existing semantic.json or as a separate file? |
+No new steering questions.
 
 ---
 
@@ -151,10 +148,7 @@ Conductor exists on GitHub (`habitusnet/conductor`) but isn't cloned to `~/githu
 
 | Priority | Action | Owner | Blocks | Status |
 |----------|--------|-------|--------|--------|
-| **P0** | Clone Conductor locally | User | Local reconcile, all Conductor work | NEW |
-| **P0** | Add `ecosystem_role` + `integration_points` to Conductor semantic.json | Conductor | Schema alignment, reconcile comparison | NEW |
-| P1 | Implement Lisa reconcile command + skill (lightweight) | Lisa | Repeatable reconciliation | Unchanged |
-| P1 | Create `~/.lisa/ecosystem.json` config for project paths | Lisa | Multi-project reconcile | Unchanged |
-| P2 | Create Carlos `gates.yaml` following Lisa's schema | Carlos | Phase 2 gate alignment | Unchanged |
-| P3 | Define .checkpoint.json schema formally | Lisa | Context recovery | Unchanged |
-| P3 | Add reconcile quality gates to Lisa's gates.yaml | Lisa | Validation of reconcile outputs | Unchanged |
+| P1 | Create Carlos `gates.yaml` following Lisa's schema | Carlos | M1 resolution, Phase 2 gate alignment | Unchanged |
+| P2 | Update Lisa `semantic.json` to include Stage 5 in pipeline/skills | Lisa | G6 accuracy | New |
+| P3 | Create reconcile output templates (like plan stage has) | Lisa | G3, output consistency | Unchanged |
+| P3 | Define `.checkpoint.json` schema formally | Lisa | Context recovery documentation | Unchanged |
