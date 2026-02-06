@@ -1,9 +1,9 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T19:00:00Z",
-    "version": "2.1.0",
-    "previous_version": "2.0.0",
+    "timestamp": "2026-02-06T21:00:00Z",
+    "version": "2.2.0",
+    "previous_version": "2.1.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)"
   },
@@ -22,7 +22,8 @@
         "tech_stack_fields": 5,
         "skills": 5,
         "pipeline_stages": [0, 1, 2, 3, 5],
-        "files_analyzed": 25
+        "files_analyzed": 25,
+        "unchanged_since": "v2.1.0"
       },
       "scopecraft": {
         "exists": true,
@@ -38,6 +39,13 @@
           ".checkpoint.json"
         ],
         "level": "ecosystem"
+      },
+      "structure": {
+        "beads": 9,
+        "convoys": 3,
+        "bead_ids": ["gt-n7h3f", "gt-t2v5j", "gt-a1s6m", "gt-e4q8b", "gt-r6d2k", "gt-cg7ya", "gt-w5y2c", "gt-k3m8n", "gt-x9p4w"],
+        "convoy_ids": ["convoy-001", "convoy-002", "convoy-003"],
+        "created": "2026-02-06T19:00:00Z"
       },
       "quality_gates": {
         "discover": {"passed": 4, "failed": 0, "status": "pass"},
@@ -57,7 +65,8 @@
         "project_name": "carlos",
         "role": "specialist-fixer",
         "tech_stack_fields": 7,
-        "files_analyzed": 35
+        "files_analyzed": 35,
+        "unchanged_since": "v2.1.0"
       },
       "scopecraft": {
         "exists": true,
@@ -73,9 +82,11 @@
         ],
         "level": "project"
       },
+      "assigned_convoys": ["convoy-002"],
+      "assigned_beads": ["gt-r6d2k", "gt-cg7ya"],
       "alignment": "mostly-aligned",
       "misalignments": [
-        "M1: Quality gates hardcoded instead of reading gates.yaml"
+        "M1: Quality gates hardcoded instead of reading gates.yaml (tracked: gt-cg7ya)"
       ]
     },
     "conductor": {
@@ -95,7 +106,8 @@
         "packages": 10,
         "llm_providers": 4,
         "supported_agents": 6,
-        "total_tests": 1100
+        "total_tests": 1100,
+        "unchanged_since": "v2.1.0"
       },
       "scopecraft": {
         "exists": true,
@@ -111,6 +123,8 @@
         ],
         "level": "project"
       },
+      "assigned_convoys": ["convoy-003"],
+      "assigned_beads": ["gt-w5y2c", "gt-k3m8n", "gt-x9p4w"],
       "alignment": "aligned"
     }
   },
@@ -121,10 +135,48 @@
     "aligned": 2,
     "mostly_aligned": 1,
     "divergent": 0,
-    "alignments": 12,
+    "alignments": 13,
     "misalignments": 1,
     "gaps": 1,
-    "resolved_since_v2_0": 1
+    "resolved_since_v2_1": 0,
+    "new_since_v2_1": 1
+  },
+  "work_structure": {
+    "total_beads": 9,
+    "total_convoys": 3,
+    "convoys": [
+      {
+        "id": "convoy-001",
+        "name": "Lisa Pipeline Hardening",
+        "owner": "lisa",
+        "beads": 4,
+        "phase": "1-2",
+        "estimated_days": 3,
+        "status": "pending",
+        "blocks": []
+      },
+      {
+        "id": "convoy-002",
+        "name": "Carlos Interface Alignment",
+        "owner": "carlos",
+        "beads": 2,
+        "phase": "2",
+        "estimated_days": 5,
+        "status": "pending",
+        "blocks": ["convoy-003"]
+      },
+      {
+        "id": "convoy-003",
+        "name": "Conductor Ecosystem Integration",
+        "owner": "conductor",
+        "beads": 3,
+        "phase": "3",
+        "estimated_days": 14,
+        "status": "blocked",
+        "blocked_by": ["gt-cg7ya (convoy-002)"]
+      }
+    ],
+    "critical_path": "convoy-002 (gt-cg7ya) → convoy-003 (gt-k3m8n → gt-x9p4w)"
   },
   "misalignments": [
     {
@@ -132,8 +184,9 @@
       "severity": "high",
       "description": "Quality gate dual source: Lisa uses gates.yaml, Carlos uses hardcoded gates",
       "affects": ["carlos"],
-      "resolution": "Phase 2 Story 7: Carlos creates own gates.yaml following same schema",
-      "status": "unchanged"
+      "resolution": "Bead gt-cg7ya in convoy-002: Carlos creates own gates.yaml following same schema",
+      "status": "tracked",
+      "bead": "gt-cg7ya"
     }
   ],
   "resolved": [
@@ -200,7 +253,8 @@
     "open_questions": []
   },
   "next_reconcile_triggers": [
-    "Carlos gates.yaml created (same schema as Lisa)",
+    "Any bead status changes from pending to in_progress or completed",
+    "Carlos gates.yaml created (M1 resolution, unblocks convoy-003)",
     "Any plugin ships a new version",
     "Conductor ships first release or reaches beta"
   ]

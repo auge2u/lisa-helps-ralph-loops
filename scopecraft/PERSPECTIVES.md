@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06 (reconcile v2.1.0)
+**Generated:** 2026-02-06 (reconcile v2.2.0)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
 
@@ -167,9 +167,24 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 ---
 
+## Work Structure (NEW in v2.2.0)
+
+Lisa Stage 3 (structure) extracted 9 beads across 3 convoys covering all remaining ecosystem work:
+
+| Convoy | Owner | Beads | Phase | Est. Days |
+|--------|-------|-------|-------|-----------|
+| convoy-001: Lisa Pipeline Hardening | Lisa | 4 (gate fix, reconcile templates, checkpoint schema, reconcile gates) | 1-2 | 3 |
+| convoy-002: Carlos Interface Alignment | Carlos | 2 (.gt/ state reading, gates.yaml M1 resolution) | 2 | 5 |
+| convoy-003: Conductor Ecosystem Integration | Conductor | 3 (checkpoint spike, bead/convoy reading, context rollover) | 3 | 14 |
+
+**Pipeline status:** discover (Stage 1) + plan (Stage 2) + structure (Stage 3) + reconcile (Stage 5) — all operational.
+
+---
+
 ## Notable Changes From v1.1.0
 
 1. **Conductor growth**: 8 packages -> 10 packages (added observer, secrets). 148 src files, 1,100 tests. Significant maturation.
 2. **Schema unification**: All three projects now use `semantic-memory-v1`. Direct comparison is fully possible.
 3. **Ecosystem awareness**: All three projects now declare ecosystem_role, integration_points, non_goals. The "who reads what" chain is complete.
 4. **Lisa Stage 5**: Reconcile pipeline fully operational. Lisa `semantic.json` now reflects Stage 5 in skills, pipeline, and agent stages.
+5. **Lisa Stage 3**: 9 beads + 3 convoys extracted. All remaining work items structured with acceptance criteria and dependencies.
