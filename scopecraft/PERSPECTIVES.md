@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06 (reconcile v2.0.0)
+**Generated:** 2026-02-06 (reconcile v2.1.0)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
 
@@ -36,7 +36,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | Ecosystem root | Yes (hosts reconcile and ecosystem scopecraft/) |
 | Commands | 8 (research, discover, plan, structure, status, migrate, rescue, reconcile) |
 | Agents | 2 (archaeologist, migrator) |
-| Skills | 4 listed (research, discover, plan, structure) + reconcile (implemented but not in semantic.json yet) |
+| Skills | 5 (research, discover, plan, structure, reconcile) |
 | Quality gates | 22 across 4 stages |
 | Gate source | gates.yaml (declarative) |
 
@@ -163,7 +163,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 |------|------|--------|-----------|
 | Core functionality | Stages 0-3 implemented, Stage 5 implemented | All commands working | Core, DB, MCP, CLI, connectors, observer, secrets done |
 | In progress | — | — | Dashboard UI |
-| Planned / Next | Templates for reconcile, gates.yaml for Stage 5 | gates.yaml alignment | WebSocket notifications, auction system, Lisa bead consumption, Carlos specialist routing, context rollover |
+| Planned / Next | Templates for reconcile outputs, formal gates.yaml for Stage 5 | gates.yaml alignment | WebSocket notifications, auction system, Lisa bead consumption, Carlos specialist routing, context rollover |
 
 ---
 
@@ -172,4 +172,4 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 1. **Conductor growth**: 8 packages -> 10 packages (added observer, secrets). 148 src files, 1,100 tests. Significant maturation.
 2. **Schema unification**: All three projects now use `semantic-memory-v1`. Direct comparison is fully possible.
 3. **Ecosystem awareness**: All three projects now declare ecosystem_role, integration_points, non_goals. The "who reads what" chain is complete.
-4. **Lisa Stage 5**: This reconcile was run through the implemented pipeline for the first time.
+4. **Lisa Stage 5**: Reconcile pipeline fully operational. Lisa `semantic.json` now reflects Stage 5 in skills, pipeline, and agent stages.

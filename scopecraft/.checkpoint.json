@@ -1,9 +1,9 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T18:00:00Z",
-    "version": "2.0.0",
-    "previous_version": "1.1.0",
+    "timestamp": "2026-02-06T19:00:00Z",
+    "version": "2.1.0",
+    "previous_version": "2.0.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)"
   },
@@ -16,11 +16,13 @@
         "exists": true,
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
-        "last_scan": "2026-02-06T00:00:00Z",
+        "last_scan": "2026-02-06T18:00:00Z",
         "project_name": "lisa",
         "role": "pipeline-and-memory",
         "tech_stack_fields": 5,
-        "files_analyzed": 23
+        "skills": 5,
+        "pipeline_stages": [0, 1, 2, 3, 5],
+        "files_analyzed": 25
       },
       "scopecraft": {
         "exists": true,
@@ -121,8 +123,8 @@
     "divergent": 0,
     "alignments": 12,
     "misalignments": 1,
-    "gaps": 2,
-    "resolved_since_v1_1": 5
+    "gaps": 1,
+    "resolved_since_v2_0": 1
   },
   "misalignments": [
     {
@@ -176,6 +178,12 @@
       "was": "Conductor not cloned locally",
       "now": "Conductor cloned at ~/github/habitusnet/conductor/",
       "resolved_in": "v2.0.0"
+    },
+    {
+      "id": "G6",
+      "was": "Lisa semantic.json missing Stage 5 in pipeline/skills",
+      "now": "semantic.json updated with reconcile skill, Stage 5 pipeline, migrator stages [1,2,3,5]",
+      "resolved_in": "v2.1.0"
     }
   ],
   "decisions": {
@@ -194,7 +202,6 @@
   "next_reconcile_triggers": [
     "Carlos gates.yaml created (same schema as Lisa)",
     "Any plugin ships a new version",
-    "Lisa semantic.json updated to include Stage 5 in pipeline/skills",
     "Conductor ships first release or reaches beta"
   ]
 }

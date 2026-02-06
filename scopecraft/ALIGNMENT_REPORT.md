@@ -1,38 +1,30 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-06 (reconcile v2.0.0)
-**Previous reconcile:** 2026-02-06 v1.1.0
+**Generated:** 2026-02-06 (reconcile v2.1.0)
+**Previous reconcile:** 2026-02-06 v2.0.0
 **Ecosystem root:** lisa3 (this repo)
-**Reconcile method:** Lisa Stage 5 skill (first run via implemented pipeline)
+**Reconcile method:** Lisa Stage 5 skill
 **Projects:** Lisa (local), Carlos (local), Conductor (local)
 
 ---
 
 ## Summary
 
-| Status | Count | Change from v1.1.0 |
+| Status | Count | Change from v2.0.0 |
 |--------|-------|---------------------|
-| Aligned | 12 | +3 (Conductor ecosystem fields, schema alignment, local clone) |
-| Misaligned | 1 | -2 (M3 resolved: Stage 5 implemented; M4 resolved: Conductor schema aligned) |
-| Gaps | 2 | -2 (G4 resolved: ecosystem.json exists; G5 resolved: Conductor cloned) |
+| Aligned | 12 | — |
+| Misaligned | 1 | — |
+| Gaps | 1 | -1 (G6 resolved: Lisa semantic.json updated) |
 
-**Overall assessment:** The ecosystem is in its best alignment state yet. Three of five prior reconcile triggers have fired: Conductor is cloned locally, Conductor adopted `semantic-memory-v1` with full ecosystem fields, and Lisa's reconcile is now a proper pipeline stage. The remaining misalignment (M1: Carlos quality gate dual source) is well-understood with a clear resolution path. Both open steering questions (SQ6, SQ7) are now resolved by Conductor's adoption of `semantic-memory-v1`.
+**Overall assessment:** Incremental improvement from v2.0.0. The only change is G6 resolved — Lisa's `semantic.json` now includes Stage 5 reconcile in pipeline, skills, and agent stages. One misalignment remains (M1: Carlos quality gate dual source) with a clear resolution path. One gap remains (G3: no reconcile output templates). All steering questions resolved.
 
 ---
 
-## Changes Since v1.1.0
+## Changes Since v2.0.0
 
-| Item | v1.1.0 | v2.0.0 | Impact |
+| Item | v2.0.0 | v2.1.0 | Impact |
 |------|--------|--------|--------|
-| Reconcile method | Manual (from Carlos repo) | Lisa Stage 5 skill | **M3 resolved** — reconcile is repeatable |
-| Conductor clone | GitHub API only | Cloned locally | **G5 resolved** — local filesystem access |
-| Conductor schema | `gastown semantic-memory.json` (different) | `semantic-memory-v1` (aligned) | **M4 resolved** — direct comparison possible |
-| Conductor ecosystem fields | Missing (ecosystem_role, integration_points, non_goals) | Present and detailed | **SQ6+SQ7 resolved** — adopted same schema |
-| Conductor version | 1.0.0 | 0.1.0 (reset for early-development) | Version recalibrated |
-| Conductor packages | 8 | 10 (+observer, +secrets) | Significant capability growth |
-| Lisa pipeline | Stage 5 not implemented | Stage 5 reconcile implemented | **G1 resolved** |
-| Ecosystem config | Did not exist | `~/.lisa/ecosystem.json` created | **G4 resolved** |
-| Lisa semantic.json | Does not reference Stage 5 skill | Still missing reconcile skill reference | Minor drift — see G6 |
+| Lisa semantic.json | Missing reconcile in skills/pipeline | Reconcile skill, Stage 5 pipeline, migrator stages [1,2,3,5], evidence updated | **G6 resolved** |
 
 ---
 
@@ -97,8 +89,8 @@ All three repos are cloned locally. No GitHub API fallback needed for reconcile.
 ### G3: No reconcile output templates — UNCHANGED
 Reconcile has no templates for its outputs (ALIGNMENT_REPORT.md, PERSPECTIVES.md) unlike the plan stage which has 6 templates. Output format is defined in the skill procedure but not as reusable templates.
 
-### G6: Lisa semantic.json stale on Stage 5 (NEW)
-Lisa's `.gt/memory/semantic.json` does not reference the reconcile skill in `capabilities.skills`, and `pipeline.stages` only lists stages 0-3. The `capabilities.commands` list does include `/lisa:reconcile` but the skill and pipeline sections are incomplete.
+### ~~G6: Lisa semantic.json stale on Stage 5~~ — RESOLVED
+Lisa's `.gt/memory/semantic.json` now includes reconcile in `capabilities.skills`, `pipeline.stages` includes Stage 5, and `migrator` agent lists stages `[1, 2, 3, 5]`.
 
 ---
 
@@ -126,6 +118,10 @@ Lisa's `.gt/memory/semantic.json` does not reference the reconcile skill in `cap
 **v1.1.0 said:** "Reconcile had to use GitHub API."
 **v2.0.0 finding:** Conductor cloned at `~/github/habitusnet/conductor/`.
 
+### ~~G6: Lisa semantic.json stale on Stage 5~~ — RESOLVED
+**v2.0.0 said:** "Missing reconcile in skills/pipeline."
+**v2.1.0 finding:** `semantic.json` updated with reconcile skill, Stage 5 pipeline entry, migrator stages `[1, 2, 3, 5]`, and evidence for new files.
+
 ---
 
 ## Steering Questions — All Previously Open Questions RESOLVED
@@ -149,6 +145,6 @@ No new steering questions.
 | Priority | Action | Owner | Blocks | Status |
 |----------|--------|-------|--------|--------|
 | P1 | Create Carlos `gates.yaml` following Lisa's schema | Carlos | M1 resolution, Phase 2 gate alignment | Unchanged |
-| P2 | Update Lisa `semantic.json` to include Stage 5 in pipeline/skills | Lisa | G6 accuracy | New |
+| ~~P2~~ | ~~Update Lisa `semantic.json` to include Stage 5 in pipeline/skills~~ | ~~Lisa~~ | ~~G6~~ | Resolved v2.1.0 |
 | P3 | Create reconcile output templates (like plan stage has) | Lisa | G3, output consistency | Unchanged |
 | P3 | Define `.checkpoint.json` schema formally | Lisa | Context recovery documentation | Unchanged |
