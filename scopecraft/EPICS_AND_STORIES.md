@@ -113,20 +113,21 @@
 **Complexity:** M
 **Risk:** Low
 
-#### Story 7: Align Carlos quality gates with gates.yaml
+#### Story 7: Create Carlos gates.yaml following Lisa's schema
 **As a** ecosystem maintainer
-**I want** Carlos's quality gate definitions to read Lisa's `gates.yaml`
-**So that** quality standards are defined once and enforced consistently
+**I want** Carlos to have its own `gates.yaml` following Lisa's schema
+**So that** quality standards use the same format and reconcile can validate consistency
 
 **Acceptance Criteria:**
-- [ ] Carlos can parse Lisa's `gates.yaml` format
-- [ ] Falls back to hardcoded gates if `gates.yaml` not found
-- [ ] No duplicate gate definitions between plugins
+- [ ] Carlos has `gates.yaml` in the same schema as Lisa's
+- [ ] Carlos `validate_quality_gates.py` reads from `gates.yaml` instead of hardcoded gates
 - [ ] Gate check types are compatible (file_exists, json_valid, pattern_exists, etc.)
+- [ ] Reconcile can compare both `gates.yaml` files for conflicts
 
 **Dependencies:** Story 6
 **Complexity:** L
 **Risk:** Medium (different validation engines)
+**Decision:** Each plugin owns gates.yaml, same schema, reconcile validates (resolved 2026-02-06)
 
 ---
 

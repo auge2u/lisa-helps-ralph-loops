@@ -1,16 +1,18 @@
 # Open Questions
 
-## Blocking Questions
+## Resolved Questions
 
-### Q1: How does Conductor discover project paths for multi-project awareness?
-**Context:** Conductor needs to know where Lisa, Carlos, and other project repos live on disk. Currently reconcile requires explicit paths.
-**Impact:** Blocks Phase 3 (Conductor can't find projects to orchestrate without this)
-**Proposed Resolution:**
-- Option A: Configuration file listing project paths (e.g., `~/.conductor/projects.json`)
-- Option B: Convention-based discovery (scan `~/github/` for `.gt/` directories)
-- Option C: User provides paths per session via CLI flags
-**Stakeholders Needed:** Conductor architect
-**Deadline:** Before Phase 3 starts
+### Q1: How does reconcile discover project paths? — RESOLVED
+**Decision:** Config file at `~/.lisa/ecosystem.json` listing project paths explicitly.
+**Date:** 2026-02-06
+
+### Q3: Should gates.yaml be a shared package or duplicated? — RESOLVED
+**Decision:** Each plugin owns its own `gates.yaml` following the same schema. Reconcile validates they don't conflict.
+**Date:** 2026-02-06
+
+---
+
+## Blocking Questions
 
 ### Q2: What is the checkpoint schema for context rollover?
 **Context:** When a CLI agent's context window fills, Conductor needs to checkpoint state and hand off to a fresh session. The checkpoint format must be sufficient to resume work.
@@ -21,16 +23,6 @@
 - Option C: Use `.agent/scratchpad.md` pattern (already used by Lisa/Carlos)
 **Stakeholders Needed:** Conductor architect, Lisa maintainer
 **Deadline:** Before Phase 3 starts
-
-### Q3: Should gates.yaml be a shared package or duplicated?
-**Context:** Carlos needs to read Lisa's `gates.yaml` format. Currently Carlos has hardcoded gates. The question is whether `gates.yaml` becomes a shared schema or Carlos reads Lisa's file directly.
-**Impact:** Blocks Phase 2 quality gate alignment (Story 7)
-**Proposed Resolution:**
-- Option A: Carlos reads Lisa's `gates.yaml` from ecosystem root (requires knowing Lisa's path)
-- Option B: Each plugin has own `gates.yaml` following same schema; reconcile validates they don't conflict
-- Option C: Shared gates.yaml published as artifact; both plugins consume it
-**Stakeholders Needed:** Lisa maintainer, Carlos maintainer
-**Deadline:** Phase 2
 
 ---
 

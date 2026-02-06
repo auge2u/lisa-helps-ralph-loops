@@ -112,10 +112,20 @@
       "resolution": "Implement reconcile as Stage 5 with command, skill, and gates"
     }
   ],
+  "decisions": {
+    "resolved_date": "2026-02-06",
+    "steering_questions": [
+      {"id": "SQ1", "question": "Conductor timeline", "answer": "After Phase 1", "impact": "Conductor blocked until Lisa+Carlos foundation complete"},
+      {"id": "SQ2", "question": "Quality gate alignment", "answer": "Each plugin owns gates.yaml, same schema, reconcile validates", "impact": "M1 resolution: Carlos creates own gates.yaml"},
+      {"id": "SQ3", "question": "Reconcile implementation", "answer": "Lightweight: command + skill only", "impact": "M3 resolution: no agent or quality gates yet"},
+      {"id": "SQ4", "question": "Project path config", "answer": "~/.lisa/ecosystem.json", "impact": "G4 resolution"},
+      {"id": "SQ5", "question": "Conductor repo location", "answer": "habitusnet org", "impact": "Path: ~/github/habitusnet/conductor/"}
+    ]
+  },
   "next_reconcile_triggers": [
-    "Conductor repo created",
-    "Carlos gates.yaml alignment implemented",
-    "Lisa reconcile stage implemented",
+    "Conductor repo created at habitusnet",
+    "Carlos gates.yaml created (same schema as Lisa)",
+    "Lisa reconcile command + skill implemented",
     "Any plugin ships a new version"
   ]
 }

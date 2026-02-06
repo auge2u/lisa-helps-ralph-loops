@@ -91,17 +91,15 @@ Reconcile needs to know where Carlos and Conductor repos live. Currently hardcod
 
 ---
 
-## Steering Questions for Human Review
+## Steering Questions — RESOLVED (2026-02-06)
 
-1. **Conductor timeline:** When should Conductor development start? Is Phase 1 (foundation alignment) completion the trigger, or should it start in parallel?
-
-2. **Quality gate alignment approach:** Should Carlos read Lisa's `gates.yaml` directly (requires knowing Lisa's path), or should each plugin have its own `gates.yaml` following the same schema?
-
-3. **Reconcile implementation priority:** Should reconcile be implemented as a proper Lisa stage (with command, skill, agent, gates) before Phase 2 starts, or can it remain manual for now?
-
-4. **Project path configuration:** How should reconcile discover project paths? Options: config file (`~/.lisa/ecosystem.json`), convention (`~/github/*/`), or CLI arguments per session.
-
-5. **Conductor repo location:** Should Conductor live under `auge2u` (personal) or `habitusnet` (org)? The design doc mentions `~/github/habitusnet/conductor/` but the repo doesn't exist there.
+| # | Question | Decision |
+|---|----------|----------|
+| 1 | Conductor timeline | **After Phase 1** — Focus on Lisa + Carlos foundation first |
+| 2 | Quality gate alignment | **Each plugin gets own `gates.yaml`** following same schema; reconcile validates no conflicts |
+| 3 | Reconcile implementation | **Lightweight** — command + skill now; defer dedicated agent and quality gates |
+| 4 | Project path configuration | **Config file** at `~/.lisa/ecosystem.json` |
+| 5 | Conductor repo location | **habitusnet org** — `~/github/habitusnet/conductor/` (matches design doc) |
 
 ---
 
@@ -109,10 +107,9 @@ Reconcile needs to know where Carlos and Conductor repos live. Currently hardcod
 
 | Priority | Action | Owner | Blocks |
 |----------|--------|-------|--------|
-| P0 | Answer steering questions 1-5 | Human | Everything below |
-| P1 | Implement Lisa reconcile as Stage 5 (command + skill + templates) | Lisa | Repeatable reconciliation |
-| P1 | Add reconcile quality gates to gates.yaml | Lisa | Validation of reconcile outputs |
-| P2 | Create Conductor repo with minimal semantic.json | Conductor | Phase 1 completion |
-| P2 | Begin gates.yaml alignment in Carlos | Carlos | Phase 2 |
-| P3 | Define .checkpoint.json schema | Lisa | Context recovery |
-| P3 | Add ecosystem project path configuration | Lisa | Multi-project reconcile automation |
+| P1 | Implement Lisa reconcile command + skill (lightweight) | Lisa | Repeatable reconciliation |
+| P1 | Create `~/.lisa/ecosystem.json` config for project paths | Lisa | Multi-project reconcile |
+| P2 | Create Carlos `gates.yaml` following Lisa's schema | Carlos | Phase 2 gate alignment |
+| P2 | Create Conductor repo at habitusnet with minimal semantic.json | Conductor | Phase 1 completion |
+| P3 | Define .checkpoint.json schema formally | Lisa | Context recovery |
+| P3 | Add reconcile quality gates to Lisa's gates.yaml | Lisa | Validation of reconcile outputs |
