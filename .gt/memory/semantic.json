@@ -1,25 +1,145 @@
 {
   "$schema": "semantic-memory-v1",
   "project": {
-    "name": null,
-    "type": null,
-    "primary_language": null,
-    "description": null
+    "name": "lisa",
+    "display_name": "Lisa - Staged Migration System for Gastown",
+    "type": "claude-code-plugin",
+    "primary_language": "Python",
+    "version": "0.3.0",
+    "description": "Staged migration system that analyzes codebases, extracts work items as Beads, bundles them into Convoys, and generates .gt/ directory structure for multi-agent execution via Gastown.",
+    "repository": "https://github.com/auge2u/lisa-helps-ralph-loops",
+    "license": "MIT",
+    "status": "alpha"
   },
   "tech_stack": {
-    "runtime": null,
-    "framework": null,
-    "database": null,
-    "auth": null,
-    "deployment": null,
-    "styling": null,
-    "testing": null
+    "runtime": "Python 3.10+",
+    "primary_dependency": "PyYAML",
+    "testing": "pytest (pytest -v)",
+    "validation": "validate.py (loads gates.yaml)",
+    "output_format": "JSON (.gt/ state files) + Markdown (scopecraft/)"
   },
-  "personas": [],
-  "constraints": [],
-  "non_goals": [],
+  "ecosystem_role": {
+    "role": "pipeline-and-memory",
+    "description": "Owns the staged pipeline (research, discover, plan, structure, reconcile) and the .gt/ directory schema. Ecosystem root for reconciliation.",
+    "reads_from": [
+      "target project files (package.json, README.md, docs/, etc.)",
+      "carlos/.gt/memory/semantic.json (for reconcile)",
+      "conductor/.gt/memory/semantic.json (for reconcile)"
+    ],
+    "writes_to": [
+      ".gt/research/ (stage 0)",
+      ".gt/memory/ (stage 1)",
+      "scopecraft/ (stage 2)",
+      ".gt/beads/ (stage 3)",
+      ".gt/convoys/ (stage 3)",
+      "scopecraft/.checkpoint.json (reconcile)",
+      "scopecraft/ALIGNMENT_REPORT.md (reconcile)"
+    ],
+    "does_not_own": [
+      "Carlos analysis reports",
+      "Conductor state (task queue, file locks, agent lifecycle)"
+    ],
+    "standalone": true,
+    "standalone_command": "/lisa:migrate",
+    "ecosystem_root": "this repo (hosts reconcile and ecosystem scopecraft/)"
+  },
+  "capabilities": {
+    "commands": [
+      {"name": "/lisa:research", "purpose": "Stage 0: Archaeological rescue for abandoned projects", "stage": 0},
+      {"name": "/lisa:discover", "purpose": "Stage 1: Extract semantic memory from project analysis", "stage": 1},
+      {"name": "/lisa:plan", "purpose": "Stage 2: Generate roadmap with epics, risks, metrics", "stage": 2},
+      {"name": "/lisa:structure", "purpose": "Stage 3: Create Beads and Convoys for Gastown", "stage": 3},
+      {"name": "/lisa:status", "purpose": "Show migration progress and quality gate results"},
+      {"name": "/lisa:migrate", "purpose": "Composite: stages 1-3 (discover + plan + structure)"},
+      {"name": "/lisa:rescue", "purpose": "Composite: stages 0-3 (research + discover + plan + structure)"},
+      {"name": "/lisa:reconcile", "purpose": "Cross-project alignment report and checkpoint"}
+    ],
+    "agents": [
+      {"name": "archaeologist", "role": "Archaeological rescue specialist", "stage": 0},
+      {"name": "migrator", "role": "Project migration specialist", "stages": [1, 2, 3]}
+    ],
+    "skills": [
+      {"name": "research", "purpose": "Git archaeology, timeline, mission extraction"},
+      {"name": "discover", "purpose": "Tech stack detection, semantic memory generation"},
+      {"name": "plan", "purpose": "Roadmap generation with templates"},
+      {"name": "structure", "purpose": "Bead extraction and convoy bundling"}
+    ],
+    "quality_gates": 22,
+    "gate_stages": ["research", "discover", "plan", "structure"],
+    "gate_source": "gates.yaml (declarative, single source of truth)"
+  },
+  "pipeline": {
+    "stages": [
+      {"number": 0, "name": "research", "output": ".gt/research/", "agent": "archaeologist"},
+      {"number": 1, "name": "discover", "output": ".gt/memory/", "agent": "migrator"},
+      {"number": 2, "name": "plan", "output": "scopecraft/", "agent": "migrator"},
+      {"number": 3, "name": "structure", "output": ".gt/beads/, .gt/convoys/", "agent": "migrator"}
+    ],
+    "workflows": {
+      "migrate": ["discover", "plan", "structure"],
+      "rescue": ["research", "discover", "plan", "structure"]
+    }
+  },
+  "gastown_concepts": {
+    "bead": "Work item with ID gt-xxxxx, acceptance criteria, evidence",
+    "convoy": "Bundle of 3-7 related beads for assignment",
+    "memory": "Semantic (facts), episodic (decisions), procedural (patterns)"
+  },
+  "personas": [
+    {"name": "Solo developer with abandoned projects", "need": "Context recovery and structured work extraction", "priority": 1},
+    {"name": "Small team migrating to multi-agent", "need": "Structured work items for Gastown execution", "priority": 1},
+    {"name": "Ecosystem operator", "need": "Cross-project alignment and drift detection", "priority": 2}
+  ],
+  "constraints": [
+    "Works offline after initial clone",
+    "All outputs are local files (no database required)",
+    "Python 3.10+ with PyYAML dependency",
+    "Plugins must degrade gracefully when ecosystem partners are absent",
+    "Allowed output directories: ., .gt, scopecraft (enforced by validate.py)"
+  ],
+  "non_goals": [
+    "Specialist analysis (Carlos's job)",
+    "Multi-agent tracking and orchestration (Conductor's job)",
+    "Model routing or cost optimization (Carlos/Conductor)",
+    "Web UI or dashboard"
+  ],
+  "integration_points": {
+    "carlos": {
+      "provides": ".gt/memory/semantic.json (discovery output), gates.yaml (quality gate schema), scopecraft/ format",
+      "receives": "Richer analysis reports, quality gate enforcement, market fit scoring"
+    },
+    "conductor": {
+      "provides": ".gt/beads/*.json, .gt/convoys/*.json (structured work items)",
+      "receives": "Task assignment, agent lifecycle management, context rollover"
+    }
+  },
   "evidence": {
-    "last_scan": null,
-    "files_analyzed": []
+    "last_scan": "2026-02-06T00:00:00Z",
+    "files_analyzed": [
+      "CLAUDE.md",
+      "plugins/lisa/.claude-plugin/plugin.json",
+      "plugins/lisa/gates.yaml",
+      "plugins/lisa/hooks/validate.py",
+      "plugins/lisa/commands/discover.md",
+      "plugins/lisa/commands/plan.md",
+      "plugins/lisa/commands/research.md",
+      "plugins/lisa/commands/structure.md",
+      "plugins/lisa/commands/status.md",
+      "plugins/lisa/commands/migrate.md",
+      "plugins/lisa/commands/rescue.md",
+      "plugins/lisa/agents/archaeologist.md",
+      "plugins/lisa/agents/migrator.md",
+      "plugins/lisa/skills/discover/SKILL.md",
+      "plugins/lisa/skills/plan/SKILL.md",
+      "plugins/lisa/skills/research/SKILL.md",
+      "plugins/lisa/skills/structure/SKILL.md",
+      "plugins/lisa/skills/plan/templates/VISION_FORMAT.md",
+      "plugins/lisa/skills/plan/templates/ROADMAP_FORMAT.md",
+      "plugins/lisa/skills/plan/templates/EPICS_FORMAT.md",
+      "plugins/lisa/skills/plan/templates/RISK_REGISTER_FORMAT.md",
+      "plugins/lisa/skills/plan/templates/METRICS_FORMAT.md",
+      "plugins/lisa/skills/plan/templates/OPEN_QUESTIONS_FORMAT.md",
+      "tests/test_validate_quality_gates.py"
+    ]
   }
 }

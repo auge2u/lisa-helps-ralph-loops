@@ -11,16 +11,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-# Run tests
+# Run tests (requires: pip install pytest pyyaml)
 pytest tests/ -v
 
-# Run specific test
+# Run specific test class or method
 pytest tests/test_validate_quality_gates.py::TestPathSecurity -v
 
-# Validate plugin outputs
+# Validate plugin outputs against quality gates
 python3 plugins/lisa/hooks/validate.py --stage discover
 python3 plugins/lisa/hooks/validate.py --workflow migrate --format json
+python3 plugins/lisa/hooks/validate.py --stage all --format markdown
+
+# Bump version (updates plugin.json + marketplace.json + CHANGELOG.md)
+./scripts/bump-version.sh 0.4.0        # bump only
+./scripts/bump-version.sh 0.4.0 --tag  # bump + git tag
 ```
+
+## Two-Plugin Structure
+
+The repo contains two plugins. Only `lisa` is active:
+
+| Plugin | Status | Path |
+|--------|--------|------|
+| `lisa` | **Active (v0.3.0)** | `plugins/lisa/` |
+| `lisa-loops-memory` | Deprecated (v0.2.0) | `plugins/lisa-loops-memory/` |
+
+The marketplace registry at `.claude-plugin/marketplace.json` lists both; `lisa-loops-memory` has `"deprecated": true`.
+
+**Note:** The existing tests in `tests/test_validate_quality_gates.py` import from the **legacy** `lisa-loops-memory` validator (`validate_quality_gates.py`), not the current `plugins/lisa/hooks/validate.py`. These are different implementations — the active one uses `gates.yaml` while the legacy one has hardcoded gates.
 
 ## Plugin Architecture
 
@@ -32,6 +50,11 @@ The `lisa` plugin uses a 4-stage pipeline. Each stage has corresponding files:
 | 1 | `discover.md` | `discover/SKILL.md` | `migrator.md` | `.gt/memory/` |
 | 2 | `plan.md` | `plan/SKILL.md` | `migrator.md` | `scopecraft/` |
 | 3 | `structure.md` | `structure/SKILL.md` | `migrator.md` | `.gt/beads/`, `.gt/convoys/` |
+
+Composite commands run multiple stages sequentially:
+- **`migrate.md`** — Stages 1-3 (discover + plan + structure)
+- **`rescue.md`** — Stages 0-3 (research + discover + plan + structure)
+- **`status.md`** — Detects completed stages and runs their quality gates
 
 ### File Relationships
 
@@ -46,8 +69,8 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 ### Key Files
 
 - **`gates.yaml`** — Defines all 22 quality gates across 4 stages. Edit this to change validation rules.
-- **`validate.py`** — Unified validator. Supports `--stage`, `--workflow`, `--format` flags.
-- **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing.
+- **`validate.py`** — Unified validator. Requires PyYAML. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location.
+- **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
 
 ### Command Frontmatter Pattern
 
@@ -57,9 +80,11 @@ All commands use this YAML frontmatter structure:
 description: Brief description
 skill: skill-name          # Must exist in skills/
 agent: agent-name          # Must exist in agents/
-stage: 0-3                 # Pipeline stage number
+stage: 0-3                 # Pipeline stage number (omitted for composite commands)
 ---
 ```
+
+Composite commands use `workflow:` instead of `stage:` and list multiple skills/agents.
 
 ## Gastown Concepts
 
@@ -79,6 +104,8 @@ Quality gates are defined in `gates.yaml` with these check types:
 
 Exit codes: `0`=pass, `1`=blocker, `2`=warning, `3`=security error
 
+`validate.py` enforces path security — all validated paths must resolve within the working directory. Allowed output directories: `.`, `.gt`, `scopecraft`.
+
 ## Adding New Stages/Gates
 
 1. Add stage to `gates.yaml` under `stages:`
@@ -87,3 +114,11 @@ Exit codes: `0`=pass, `1`=blocker, `2`=warning, `3`=security error
 4. Create templates in `skills/<name>/templates/`
 5. Update workflows in `gates.yaml` if needed
 6. Run `python3 plugins/lisa/hooks/validate.py --stage <name>` to test
+
+## Releasing
+
+Versions must stay in sync across two files:
+- `plugins/lisa/.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json`
+
+Use `./scripts/bump-version.sh <version>` to update both automatically.

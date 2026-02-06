@@ -1,0 +1,121 @@
+{
+  "$schema": "reconcile-checkpoint-v1",
+  "reconcile": {
+    "timestamp": "2026-02-06T00:00:00Z",
+    "version": "1.0.0",
+    "ecosystem_root": "lisa3",
+    "method": "manual (reconcile skill not yet implemented as pipeline stage)"
+  },
+  "projects": {
+    "lisa": {
+      "path": "~/github/auge2u/lisa3",
+      "status": "found",
+      "semantic_json": {
+        "exists": true,
+        "version": "0.3.0",
+        "schema": "semantic-memory-v1",
+        "last_scan": "2026-02-06T00:00:00Z",
+        "project_name": "lisa",
+        "role": "pipeline-and-memory",
+        "tech_stack_fields": 5,
+        "files_analyzed": 23
+      },
+      "scopecraft": {
+        "exists": true,
+        "files": [
+          "VISION_AND_STAGE_DEFINITION.md",
+          "ROADMAP.md",
+          "EPICS_AND_STORIES.md",
+          "RISKS_AND_DEPENDENCIES.md",
+          "METRICS_AND_PMF.md",
+          "OPEN_QUESTIONS.md",
+          "ALIGNMENT_REPORT.md",
+          "PERSPECTIVES.md",
+          ".checkpoint.json"
+        ],
+        "level": "ecosystem"
+      },
+      "quality_gates": {
+        "discover": {"passed": 4, "failed": 0, "status": "pass"},
+        "plan": {"passed": 6, "failed": 0, "status": "pass"}
+      },
+      "alignment": "aligned"
+    },
+    "carlos": {
+      "path": "~/github/auge2u/carlos",
+      "status": "found",
+      "semantic_json": {
+        "exists": true,
+        "version": "1.2.0",
+        "schema": "semantic-memory-v1",
+        "last_scan": "2026-02-06T00:00:00Z",
+        "project_name": "carlos",
+        "role": "specialist-fixer",
+        "tech_stack_fields": 7,
+        "files_analyzed": 28
+      },
+      "scopecraft": {
+        "exists": false,
+        "note": "Carlos generates scopecraft/ on target projects, not on itself"
+      },
+      "alignment": "mostly-aligned",
+      "misalignments": [
+        "M1: Quality gates hardcoded instead of reading gates.yaml"
+      ]
+    },
+    "conductor": {
+      "path": "~/github/habitusnet/conductor",
+      "status": "missing",
+      "semantic_json": {
+        "exists": false
+      },
+      "scopecraft": {
+        "exists": false
+      },
+      "alignment": "missing",
+      "misalignments": [
+        "M2: Repository does not exist"
+      ]
+    }
+  },
+  "alignment_summary": {
+    "total_projects": 3,
+    "found": 2,
+    "missing": 1,
+    "aligned": 1,
+    "mostly_aligned": 1,
+    "misaligned": 0,
+    "alignments": 8,
+    "misalignments": 3,
+    "gaps": 4
+  },
+  "misalignments": [
+    {
+      "id": "M1",
+      "severity": "high",
+      "description": "Quality gate dual source: Lisa uses gates.yaml, Carlos uses hardcoded gates",
+      "affects": ["carlos"],
+      "resolution": "Phase 2 Story 7: Carlos reads gates.yaml format"
+    },
+    {
+      "id": "M2",
+      "severity": "medium",
+      "description": "Conductor repository does not exist",
+      "affects": ["conductor"],
+      "resolution": "Create conductor repo with minimal semantic.json"
+    },
+    {
+      "id": "M3",
+      "severity": "medium",
+      "description": "Reconcile not implemented as Lisa pipeline stage",
+      "affects": ["lisa"],
+      "resolution": "Implement reconcile as Stage 5 with command, skill, and gates"
+    }
+  ],
+  "next_reconcile_triggers": [
+    "Conductor repo created",
+    "Carlos gates.yaml alignment implemented",
+    "Lisa reconcile stage implemented",
+    "Any plugin ships a new version"
+  ]
+}
