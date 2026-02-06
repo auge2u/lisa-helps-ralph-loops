@@ -1,0 +1,27 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-k3m8n",
+  "title": "Conductor reads beads/convoys for task assignment",
+  "type": "feature",
+  "complexity": "L",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": ["gt-cg7ya"],
+  "acceptance_criteria": [
+    "Conductor enumerates bead files and parses bead-v1 schema",
+    "Conductor enumerates convoy files and parses convoy-v1 schema",
+    "Task assignment respects convoy grouping (assign convoy, not individual beads)",
+    "Bead status updates written back to .gt/beads/"
+  ],
+  "evidence": {
+    "source": "scopecraft/EPICS_AND_STORIES.md",
+    "story": "Story 8",
+    "extracted": "2026-02-06T19:00:00Z"
+  },
+  "metadata": {
+    "epic": "Conductor Task Assignment",
+    "phase": 3,
+    "owner_project": "conductor",
+    "labels": ["orchestration", "beads"]
+  }
+}

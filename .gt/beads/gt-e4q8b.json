@@ -1,0 +1,27 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-e4q8b",
+  "title": "Add formal reconcile quality gates to gates.yaml",
+  "type": "feature",
+  "complexity": "M",
+  "priority": "low",
+  "status": "pending",
+  "dependencies": ["gt-t2v5j"],
+  "acceptance_criteria": [
+    "gates.yaml has a reconcile stage with automated check definitions",
+    "validate.py --stage reconcile runs and validates outputs",
+    "Gates check: ecosystem.json loaded, 2+ projects reachable, report sections exist, checkpoint valid JSON",
+    "CLAUDE.md updated to reflect new gate count"
+  ],
+  "evidence": {
+    "source": "plugins/lisa/skills/reconcile/SKILL.md",
+    "section": "Quality Gates (Manual Checklist)",
+    "extracted": "2026-02-06T19:00:00Z"
+  },
+  "metadata": {
+    "epic": "Reconciliation Pipeline",
+    "phase": 2,
+    "owner_project": "lisa",
+    "labels": ["quality-gates", "reconcile"]
+  }
+}

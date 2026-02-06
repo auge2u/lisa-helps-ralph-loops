@@ -1,0 +1,29 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-n7h3f",
+  "title": "Update plan stage gate to tolerate reconcile outputs in scopecraft/",
+  "type": "bug",
+  "complexity": "XS",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "Plan stage outputs_exist gate uses min: 6 instead of expect: 6",
+    "Gate passes when scopecraft/ contains both plan and reconcile outputs",
+    "validate.py --stage plan passes with current scopecraft/ contents"
+  ],
+  "evidence": {
+    "source": "plugins/lisa/gates.yaml",
+    "line": "105: expect: 6",
+    "extracted": "2026-02-06T19:00:00Z",
+    "also_referenced_in": [
+      "scopecraft/.checkpoint.json (plan gate warn note)"
+    ]
+  },
+  "metadata": {
+    "epic": "Reconciliation Pipeline",
+    "phase": 1,
+    "owner_project": "lisa",
+    "labels": ["quality-gates", "bug-fix"]
+  }
+}

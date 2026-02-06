@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-a1s6m",
+  "title": "Define checkpoint schema formally",
+  "type": "docs",
+  "complexity": "S",
+  "priority": "low",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "reconcile-checkpoint-v1 schema documented as JSON Schema or equivalent",
+    "Schema referenced from skills/reconcile/SKILL.md",
+    "Existing .checkpoint.json validates against the formal schema"
+  ],
+  "evidence": {
+    "source": "scopecraft/ALIGNMENT_REPORT.md",
+    "section": "Next Actions: Define .checkpoint.json schema formally",
+    "extracted": "2026-02-06T19:00:00Z"
+  },
+  "metadata": {
+    "epic": "Reconciliation Pipeline",
+    "phase": 2,
+    "owner_project": "lisa",
+    "labels": ["schema", "documentation"]
+  }
+}

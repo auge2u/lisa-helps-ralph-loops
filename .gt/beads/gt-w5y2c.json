@@ -1,0 +1,26 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-w5y2c",
+  "title": "Resolve checkpoint schema for context rollover (Q2)",
+  "type": "spike",
+  "complexity": "M",
+  "priority": "medium",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "Decision made between Option A (.gt/ progress markers), B (.conductor/checkpoints/), or C (.agent/scratchpad.md)",
+    "Decision documented in OPEN_QUESTIONS.md as resolved",
+    "Chosen approach prototyped with at least one agent type"
+  ],
+  "evidence": {
+    "source": "scopecraft/OPEN_QUESTIONS.md",
+    "section": "Q2: What is the checkpoint schema for context rollover?",
+    "extracted": "2026-02-06T19:00:00Z"
+  },
+  "metadata": {
+    "epic": "Conductor Task Assignment",
+    "phase": 3,
+    "owner_project": "conductor",
+    "labels": ["spike", "context-rollover", "blocking-question"]
+  }
+}

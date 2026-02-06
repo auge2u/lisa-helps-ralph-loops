@@ -1,0 +1,27 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-t2v5j",
+  "title": "Create reconcile output templates",
+  "type": "chore",
+  "complexity": "S",
+  "priority": "low",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "Template files exist in skills/reconcile/templates/",
+    "ALIGNMENT_REPORT_FORMAT.md template matches current output structure",
+    "PERSPECTIVES_FORMAT.md template matches current output structure",
+    "CHECKPOINT_FORMAT.json template matches reconcile-checkpoint-v1 schema"
+  ],
+  "evidence": {
+    "source": "scopecraft/ALIGNMENT_REPORT.md",
+    "section": "G3: No reconcile output templates",
+    "extracted": "2026-02-06T19:00:00Z"
+  },
+  "metadata": {
+    "epic": "Reconciliation Pipeline",
+    "phase": 2,
+    "owner_project": "lisa",
+    "labels": ["templates", "G3"]
+  }
+}

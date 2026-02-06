@@ -1,0 +1,17 @@
+{
+  "$schema": "convoy-v1",
+  "id": "convoy-003",
+  "name": "Conductor Ecosystem Integration",
+  "description": "Conductor reads beads/convoys for task assignment, resolves checkpoint schema question, and implements context rollover for CLI agents.",
+  "beads": ["gt-w5y2c", "gt-k3m8n", "gt-x9p4w"],
+  "assigned_to": null,
+  "status": "pending",
+  "created": "2026-02-06T19:00:00Z",
+  "metadata": {
+    "epic": "Conductor Task Assignment",
+    "phase": 3,
+    "owner_project": "conductor",
+    "estimated_days": 14,
+    "note": "Spike (gt-w5y2c) should complete before gt-k3m8n and gt-x9p4w begin"
+  }
+}

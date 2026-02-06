@@ -1,0 +1,31 @@
+{
+  "$schema": "bead-v1",
+  "id": "gt-cg7ya",
+  "title": "Create Carlos gates.yaml following Lisa's schema",
+  "type": "feature",
+  "complexity": "L",
+  "priority": "high",
+  "status": "pending",
+  "dependencies": [],
+  "acceptance_criteria": [
+    "Carlos has gates.yaml in the same schema as Lisa's",
+    "Carlos validate_quality_gates.py reads from gates.yaml instead of hardcoded gates",
+    "Gate check types are compatible (file_exists, json_valid, pattern_exists, etc.)",
+    "Reconcile can compare both gates.yaml files for conflicts"
+  ],
+  "evidence": {
+    "source": "scopecraft/EPICS_AND_STORIES.md",
+    "story": "Story 7",
+    "extracted": "2026-02-06T19:00:00Z",
+    "also_referenced_in": [
+      "scopecraft/ALIGNMENT_REPORT.md (M1: Quality Gate Dual Source)",
+      "scopecraft/.checkpoint.json (misalignment M1)"
+    ]
+  },
+  "metadata": {
+    "epic": "Carlos Integration",
+    "phase": 2,
+    "owner_project": "carlos",
+    "labels": ["quality-gates", "alignment", "M1"]
+  }
+}

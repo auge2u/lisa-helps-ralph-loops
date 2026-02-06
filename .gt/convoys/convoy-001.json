@@ -1,0 +1,16 @@
+{
+  "$schema": "convoy-v1",
+  "id": "convoy-001",
+  "name": "Lisa Pipeline Hardening",
+  "description": "Fix the plan gate tolerance issue, create reconcile templates, formalize checkpoint schema, and add reconcile quality gates. All Lisa-owned, no external dependencies.",
+  "beads": ["gt-n7h3f", "gt-t2v5j", "gt-a1s6m", "gt-e4q8b"],
+  "assigned_to": null,
+  "status": "pending",
+  "created": "2026-02-06T19:00:00Z",
+  "metadata": {
+    "epic": "Reconciliation Pipeline",
+    "phase": 2,
+    "owner_project": "lisa",
+    "estimated_days": 3
+  }
+}
