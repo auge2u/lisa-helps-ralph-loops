@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reconcile-checkpoint-v1",
+  "title": "Reconcile Checkpoint",
+  "description": "Machine-readable state for ecosystem reconciliation context recovery",
+  "type": "object",
+  "required": ["$schema", "reconcile", "projects", "alignment_summary"],
+  "properties": {
+    "$schema": {
+      "const": "reconcile-checkpoint-v1"
+    },
+    "reconcile": {
+      "type": "object",
+      "required": ["timestamp", "version", "ecosystem_root", "method"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this reconcile was generated"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Reconcile version (semver)"
+        },
+        "previous_version": {
+          "type": ["string", "null"],
+          "description": "Previous reconcile version, null if first"
+        },
+        "ecosystem_root": {
+          "type": "string",
+          "description": "Name of the repo that hosts ecosystem reconciliation"
+        },
+        "method": {
+          "type": "string",
+          "description": "How reconcile was performed"
+        },
+        "data_source": {
+          "type": "string",
+          "description": "How project data was gathered (local, git remote, etc.)"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What triggered this reconcile cycle"
+        }
+      }
+    },
+    "projects": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path", "status"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Project path (~ prefix for portability)"
+          },
+          "status": {
+            "enum": ["found", "not-found"],
+            "description": "Whether the project was reachable"
+          },
+          "source": {
+            "type": "string",
+            "description": "How project was accessed"
+          },
+          "semantic_json": {
+            "type": "object",
+            "properties": {
+              "exists": { "type": "boolean" },
+              "version": { "type": "string" },
+              "schema": { "type": "string" },
+              "last_scan": { "type": "string", "format": "date-time" }
+            }
+          },
+          "gates_yaml": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "version": { "type": "string" },
+              "gates": { "type": "integer" }
+            }
+          },
+          "alignment": {
+            "enum": ["aligned", "mostly-aligned", "divergent", "not-found"]
+          }
+        }
+      }
+    },
+    "alignment_summary": {
+      "type": "object",
+      "required": ["total_projects", "found", "aligned", "alignments", "misalignments", "gaps"],
+      "properties": {
+        "total_projects": { "type": "integer", "minimum": 0 },
+        "found": { "type": "integer", "minimum": 0 },
+        "aligned": { "type": "integer", "minimum": 0 },
+        "alignments": { "type": "integer", "minimum": 0 },
+        "misalignments": { "type": "integer", "minimum": 0 },
+        "gaps": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "work_structure": {
+      "type": "object",
+      "properties": {
+        "total_beads": { "type": "integer", "minimum": 0 },
+        "beads_complete": { "type": "integer", "minimum": 0 },
+        "beads_pending": { "type": "integer", "minimum": 0 },
+        "total_convoys": { "type": "integer", "minimum": 0 },
+        "convoys_complete": { "type": "integer", "minimum": 0 },
+        "convoys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "status": { "type": "string" },
+              "beads_complete": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "misalignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^M\\d+$" },
+          "severity": { "enum": ["high", "medium", "low"] },
+          "description": { "type": "string" },
+          "status": { "enum": ["new", "unchanged", "worsened", "resolved", "needs-decision"] }
+        }
+      }
+    },
+    "decisions": {
+      "type": "object",
+      "properties": {
+        "open_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "question", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "question": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "next_reconcile_triggers": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "context_recovery": {
+      "type": "object",
+      "properties": {
+        "read_order": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files to read in order to recover context"
+        },
+        "key_facts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Essential facts for quick context recovery"
+        }
+      }
+    }
+  }
+}

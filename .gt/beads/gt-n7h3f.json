@@ -5,7 +5,7 @@
   "type": "bug",
   "complexity": "XS",
   "priority": "medium",
-  "status": "pending",
+  "status": "complete",
   "dependencies": [],
   "acceptance_criteria": [
     "Plan stage outputs_exist gate uses min: 6 instead of expect: 6",

@@ -5,7 +5,7 @@
   "type": "feature",
   "complexity": "M",
   "priority": "low",
-  "status": "pending",
+  "status": "complete",
   "dependencies": ["gt-t2v5j"],
   "acceptance_criteria": [
     "gates.yaml has a reconcile stage with automated check definitions",

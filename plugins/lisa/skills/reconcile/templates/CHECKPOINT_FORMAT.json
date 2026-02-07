@@ -1,0 +1,68 @@
+{
+  "$schema": "reconcile-checkpoint-v1",
+  "reconcile": {
+    "timestamp": "ISO-8601",
+    "version": "X.Y.Z",
+    "previous_version": "X.Y.Z or null",
+    "ecosystem_root": "repo-name",
+    "method": "lisa reconcile skill (Stage 5)",
+    "data_source": "description of how data was gathered"
+  },
+  "projects": {
+    "<project-name>": {
+      "path": "~/path/to/project",
+      "status": "found|not-found",
+      "source": "local filesystem|GitHub API",
+      "semantic_json": {
+        "exists": true,
+        "version": "X.Y.Z",
+        "schema": "semantic-memory-v1",
+        "last_scan": "ISO-8601"
+      },
+      "gates_yaml": {
+        "path": "relative/path/to/gates.yaml",
+        "version": "X.Y",
+        "gates": 0
+      },
+      "alignment": "aligned|mostly-aligned|divergent|not-found"
+    }
+  },
+  "alignment_summary": {
+    "total_projects": 0,
+    "found": 0,
+    "aligned": 0,
+    "alignments": 0,
+    "misalignments": 0,
+    "gaps": 0
+  },
+  "work_structure": {
+    "total_beads": 0,
+    "beads_complete": 0,
+    "beads_pending": 0,
+    "total_convoys": 0,
+    "convoys_complete": 0,
+    "convoys": []
+  },
+  "misalignments": [
+    {
+      "id": "M1",
+      "severity": "high|medium|low",
+      "description": "...",
+      "status": "new|unchanged|worsened|resolved|needs-decision"
+    }
+  ],
+  "decisions": {
+    "open_questions": [
+      {
+        "id": "SQ1",
+        "question": "...",
+        "status": "needs-decision|resolved"
+      }
+    ]
+  },
+  "next_reconcile_triggers": [],
+  "context_recovery": {
+    "read_order": [],
+    "key_facts": []
+  }
+}

@@ -1,8 +1,8 @@
 # Quality Gates Configuration for Lisa
-# Single source of truth for all validation rules across 4 stages
+# Single source of truth for all validation rules across 5 stages
 # Used by: plugins/lisa/hooks/validate.py
 
-version: "1.0"
+version: "1.1"
 
 # Check types:
 # - file_exists: Check if file exists
@@ -99,10 +99,10 @@ stages:
     output_dir: "scopecraft"
     gates:
       - id: outputs_exist
-        name: "All required outputs exist (6 files)"
+        name: "All required plan outputs exist (6+ files)"
         check: file_count
         path: "scopecraft/*.md"
-        expect: 6
+        min: 6
         severity: blocker
 
       - id: phases_valid
@@ -209,6 +209,73 @@ stages:
         target_pattern: "{id}.json"
         severity: blocker
 
+  # Stage 5: Reconcile (Ecosystem Alignment)
+  # Cross-validate project self-reports against ecosystem assumptions
+  reconcile:
+    description: "Reconcile ecosystem assumptions against project self-reports"
+    output_dir: "scopecraft"
+    gates:
+      - id: config_loaded
+        name: "Checkpoint confirms ecosystem config was loaded"
+        check: json_field_present
+        path: "scopecraft/.checkpoint.json"
+        field: "reconcile.ecosystem_root"
+        severity: blocker
+
+      - id: projects_found
+        name: "2+ projects found in checkpoint"
+        check: json_field_count
+        path: "scopecraft/.checkpoint.json"
+        field: "projects"
+        min: 2
+        severity: blocker
+
+      - id: alignment_report_exists
+        name: "Alignment report generated"
+        check: file_exists
+        path: "scopecraft/ALIGNMENT_REPORT.md"
+        severity: blocker
+
+      - id: perspectives_exists
+        name: "Perspectives generated"
+        check: file_exists
+        path: "scopecraft/PERSPECTIVES.md"
+        severity: blocker
+
+      - id: checkpoint_valid
+        name: "Checkpoint is valid JSON"
+        check: json_valid
+        path: "scopecraft/.checkpoint.json"
+        severity: blocker
+
+      - id: checkpoint_schema
+        name: "Checkpoint has reconcile-checkpoint-v1 schema"
+        check: json_field_present
+        path: "scopecraft/.checkpoint.json"
+        field: "$schema"
+        severity: blocker
+
+      - id: report_has_summary
+        name: "Alignment report has Summary section"
+        check: pattern_exists
+        path: "scopecraft/ALIGNMENT_REPORT.md"
+        pattern: "^## Summary"
+        severity: blocker
+
+      - id: report_has_misalignments
+        name: "Alignment report has Misalignments section"
+        check: pattern_exists
+        path: "scopecraft/ALIGNMENT_REPORT.md"
+        pattern: "^## Misalignments"
+        severity: warning
+
+      - id: changes_tracked
+        name: "Changes tracked from prior version"
+        check: json_field_present
+        path: "scopecraft/.checkpoint.json"
+        field: "reconcile.previous_version"
+        severity: warning
+
 # Workflow definitions
 workflows:
   migrate:
@@ -218,6 +285,10 @@ workflows:
   rescue:
     description: "Full rescue for lost projects"
     stages: [research, discover, plan, structure]
+
+  ecosystem:
+    description: "Ecosystem reconciliation"
+    stages: [reconcile]
 
 # Exit codes
 exit_codes:

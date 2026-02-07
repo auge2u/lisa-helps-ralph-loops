@@ -27,6 +27,8 @@ project/
     └── .checkpoint.json       # Machine-readable state for recovery
 ```
 
+Output templates: [`templates/`](templates/) | Checkpoint schema: [`checkpoint-schema.json`](checkpoint-schema.json)
+
 ## Ecosystem Configuration
 
 The reconcile skill reads project locations from `~/.lisa/ecosystem.json`.
@@ -248,6 +250,8 @@ For each project that has quality gates:
 
 #### .checkpoint.json
 
+Formal JSON Schema: [`checkpoint-schema.json`](checkpoint-schema.json)
+
 ```json
 {
   "$schema": "reconcile-checkpoint-v1",
@@ -310,6 +314,15 @@ For each project that has quality gates:
 }
 ```
 
+## Schema Tolerance
+
+External projects (e.g., Conductor) may produce their own reconcile checkpoints with different field names. When reading external checkpoints during reconcile, extract common fields regardless of schema:
+- `misalignments` / `remaining_misalignments` — treat as equivalent
+- `steering_questions` / `steering_questions_resolved` + `open_queries` — extract both
+- Different severity scales or status enums — normalize to Lisa's convention
+
+The `reconcile-checkpoint-v1` schema (see [`checkpoint-schema.json`](checkpoint-schema.json)) is canonical for Lisa's own checkpoints. External formats are tolerated as input, not required to conform.
+
 ## Error Handling
 
 | Error | Response |
@@ -322,21 +335,26 @@ For each project that has quality gates:
 | No prior checkpoint | First reconcile — skip "Changes Since" section |
 | Fewer than 2 projects reachable | Warn but still produce report (limited comparison) |
 
-## Quality Gates (Manual Checklist)
+## Quality Gates
 
-| Gate | Requirement |
-|------|-------------|
-| `config_loaded` | `~/.lisa/ecosystem.json` was loaded and parsed |
-| `projects_reachable` | At least 2 projects were reachable |
-| `report_complete` | `ALIGNMENT_REPORT.md` has Summary, Alignments, Misalignments sections |
-| `perspectives_complete` | `PERSPECTIVES.md` has a section per found project |
-| `checkpoint_valid` | `.checkpoint.json` is valid JSON with `reconcile-checkpoint-v1` schema |
-| `changes_tracked` | If prior checkpoint existed, changes are noted in report |
+Reconcile quality gates are defined in `gates.yaml` (9 gates, automated via `validate.py --stage reconcile`):
+
+| Gate | Check | Severity |
+|------|-------|----------|
+| `config_loaded` | Checkpoint confirms ecosystem config was loaded | blocker |
+| `projects_found` | 2+ projects found in checkpoint | blocker |
+| `alignment_report_exists` | ALIGNMENT_REPORT.md generated | blocker |
+| `perspectives_exists` | PERSPECTIVES.md generated | blocker |
+| `checkpoint_valid` | .checkpoint.json is valid JSON | blocker |
+| `checkpoint_schema` | Checkpoint has reconcile-checkpoint-v1 schema | blocker |
+| `report_has_summary` | Report has Summary section | blocker |
+| `report_has_misalignments` | Report has Misalignments section | warning |
+| `changes_tracked` | Prior version tracked in checkpoint | warning |
 
 ## Next Steps
 
 After reconcile completes:
+- Run `validate.py --stage reconcile` to verify outputs
 - Review `ALIGNMENT_REPORT.md` for action items
 - Address HIGH priority misalignments first
 - Re-run reconcile after significant changes (see `next_reconcile_triggers` in checkpoint)
-- Consider adding formal quality gates to `gates.yaml` once the reconcile pattern stabilizes

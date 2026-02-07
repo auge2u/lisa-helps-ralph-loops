@@ -5,7 +5,7 @@
   "type": "docs",
   "complexity": "S",
   "priority": "low",
-  "status": "pending",
+  "status": "complete",
   "dependencies": [],
   "acceptance_criteria": [
     "reconcile-checkpoint-v1 schema documented as JSON Schema or equivalent",

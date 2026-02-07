@@ -69,7 +69,7 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 
 ### Key Files
 
-- **`gates.yaml`** — Defines all 22 quality gates across 4 stages. Edit this to change validation rules. (Stage 5 uses manual checklist for now.)
+- **`gates.yaml`** — Defines all 31 quality gates across 5 stages (research, discover, plan, structure, reconcile). Edit this to change validation rules.
 - **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths for reconcile (Stage 5). Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Requires PyYAML. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location.
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).

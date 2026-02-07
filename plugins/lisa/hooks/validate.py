@@ -673,10 +673,10 @@ def generate_markdown_report(results: list[GateResult]) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Validate Lisa plugin outputs")
     parser.add_argument("--stage", "-s",
-                        choices=["research", "discover", "plan", "structure", "all"],
+                        choices=["research", "discover", "plan", "structure", "reconcile", "all"],
                         default="all", help="Stage to validate")
     parser.add_argument("--workflow", "-w",
-                        choices=["migrate", "rescue"],
+                        choices=["migrate", "rescue", "ecosystem"],
                         help="Validate workflow stages")
     parser.add_argument("--base-dir", "-d", default=".", help="Base directory")
     parser.add_argument("--config", "-c", help="Path to gates.yaml (default: auto-detect)")

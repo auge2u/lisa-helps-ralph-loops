@@ -5,7 +5,7 @@
   "type": "chore",
   "complexity": "S",
   "priority": "low",
-  "status": "pending",
+  "status": "complete",
   "dependencies": [],
   "acceptance_criteria": [
     "Template files exist in skills/reconcile/templates/",
