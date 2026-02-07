@@ -1,13 +1,13 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T23:00:00Z",
-    "version": "2.4.0",
-    "previous_version": "2.3.0",
+    "timestamp": "2026-02-06T23:30:00Z",
+    "version": "2.5.0",
+    "previous_version": "2.4.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "git remote (Conductor Cycle 2 pulled — commit 04caab3)",
-    "trigger": "Conductor pushed Cycle 2 reconcile with 3 new steering questions"
+    "data_source": "git remote (both remotes up to date, no new commits)",
+    "trigger": "convoy-001 complete + SQ8/SQ9/SQ10 decided"
   },
   "projects": {
     "lisa": {
@@ -23,15 +23,18 @@
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
-        "version": "1.0",
-        "gates": 22,
-        "stages": 4,
-        "note": "Reconcile stage not yet in gates.yaml (manual checklist, bead gt-e4q8b pending)"
+        "version": "1.1",
+        "gates": 31,
+        "stages": 5,
+        "note": "convoy-001 complete: reconcile stage now in gates.yaml with 9 automated gates"
       },
+      "checkpoint_schema": "plugins/lisa/skills/reconcile/checkpoint-schema.json",
+      "templates": "plugins/lisa/skills/reconcile/templates/ (3 files)",
       "alignment": "aligned",
       "external_score": {
         "conductor_cycle_2": 85,
-        "factual_corrections_needed": 4
+        "factual_corrections_needed": 4,
+        "note": "C2 partially self-corrected: Lisa3 now has 31 gates across 5 stages (was 22/4 when Conductor claimed 29/5)"
       }
     },
     "carlos": {
@@ -51,21 +54,13 @@
         "stages": 1,
         "schema_compatible": "lisa v1.0"
       },
-      "bead_status": {
-        "gt-cg7ya": "complete",
-        "gt-r6d2k": "complete"
-      },
       "alignment": "aligned",
-      "external_score": {
-        "conductor_cycle_2": 95,
-        "note": "Conductor doesn't know about gates.yaml migration"
-      },
       "local_changes": "uncommitted edits to .gitignore and CLAUDE.md"
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
       "status": "found",
-      "source": "git remote (pulled commit 04caab3)",
+      "source": "git remote (no new commits since 04caab3)",
       "semantic_json": {
         "exists": true,
         "version": "0.1.0",
@@ -79,23 +74,7 @@
         "type": "ecosystem overlay"
       },
       "reconcile_cycle": 2,
-      "new_steering_questions": [
-        {"id": "sq-c2-01", "question": "Align checkpoint schema with Lisa3?", "response": "Option C: Document schema tolerance. No Conductor change."},
-        {"id": "sq-c2-02", "question": "Merge reconcile gate definitions?", "response": "Option A: Lisa3 canonical when gt-e4q8b implemented. Conductor overlay is input."},
-        {"id": "sq-c2-03", "question": "Should Carlos migrate to gates.yaml?", "response": "Already done (commit 7adbda0). Conductor Cycle 2 is stale."}
-      ],
-      "open_queries_updated": {
-        "OQ-1": "open — recommend Phase 1",
-        "OQ-2": "refined — Lisa3 is plugin-first, validate.py works standalone for CI",
-        "OQ-3": "open — tracked as gt-w5y2c + gt-x9p4w",
-        "OQ-4": "further resolved — Carlos already migrated, schema converging"
-      },
-      "factual_corrections": [
-        {"id": "C1", "claim": "Lisa3 version 1.1.0", "actual": "0.3.0", "cause": "Reading marketplace copy, not repo"},
-        {"id": "C2", "claim": "29 gates across 5 stages", "actual": "22 gates across 4 stages", "cause": "Reconcile stage not in gates.yaml yet"},
-        {"id": "C3", "claim": "No semantic.json", "actual": "semantic.json exists since v2.1.0", "cause": "Reading wrong path"},
-        {"id": "C4", "claim": "Carlos should migrate to gates.yaml", "actual": "Already done (commit 7adbda0)", "cause": "Cycle 2 predates Carlos convoy-002"}
-      ],
+      "factual_corrections_pending": ["C1: version", "C2: gate count (partially self-corrected)", "C3: semantic.json path", "C4: Carlos migration (resolved)"],
       "alignment": "aligned"
     }
   },
@@ -106,16 +85,16 @@
     "alignments": 16,
     "misalignments": 1,
     "gaps": 0,
-    "unchanged_from": "v2.3.0"
+    "note": "M5 decided but not yet implemented"
   },
   "work_structure": {
     "total_beads": 9,
-    "beads_complete": 2,
-    "beads_pending": 7,
+    "beads_complete": 6,
+    "beads_pending": 3,
     "total_convoys": 3,
-    "convoys_complete": 1,
+    "convoys_complete": 2,
     "convoys": [
-      {"id": "convoy-001", "name": "Lisa Pipeline Hardening", "status": "pending", "beads_complete": 0},
+      {"id": "convoy-001", "name": "Lisa Pipeline Hardening", "status": "complete", "beads_complete": 4},
       {"id": "convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
       {"id": "convoy-003", "name": "Conductor Ecosystem Integration", "status": "unblocked", "beads_complete": 0}
     ]
@@ -125,26 +104,27 @@
       "id": "M5",
       "severity": "medium",
       "description": "Convoy naming collision: ecosystem convoys overlap with project convoys",
-      "status": "needs-decision"
+      "status": "decided",
+      "decision": "SQ8: Use eco-convoy-NNN prefix for ecosystem-level convoys"
     }
   ],
   "decisions": {
-    "open_questions": [
-      {"id": "SQ8", "question": "Convoy naming convention", "status": "needs-decision"},
-      {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "status": "needs-decision"},
-      {"id": "SQ10", "question": "Conductor bead consumption timing", "status": "needs-decision"}
+    "resolved_questions": [
+      {"id": "SQ8", "question": "Convoy naming convention", "decision": "eco-convoy-NNN prefix", "resolved": "v2.5.0"},
+      {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "decision": "Batch later, not urgent", "resolved": "v2.5.0"},
+      {"id": "SQ10", "question": "Conductor bead consumption timing", "decision": "Phase 1 (recommend)", "resolved": "v2.5.0"}
     ],
     "conductor_questions_answered": [
-      {"id": "sq-c2-01", "answer": "Document schema tolerance in SKILL.md"},
-      {"id": "sq-c2-02", "answer": "Lisa3 canonical when gt-e4q8b implemented"},
+      {"id": "sq-c2-01", "answer": "Document schema tolerance in SKILL.md", "implemented": "convoy-001 (gt-e4q8b)"},
+      {"id": "sq-c2-02", "answer": "Lisa3 canonical — now implemented with 9 reconcile gates in gates.yaml v1.1", "implemented": "convoy-001 (gt-e4q8b)"},
       {"id": "sq-c2-03", "answer": "Already done (Carlos commit 7adbda0)"}
     ]
   },
   "next_reconcile_triggers": [
-    "Conductor pulls this v2.4.0 and corrects Lisa3 data sources (C1-C4)",
-    "Carlos semantic.json refreshed (SQ9)",
-    "Convoy naming convention decided (M5/SQ8)",
-    "Any convoy-001 or convoy-003 bead starts",
+    "Conductor pulls v2.5.0 and corrects Lisa3 data sources (C1/C3 still pending)",
+    "Carlos semantic.json refreshed (SQ9 — batched for later)",
+    "eco-convoy-NNN naming applied to convoy files (M5 implementation)",
+    "Any convoy-003 bead starts",
     "Any plugin version ship"
   ],
   "context_recovery": {
@@ -157,14 +137,14 @@
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "M1 RESOLVED (v2.3.0): All three have gates.yaml in compatible schema",
-      "convoy-002 COMPLETE, convoy-003 UNBLOCKED",
-      "Conductor Cycle 2 includes Lisa3 for first time (85% score)",
-      "4 factual corrections needed: Conductor reads marketplace copy not repo",
-      "3 Conductor steering questions answered (schema tolerance, Lisa canonical, Carlos already done)",
-      "OQ-2 refined: Lisa3 is plugin-first, validate.py standalone for CI",
-      "1 misalignment: M5 (convoy naming collision)",
-      "3 open steering questions: SQ8 (naming), SQ9 (Carlos refresh), SQ10 (bead consumption)"
+      "convoy-001 COMPLETE: gates.yaml v1.1 with 31 gates, 5 stages, formal checkpoint schema, templates",
+      "convoy-002 COMPLETE: Carlos gates.yaml + validate.py integration",
+      "convoy-003 UNBLOCKED: Conductor ecosystem integration (3 beads pending)",
+      "All steering questions decided: SQ8 (eco-convoy-NNN), SQ9 (batch later), SQ10 (Phase 1)",
+      "M5 decided but not implemented: convoy naming collision → eco-convoy-NNN prefix",
+      "Conductor Cycle 2 factual corrections: C1 (version) and C3 (semantic.json path) still pending",
+      "sq-c2-01 and sq-c2-02 now implemented via convoy-001 (schema tolerance + reconcile gates)",
+      "OQ-2 refined: Lisa3 is plugin-first, validate.py standalone for CI"
     ]
   }
 }

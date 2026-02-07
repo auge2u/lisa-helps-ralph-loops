@@ -2,8 +2,8 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06 (reconcile v2.4.0)
-**Data source:** Git remote (Conductor Cycle 2 pulled)
+**Generated:** 2026-02-06 (reconcile v2.5.0)
+**Data source:** Git remote (both remotes up to date)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
 
@@ -21,8 +21,8 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
 | **Last scan** | 2026-02-06T18:00 | 2026-02-06T19:00 | 2026-02-06T12:00 |
 | **License** | MIT | MIT | MIT |
-| **gates.yaml** | Yes (v1.0, 22 gates) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
-| **Own reconcile** | Yes (this report, v2.4.0) | Yes (project-level) | Yes (Cycle 2) |
+| **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
+| **Own reconcile** | Yes (this report, v2.5.0) | Yes (project-level) | Yes (Cycle 2) |
 
 ---
 
@@ -57,10 +57,12 @@ Conductor now includes Lisa3 in its reconcile but reads from the marketplace-ins
 | Commands | 8 |
 | Agents | 2 (archaeologist, migrator) |
 | Skills | 5 (research, discover, plan, structure, reconcile) |
-| Quality gates | 22 across 4 stages (+ manual checklist for reconcile) |
-| Gate source | gates.yaml v1.0 (declarative) |
+| Quality gates | 31 across 5 stages (including 9 automated reconcile gates) |
+| Gate source | gates.yaml v1.1 (declarative) |
+| Checkpoint schema | Formal JSON Schema (`checkpoint-schema.json`) |
+| Templates | 3 reconcile output templates |
 
-**Unchanged since:** v2.2.0
+**Changed in v2.5.0:** convoy-001 complete — gates.yaml v1.0→v1.1, reconcile gates automated, templates + schema added
 
 ---
 
@@ -139,10 +141,13 @@ Unchanged from v2.3.0. All roles aligned. No conflicts.
 
 ---
 
-## Notable Changes From v2.3.0
+## Notable Changes From v2.4.0
 
-1. **Conductor Cycle 2:** First reconcile to include all 3 projects. Carlos jumped 72%→95%.
-2. **Lisa3 first external score:** 85% — reasonable given Conductor's data source issues.
-3. **3 Conductor steering questions answered:** checkpoint schema (document tolerance), gate merge (Lisa canonical), Carlos migration (already done).
-4. **4 factual corrections documented:** Version, gate count, semantic.json existence, Carlos migration status.
-5. **OQ-2 refined:** From "who builds Lisa3?" to "should it be standalone?" — answer: plugin-first, validate.py works standalone for CI.
+1. **convoy-001 COMPLETE:** Lisa Pipeline Hardening — 4 beads done (gate fix, templates, schema, reconcile gates).
+2. **gates.yaml v1.1:** 22→31 gates, 4→5 stages, ecosystem workflow added.
+3. **Reconcile gates automated:** 9 gates replace manual checklist. `validate.py --stage reconcile` now works.
+4. **Formal checkpoint schema:** JSON Schema at `checkpoint-schema.json`, validated against existing checkpoint.
+5. **All steering questions decided:** SQ8 (eco-convoy-NNN), SQ9 (batch later), SQ10 (Phase 1).
+6. **sq-c2-01 + sq-c2-02 implemented:** Schema tolerance in SKILL.md, reconcile gates canonical in gates.yaml.
+7. **G3 resolved:** Reconcile output templates created (3 files).
+8. **C2 partially self-corrected:** Lisa3 now has 31 gates/5 stages (Conductor claimed 29/5, was actually 22/4).
