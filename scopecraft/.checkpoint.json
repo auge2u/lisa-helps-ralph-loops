@@ -2,12 +2,12 @@
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
     "timestamp": "2026-02-08T11:50:00Z",
-    "version": "3.0.0",
-    "previous_version": "2.5.0",
+    "version": "3.1.0",
+    "previous_version": "3.0.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "convoy-003 complete + Q2 resolved"
+    "trigger": "M5 resolved — eco-convoy-NNN naming applied"
   },
   "projects": {
     "lisa": {
@@ -84,7 +84,7 @@
     "mostly_aligned": 1,
     "divergent": 0,
     "alignments": 17,
-    "misalignments": 1,
+    "misalignments": 0,
     "gaps": 1
   },
   "work_structure": {
@@ -94,20 +94,12 @@
     "total_convoys": 3,
     "convoys_complete": 3,
     "convoys": [
-      {"id": "convoy-001", "name": "Lisa Pipeline Hardening", "status": "complete", "beads_complete": 4},
-      {"id": "convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
-      {"id": "convoy-003", "name": "Conductor Ecosystem Integration", "status": "complete", "beads_complete": 3}
+      {"id": "eco-convoy-001", "name": "Lisa Pipeline Hardening", "status": "complete", "beads_complete": 4},
+      {"id": "eco-convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
+      {"id": "eco-convoy-003", "name": "Conductor Ecosystem Integration", "status": "complete", "beads_complete": 3}
     ]
   },
-  "misalignments": [
-    {
-      "id": "M5",
-      "severity": "medium",
-      "description": "Convoy naming collision: ecosystem convoys overlap with project convoys",
-      "status": "decided",
-      "decision": "SQ8: Use eco-convoy-NNN prefix for ecosystem-level convoys"
-    }
-  ],
+  "misalignments": [],
   "gaps": [
     {
       "id": "G7",
@@ -128,7 +120,8 @@
     {"id": "G4", "resolved_in": "v2.1.0"},
     {"id": "G5", "resolved_in": "v2.1.0"},
     {"id": "G6", "resolved_in": "v2.1.0"},
-    {"id": "Q2", "resolved_in": "v3.0.0", "description": "Checkpoint schema — Hybrid SQLite + Bead File Updates"}
+    {"id": "Q2", "resolved_in": "v3.0.0", "description": "Checkpoint schema — Hybrid SQLite + Bead File Updates"},
+    {"id": "M5", "resolved_in": "v3.1.0", "description": "Convoy naming collision — eco-convoy-NNN prefix applied"}
   ],
   "decisions": {
     "resolved_questions": [
@@ -141,7 +134,6 @@
   "next_reconcile_triggers": [
     "Conductor semantic.json refreshed (G7)",
     "Carlos semantic.json refreshed (SQ9)",
-    "eco-convoy-NNN naming applied (M5 implementation)",
     "Any plugin version ship",
     "Conductor pulls v3.0.0 reconcile outputs"
   ],
@@ -155,13 +147,13 @@
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "ALL 3 CONVOYS COMPLETE: convoy-001 (Lisa), convoy-002 (Carlos), convoy-003 (Conductor)",
+      "ALL 3 CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
       "ALL 9 BEADS DONE: no pending work items",
       "convoy-003 delivered: checkpoint schema, bead import pipeline, context exhaustion detection",
       "Q2 resolved: Hybrid SQLite + Bead File Updates for context rollover",
       "Conductor now has 26 MCP tools (+4), 10 detection types (+1), 8 action types (+1)",
       "All steering questions decided: SQ8-SQ10",
-      "M5 decided but not implemented: convoy naming collision -> eco-convoy-NNN",
+      "M5 RESOLVED: convoy naming collision -> eco-convoy-NNN prefix applied",
       "G7 new: Conductor semantic.json stale (needs /lisa:discover refresh)",
       "Ecosystem functionally converged — remaining work is housekeeping"
     ]

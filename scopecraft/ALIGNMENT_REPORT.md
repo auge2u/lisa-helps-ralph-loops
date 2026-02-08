@@ -1,7 +1,7 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-08 (reconcile v3.0.0)
-**Previous reconcile:** 2026-02-06 v2.5.0
+**Generated:** 2026-02-08 (reconcile v3.1.0)
+**Previous reconcile:** 2026-02-08 v3.0.0
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
@@ -13,15 +13,22 @@
 
 | Status | Count | Change from v2.5.0 |
 |--------|-------|---------------------|
-| Aligned | 17 | +1 (A17: bead consumption) |
-| Misaligned | 1 | M5 unchanged (decided, not implemented) |
-| Gaps | 1 | +1 (G7: Conductor semantic.json stale) |
+| Aligned | 17 | unchanged |
+| Misaligned | 0 | -1 (M5 resolved: eco-convoy-NNN applied) |
+| Gaps | 1 | unchanged (G7: Conductor semantic.json stale) |
 
-**Overall assessment:** All 3 convoys complete, all 9 beads done. Convoy-003 (Conductor Ecosystem Integration) delivered checkpoint schema, bead import pipeline, and context exhaustion detection. Q2 (checkpoint schema) resolved. Conductor's semantic.json is now stale — it lists "Context rollover detection" and "Lisa bead/convoy consumption" as "planned" but both are implemented. Ecosystem is functionally converged; remaining work is housekeeping (naming convention, stale docs refresh).
+**Overall assessment:** All 3 convoys complete, all 9 beads done. M5 (convoy naming collision) resolved — ecosystem convoys now use `eco-convoy-NNN` prefix. Only remaining item is G7 (Conductor semantic.json stale). Ecosystem is functionally converged; remaining work is housekeeping only.
 
 ---
 
-## Changes Since v2.5.0
+## Changes Since v3.0.0
+
+| Item | Previous | Current | Impact |
+|------|----------|---------|--------|
+| M5 | decided, not implemented | **RESOLVED** | Convoy files renamed to eco-convoy-NNN |
+| Convoy files | convoy-001/002/003.json | **eco-convoy-001/002/003.json** | No naming collision with project convoys |
+
+### Changes From v2.5.0 → v3.0.0 (for reference)
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
@@ -42,15 +49,14 @@
 
 A1-A16 unchanged. See v2.3.0 for full list.
 
-### A17: Bead/Convoy Consumption Interface (NEW)
-Lisa defines bead format (`.gt/beads/gt-xxxxx.json`) and convoy format (`.gt/convoys/convoy-NNN.json`). Conductor now reads these via `conductor_import_beads` MCP tool and maps them to internal tasks. On completion, `conductor_complete_bead` syncs status back to bead files. The interface agreement between Lisa's bead schema and Conductor's import is verified by shared Zod schemas (`BeadSchema`, `ConvoySchema` in `@conductor/core`).
+### A17: Bead/Convoy Consumption Interface
+Lisa defines bead format (`.gt/beads/gt-xxxxx.json`) and convoy format (`.gt/convoys/eco-convoy-NNN.json` for ecosystem, `convoy-NNN.json` for project-level). Conductor now reads these via `conductor_import_beads` MCP tool and maps them to internal tasks. On completion, `conductor_complete_bead` syncs status back to bead files. The interface agreement between Lisa's bead schema and Conductor's import is verified by shared Zod schemas (`BeadSchema`, `ConvoySchema` in `@conductor/core`).
 
 ---
 
 ## Misalignments
 
-### M5: Convoy Naming Collision (DECIDED — PRIORITY: MEDIUM)
-Ecosystem convoys collide with project convoys. **Decision (SQ8):** Use `eco-convoy-NNN` prefix for ecosystem-level convoys. Implementation pending — not urgent since ecosystem convoys are only in `scopecraft/` docs.
+None. All misalignments resolved.
 
 ---
 
@@ -78,7 +84,8 @@ Conductor's `.gt/memory/semantic.json` (last scan: 2026-02-06T12:00) lists capab
 | M4 | Conductor schema divergence | v2.0.0 |
 | G1-G2, G4-G6 | Various gaps | v1.1.0-v2.1.0 |
 | G3 | No reconcile output templates | v2.5.0 |
-| Q2 | Checkpoint schema undefined | **v3.0.0** |
+| Q2 | Checkpoint schema undefined | v3.0.0 |
+| M5 | Convoy naming collision | **v3.1.0** |
 
 ---
 
@@ -114,7 +121,7 @@ No new steering questions.
 | P0 | ~~convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
 | P1 | Conductor semantic.json refresh (G7) | Conductor | NEW — re-run discover |
 | P1 | Carlos semantic.json refresh (SQ9) | Lisa/Carlos | Batched for later |
-| P2 | eco-convoy-NNN naming implementation (M5/SQ8) | Ecosystem | Decided, not urgent |
-| P2 | Conductor reads v3.0.0 to correct C1/C3 | Conductor | Next pull |
+| P2 | ~~eco-convoy-NNN naming implementation (M5/SQ8)~~ | ~~Ecosystem~~ | **COMPLETE** |
+| P2 | Conductor reads v3.1.0 to correct C1/C3 | Conductor | Next pull |
 
-**State:** 3/3 convoys complete, 9/9 beads done. All steering questions resolved. All open questions resolved. Ecosystem functionally converged.
+**State:** 3/3 convoys complete, 9/9 beads done. 0 misalignments, 1 gap (G7). All steering questions resolved. Ecosystem functionally converged.

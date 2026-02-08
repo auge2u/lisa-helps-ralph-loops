@@ -1,11 +1,11 @@
 {
   "$schema": "convoy-v1",
-  "id": "convoy-002",
+  "id": "eco-convoy-002",
   "name": "Carlos Interface Alignment",
   "description": "Carlos reads Lisa's .gt/ state to skip redundant discovery, and creates gates.yaml following Lisa's schema to resolve M1 misalignment.",
   "beads": ["gt-r6d2k", "gt-cg7ya"],
   "assigned_to": null,
-  "status": "pending",
+  "status": "complete",
   "created": "2026-02-06T19:00:00Z",
   "metadata": {
     "epic": "Carlos Integration",

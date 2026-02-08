@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-08 (reconcile v3.0.0)
+**Generated:** 2026-02-08 (reconcile v3.1.0)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
@@ -122,7 +122,7 @@ All roles aligned. No conflicts.
 |-----------|------|--------|-----------|--------|
 | gates.yaml | v1.1, canonical source | v1.0, Lisa-compatible | v1.1 overlay proposal | **FULL MATCH** |
 | Bead schema | `gt-xxxxx` format | reads beads | **BeadSchema Zod** (imports) | **FULL MATCH** (A17) |
-| Convoy schema | `convoy-NNN` format | N/A | **ConvoySchema Zod** (imports) | **FULL MATCH** (A17) |
+| Convoy schema | `eco-convoy-NNN` (ecosystem) / `convoy-NNN` (project) | N/A | **ConvoySchema Zod** (imports) | **FULL MATCH** (A17) |
 | Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` (different purpose) | OK: complementary |
 | Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
 
@@ -136,7 +136,11 @@ Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct f
 
 ---
 
-## Notable Changes From v2.5.0
+## Notable Changes From v3.0.0
+
+1. **M5 resolved:** Ecosystem convoy files renamed from `convoy-NNN.json` to `eco-convoy-NNN.json`, eliminating naming collision with project-level convoys.
+
+### Changes From v2.5.0 → v3.0.0 (for reference)
 
 1. **convoy-003 COMPLETE:** Conductor Ecosystem Integration — 3 beads done (gt-w5y2c, gt-k3m8n, gt-x9p4w).
 2. **All 9 beads done:** 3/3 convoys complete. No pending work items.
