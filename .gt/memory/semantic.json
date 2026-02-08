@@ -16,7 +16,8 @@
     "primary_dependency": "PyYAML",
     "testing": "pytest (pytest -v)",
     "validation": "validate.py (loads gates.yaml)",
-    "output_format": "JSON (.gt/ state files) + Markdown (scopecraft/)"
+    "output_format": "JSON (.gt/ state files) + Markdown (scopecraft/)",
+    "versioning": "scripts/bump-version.sh (syncs plugin.json + marketplace.json + CHANGELOG.md)"
   },
   "ecosystem_role": {
     "role": "pipeline-and-memory",
@@ -24,7 +25,8 @@
     "reads_from": [
       "target project files (package.json, README.md, docs/, etc.)",
       "carlos/.gt/memory/semantic.json (for reconcile)",
-      "conductor/.gt/memory/semantic.json (for reconcile)"
+      "conductor/.gt/memory/semantic.json (for reconcile)",
+      "~/.lisa/ecosystem.json (project paths for reconcile)"
     ],
     "writes_to": [
       ".gt/research/ (stage 0)",
@@ -33,7 +35,8 @@
       ".gt/beads/ (stage 3)",
       ".gt/convoys/ (stage 3)",
       "scopecraft/.checkpoint.json (reconcile)",
-      "scopecraft/ALIGNMENT_REPORT.md (reconcile)"
+      "scopecraft/ALIGNMENT_REPORT.md (reconcile)",
+      "scopecraft/PERSPECTIVES.md (reconcile)"
     ],
     "does_not_own": [
       "Carlos analysis reports",
@@ -65,9 +68,9 @@
       {"name": "structure", "purpose": "Bead extraction and convoy bundling"},
       {"name": "reconcile", "purpose": "Cross-project ecosystem alignment and drift detection"}
     ],
-    "quality_gates": 22,
-    "gate_stages": ["research", "discover", "plan", "structure"],
-    "gate_source": "gates.yaml (declarative, single source of truth)"
+    "quality_gates": 31,
+    "gate_stages": ["research", "discover", "plan", "structure", "reconcile"],
+    "gate_source": "gates.yaml v1.1 (declarative, single source of truth)"
   },
   "pipeline": {
     "stages": [
@@ -79,12 +82,13 @@
     ],
     "workflows": {
       "migrate": ["discover", "plan", "structure"],
-      "rescue": ["research", "discover", "plan", "structure"]
+      "rescue": ["research", "discover", "plan", "structure"],
+      "ecosystem": ["reconcile"]
     }
   },
   "gastown_concepts": {
     "bead": "Work item with ID gt-xxxxx, acceptance criteria, evidence",
-    "convoy": "Bundle of 3-7 related beads for assignment",
+    "convoy": "Bundle of 3-7 related beads for assignment (eco-convoy-NNN for ecosystem, convoy-NNN for project)",
     "memory": "Semantic (facts), episodic (decisions), procedural (patterns)"
   },
   "personas": [
@@ -116,10 +120,11 @@
     }
   },
   "evidence": {
-    "last_scan": "2026-02-06T18:00:00Z",
+    "last_scan": "2026-02-08T19:00:00Z",
     "files_analyzed": [
       "CLAUDE.md",
       "plugins/lisa/.claude-plugin/plugin.json",
+      ".claude-plugin/marketplace.json",
       "plugins/lisa/gates.yaml",
       "plugins/lisa/hooks/validate.py",
       "plugins/lisa/commands/discover.md",
@@ -129,21 +134,28 @@
       "plugins/lisa/commands/status.md",
       "plugins/lisa/commands/migrate.md",
       "plugins/lisa/commands/rescue.md",
+      "plugins/lisa/commands/reconcile.md",
       "plugins/lisa/agents/archaeologist.md",
       "plugins/lisa/agents/migrator.md",
       "plugins/lisa/skills/discover/SKILL.md",
       "plugins/lisa/skills/plan/SKILL.md",
       "plugins/lisa/skills/research/SKILL.md",
       "plugins/lisa/skills/structure/SKILL.md",
-      "plugins/lisa/commands/reconcile.md",
       "plugins/lisa/skills/reconcile/SKILL.md",
+      "plugins/lisa/skills/reconcile/checkpoint-schema.json",
+      "plugins/lisa/skills/reconcile/templates/ALIGNMENT_REPORT_FORMAT.md",
+      "plugins/lisa/skills/reconcile/templates/PERSPECTIVES_FORMAT.md",
+      "plugins/lisa/skills/reconcile/templates/CHECKPOINT_FORMAT.json",
       "plugins/lisa/skills/plan/templates/VISION_FORMAT.md",
       "plugins/lisa/skills/plan/templates/ROADMAP_FORMAT.md",
       "plugins/lisa/skills/plan/templates/EPICS_FORMAT.md",
       "plugins/lisa/skills/plan/templates/RISK_REGISTER_FORMAT.md",
       "plugins/lisa/skills/plan/templates/METRICS_FORMAT.md",
       "plugins/lisa/skills/plan/templates/OPEN_QUESTIONS_FORMAT.md",
-      "tests/test_validate_quality_gates.py"
-    ]
+      "tests/test_validate_quality_gates.py",
+      "scripts/bump-version.sh"
+    ],
+    "previous_scan": "2026-02-06T18:00:00Z (v0.3.0, 22 gates, pre-convoy-001)",
+    "delta_since_previous": "gates.yaml v1.1 (22→31 gates, +reconcile stage 9 gates), convoy glob fix (*convoy-*.json), reconcile templates + checkpoint schema added, ecosystem workflow added, 8 new commits (convoy-001 through v3.3.0 reconcile)"
   }
 }
