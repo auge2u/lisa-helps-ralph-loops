@@ -1,13 +1,13 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-06T23:30:00Z",
-    "version": "2.5.0",
-    "previous_version": "2.4.0",
+    "timestamp": "2026-02-08T11:50:00Z",
+    "version": "3.0.0",
+    "previous_version": "2.5.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "git remote (both remotes up to date, no new commits)",
-    "trigger": "convoy-001 complete + SQ8/SQ9/SQ10 decided"
+    "data_source": "local filesystem (all 3 projects)",
+    "trigger": "convoy-003 complete + Q2 resolved"
   },
   "projects": {
     "lisa": {
@@ -25,22 +25,14 @@
         "path": "plugins/lisa/gates.yaml",
         "version": "1.1",
         "gates": 31,
-        "stages": 5,
-        "note": "convoy-001 complete: reconcile stage now in gates.yaml with 9 automated gates"
+        "stages": 5
       },
-      "checkpoint_schema": "plugins/lisa/skills/reconcile/checkpoint-schema.json",
-      "templates": "plugins/lisa/skills/reconcile/templates/ (3 files)",
-      "alignment": "aligned",
-      "external_score": {
-        "conductor_cycle_2": 85,
-        "factual_corrections_needed": 4,
-        "note": "C2 partially self-corrected: Lisa3 now has 31 gates across 5 stages (was 22/4 when Conductor claimed 29/5)"
-      }
+      "alignment": "aligned"
     },
     "carlos": {
       "path": "~/github/auge2u/carlos",
       "status": "found",
-      "source": "local filesystem (remote up to date)",
+      "source": "local filesystem",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
@@ -54,49 +46,57 @@
         "stages": 1,
         "schema_compatible": "lisa v1.0"
       },
-      "alignment": "aligned",
-      "local_changes": "uncommitted edits to .gitignore and CLAUDE.md"
+      "alignment": "aligned"
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
       "status": "found",
-      "source": "git remote (no new commits since 04caab3)",
+      "source": "local filesystem (1 new commit: d6b9426)",
       "semantic_json": {
         "exists": true,
         "version": "0.1.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-06T12:00:00Z",
-        "project_status": "alpha"
+        "project_status": "alpha",
+        "stale": true,
+        "stale_reason": "convoy-003 implemented features listed as 'planned' in semantic.json"
       },
       "gates_yaml": {
         "path": "scopecraft/gates.yaml",
         "version": "1.1",
         "type": "ecosystem overlay"
       },
-      "reconcile_cycle": 2,
-      "factual_corrections_pending": ["C1: version", "C2: gate count (partially self-corrected)", "C3: semantic.json path", "C4: Carlos migration (resolved)"],
-      "alignment": "aligned"
+      "convoy_003": {
+        "commit": "d6b9426",
+        "files_changed": 18,
+        "lines_added": 1804,
+        "new_tests": 48,
+        "beads_complete": ["gt-w5y2c", "gt-k3m8n", "gt-x9p4w"]
+      },
+      "alignment": "mostly-aligned",
+      "alignment_note": "Functionally aligned but semantic.json stale (G7)"
     }
   },
   "alignment_summary": {
     "total_projects": 3,
     "found": 3,
-    "aligned": 3,
-    "alignments": 16,
+    "aligned": 2,
+    "mostly_aligned": 1,
+    "divergent": 0,
+    "alignments": 17,
     "misalignments": 1,
-    "gaps": 0,
-    "note": "M5 decided but not yet implemented"
+    "gaps": 1
   },
   "work_structure": {
     "total_beads": 9,
-    "beads_complete": 6,
-    "beads_pending": 3,
+    "beads_complete": 9,
+    "beads_pending": 0,
     "total_convoys": 3,
-    "convoys_complete": 2,
+    "convoys_complete": 3,
     "convoys": [
       {"id": "convoy-001", "name": "Lisa Pipeline Hardening", "status": "complete", "beads_complete": 4},
       {"id": "convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
-      {"id": "convoy-003", "name": "Conductor Ecosystem Integration", "status": "unblocked", "beads_complete": 0}
+      {"id": "convoy-003", "name": "Conductor Ecosystem Integration", "status": "complete", "beads_complete": 3}
     ]
   },
   "misalignments": [
@@ -108,24 +108,42 @@
       "decision": "SQ8: Use eco-convoy-NNN prefix for ecosystem-level convoys"
     }
   ],
+  "gaps": [
+    {
+      "id": "G7",
+      "severity": "low",
+      "description": "Conductor semantic.json stale — lists bead consumption and context rollover as 'planned' but both implemented",
+      "affects": ["conductor"],
+      "resolution": "Re-run /lisa:discover on Conductor repo"
+    }
+  ],
+  "resolved": [
+    {"id": "M1", "resolved_in": "v2.3.0"},
+    {"id": "M2", "resolved_in": "v1.1.0"},
+    {"id": "M3", "resolved_in": "v2.0.0"},
+    {"id": "M4", "resolved_in": "v2.0.0"},
+    {"id": "G1", "resolved_in": "v1.1.0"},
+    {"id": "G2", "resolved_in": "v1.1.0"},
+    {"id": "G3", "resolved_in": "v2.5.0"},
+    {"id": "G4", "resolved_in": "v2.1.0"},
+    {"id": "G5", "resolved_in": "v2.1.0"},
+    {"id": "G6", "resolved_in": "v2.1.0"},
+    {"id": "Q2", "resolved_in": "v3.0.0", "description": "Checkpoint schema — Hybrid SQLite + Bead File Updates"}
+  ],
   "decisions": {
     "resolved_questions": [
       {"id": "SQ8", "question": "Convoy naming convention", "decision": "eco-convoy-NNN prefix", "resolved": "v2.5.0"},
       {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "decision": "Batch later, not urgent", "resolved": "v2.5.0"},
       {"id": "SQ10", "question": "Conductor bead consumption timing", "decision": "Phase 1 (recommend)", "resolved": "v2.5.0"}
     ],
-    "conductor_questions_answered": [
-      {"id": "sq-c2-01", "answer": "Document schema tolerance in SKILL.md", "implemented": "convoy-001 (gt-e4q8b)"},
-      {"id": "sq-c2-02", "answer": "Lisa3 canonical — now implemented with 9 reconcile gates in gates.yaml v1.1", "implemented": "convoy-001 (gt-e4q8b)"},
-      {"id": "sq-c2-03", "answer": "Already done (Carlos commit 7adbda0)"}
-    ]
+    "open_questions": []
   },
   "next_reconcile_triggers": [
-    "Conductor pulls v2.5.0 and corrects Lisa3 data sources (C1/C3 still pending)",
-    "Carlos semantic.json refreshed (SQ9 — batched for later)",
-    "eco-convoy-NNN naming applied to convoy files (M5 implementation)",
-    "Any convoy-003 bead starts",
-    "Any plugin version ship"
+    "Conductor semantic.json refreshed (G7)",
+    "Carlos semantic.json refreshed (SQ9)",
+    "eco-convoy-NNN naming applied (M5 implementation)",
+    "Any plugin version ship",
+    "Conductor pulls v3.0.0 reconcile outputs"
   ],
   "context_recovery": {
     "read_order": [
@@ -137,14 +155,15 @@
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "convoy-001 COMPLETE: gates.yaml v1.1 with 31 gates, 5 stages, formal checkpoint schema, templates",
-      "convoy-002 COMPLETE: Carlos gates.yaml + validate.py integration",
-      "convoy-003 UNBLOCKED: Conductor ecosystem integration (3 beads pending)",
-      "All steering questions decided: SQ8 (eco-convoy-NNN), SQ9 (batch later), SQ10 (Phase 1)",
-      "M5 decided but not implemented: convoy naming collision → eco-convoy-NNN prefix",
-      "Conductor Cycle 2 factual corrections: C1 (version) and C3 (semantic.json path) still pending",
-      "sq-c2-01 and sq-c2-02 now implemented via convoy-001 (schema tolerance + reconcile gates)",
-      "OQ-2 refined: Lisa3 is plugin-first, validate.py standalone for CI"
+      "ALL 3 CONVOYS COMPLETE: convoy-001 (Lisa), convoy-002 (Carlos), convoy-003 (Conductor)",
+      "ALL 9 BEADS DONE: no pending work items",
+      "convoy-003 delivered: checkpoint schema, bead import pipeline, context exhaustion detection",
+      "Q2 resolved: Hybrid SQLite + Bead File Updates for context rollover",
+      "Conductor now has 26 MCP tools (+4), 10 detection types (+1), 8 action types (+1)",
+      "All steering questions decided: SQ8-SQ10",
+      "M5 decided but not implemented: convoy naming collision -> eco-convoy-NNN",
+      "G7 new: Conductor semantic.json stale (needs /lisa:discover refresh)",
+      "Ecosystem functionally converged — remaining work is housekeeping"
     ]
   }
 }

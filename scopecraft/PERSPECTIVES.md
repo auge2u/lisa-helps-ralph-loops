@@ -2,8 +2,8 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-06 (reconcile v2.5.0)
-**Data source:** Git remote (both remotes up to date)
+**Generated:** 2026-02-08 (reconcile v3.0.0)
+**Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
 
@@ -13,7 +13,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 | Field | Lisa | Carlos | Conductor |
 |-------|------|--------|-----------|
-| **Status** | Found (local) | Found (local) | Found (pulled) |
+| **Status** | Found (local) | Found (local) | Found (local) |
 | **Version** | 0.3.0 | 1.2.0 | 0.1.0 |
 | **Stage** | alpha | beta | alpha |
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
@@ -22,24 +22,8 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Last scan** | 2026-02-06T18:00 | 2026-02-06T19:00 | 2026-02-06T12:00 |
 | **License** | MIT | MIT | MIT |
 | **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
-| **Own reconcile** | Yes (this report, v2.5.0) | Yes (project-level) | Yes (Cycle 2) |
-
----
-
-## Conductor Cycle 2 View vs Lisa Reality
-
-Conductor now includes Lisa3 in its reconcile but reads from the marketplace-installed copy rather than the repo. This creates factual discrepancies:
-
-| Field | Conductor Sees | Lisa3 Actual | Source Mismatch |
-|-------|---------------|-------------|-----------------|
-| Version | 1.1.0 | **0.3.0** | Marketplace copy vs repo |
-| Gates | 29 across 5 stages | **22 across 4 stages** | Reconcile not yet in gates.yaml |
-| gates.yaml version | v1.1 | **v1.0** | Different file |
-| semantic.json | "Does not exist" | **Exists** (since v2.1.0) | Wrong path |
-| Carlos gates.yaml | "Hardcoded, should migrate" | **Already migrated** | Stale Carlos view |
-| Carlos tests | 401 | **435** | Pre-convoy-002 data |
-
-**Resolution path:** Conductor needs to read from `~/github/auge2u/lisa3` (repo) not `~/.claude/plugins/marketplaces/lisa3/` (installed plugin).
+| **Own reconcile** | Yes (this report, v3.0.0) | Yes (project-level) | Yes (Cycle 2) |
+| **semantic.json fresh?** | Yes | Yes | **No** (stale since convoy-003) |
 
 ---
 
@@ -62,7 +46,11 @@ Conductor now includes Lisa3 in its reconcile but reads from the marketplace-ins
 | Checkpoint schema | Formal JSON Schema (`checkpoint-schema.json`) |
 | Templates | 3 reconcile output templates |
 
-**Changed in v2.5.0:** convoy-001 complete — gates.yaml v1.0→v1.1, reconcile gates automated, templates + schema added
+**Reads from:** target project files, carlos/.gt/memory/semantic.json, conductor/.gt/memory/semantic.json
+**Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, scopecraft/.checkpoint.json
+**Does not own:** Carlos analysis reports, Conductor state
+
+**No changes since v2.5.0.**
 
 ---
 
@@ -80,7 +68,11 @@ Conductor now includes Lisa3 in its reconcile but reads from the marketplace-ins
 | Quality gates | gates.yaml v1.0 (9 gates) + validate_quality_gates.py |
 | Discovery cache | 24h TTL from .gt/memory/semantic.json |
 
-**Key:** Carlos has local uncommitted edits to `.gitignore` and `CLAUDE.md` but no new commits since v2.3.0.
+**Reads from:** .gt/memory/semantic.json, .gt/beads/*.json, scopecraft/*.md
+**Writes to:** scopecraft/*.md, quality gate results, analysis reports
+**Does not own:** .gt/beads/, .gt/convoys/, conductor state
+
+**No changes since v2.5.0.**
 
 ---
 
@@ -88,33 +80,39 @@ Conductor now includes Lisa3 in its reconcile but reads from the marketplace-ins
 
 **Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json`
 
-| Attribute | Value | Change from v2.3.0 |
-|-----------|-------|---------------------|
-| Name | conductor | — |
-| Status | alpha | — |
-| Version | 0.1.0 | — |
-| **Reconcile cycle** | **Cycle 2** | was Cycle 1 |
-| **Projects scanned** | **3** (Conductor, Carlos, Lisa3) | was 2 |
-| **New steering questions** | **3** (checkpoint, gates, Carlos migration) | was 0 |
+| Attribute | Value | Actual (post convoy-003) |
+|-----------|-------|--------------------------|
+| Name | conductor | conductor |
+| Status | alpha | alpha |
+| Version | 0.1.0 | 0.1.0 |
+| MCP tools | 22 (listed) | **26** (+4 new) |
+| Detection types | 9 | **10** (+context_exhaustion) |
+| Autonomous actions | 7 | **8** (+save_checkpoint_and_pause) |
+| Bead consumption | "planned" | **implemented** (gt-k3m8n) |
+| Context rollover | "planned" | **implemented** (gt-x9p4w) |
+| Checkpoint schema | not mentioned | **implemented** (gt-w5y2c) |
 
-**Key changes since v2.3.0:**
-- Cycle 2 reconcile includes Lisa3 for the first time
-- OQ-2 refined from "Who builds Lisa3?" to "Should Lisa3 be standalone?"
-- OQ-4 updated with Lisa3 gates.yaml analysis
-- 3 new steering questions raised (sq-c2-01 through sq-c2-03)
-- Carlos alignment scored at 95% (up from 72%)
+**Reads from:** .gt/beads/*.json, .gt/convoys/*.json, .gt/memory/semantic.json, scopecraft/
+**Writes to:** Task queue state, file locks, cost events, agent lifecycle, escalation queue
+**Does not own:** .gt/ schema, scopecraft/ format, quality gate definitions, semantic memory generation
+
+**Key change:** convoy-003 commit `d6b9426` adds 1804 lines across 18 files. Semantic.json needs refresh to reflect new capabilities.
 
 ---
 
 ## Ecosystem Role Comparison
 
-Unchanged from v2.3.0. All roles aligned. No conflicts.
+All roles aligned. No conflicts.
 
 | Responsibility | Lisa | Carlos | Conductor | Conflict? |
 |----------------|------|--------|-----------|-----------|
 | Pipeline ownership | Yes | No | No | None |
-| Quality gate definition | Yes (gates.yaml v1.0) | Yes (gates.yaml v1.0) | No (overlay proposal) | **None (was M1, RESOLVED)** |
+| Quality gate definition | Yes (gates.yaml v1.1) | Yes (gates.yaml v1.0) | No (overlay proposal) | None (M1 RESOLVED) |
 | Reconciliation | Yes (ecosystem root) | Yes (project-level) | Yes (ecosystem-level) | OK: complementary |
+| Bead/convoy creation | Yes | No | No | None |
+| Bead consumption | No | No | **Yes** (NEW) | None (A17) |
+| Context rollover | No | No | **Yes** (NEW) | None |
+| Specialist analysis | No | Yes | No | None |
 
 ---
 
@@ -122,32 +120,30 @@ Unchanged from v2.3.0. All roles aligned. No conflicts.
 
 | Interface | Lisa | Carlos | Conductor | Match? |
 |-----------|------|--------|-----------|--------|
-| gates.yaml | v1.0, canonical source | v1.0, Lisa-compatible | v1.1 overlay proposal | **FULL MATCH** |
-| Checkpoint schema | `reconcile-checkpoint-v1` | N/A | Different format | **GAP** (cosmetic — no cross-read needed) |
-| Reconcile gates | Manual checklist (gt-e4q8b pending) | N/A | 6-gate proposal in overlay | **GAP** (premature — Lisa3 gates not implemented yet) |
+| gates.yaml | v1.1, canonical source | v1.0, Lisa-compatible | v1.1 overlay proposal | **FULL MATCH** |
+| Bead schema | `gt-xxxxx` format | reads beads | **BeadSchema Zod** (imports) | **FULL MATCH** (A17) |
+| Convoy schema | `convoy-NNN` format | N/A | **ConvoySchema Zod** (imports) | **FULL MATCH** (A17) |
+| Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` (different purpose) | OK: complementary |
+| Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
 
 ---
 
-## Cross-Project Reconcile Comparison
+## Schema Divergence Note
 
-| Finding | Lisa (v2.4.0) | Carlos (own) | Conductor (Cycle 2) |
-|---------|--------------|-------------|---------------------|
-| M1 resolved | Yes | Yes | **Doesn't know** (stale Carlos view) |
-| Lisa3 alignment | Self: has semantic.json, 22 gates | N/A | 85% (factual errors) |
-| Carlos alignment | High (gates.yaml done) | M3: semantic.json stale | 95% (doesn't know about gates.yaml) |
-| Checkpoint schema | Our format is canonical | N/A | Flags as mismatch (valid finding) |
+All three projects now use `semantic-memory-v1` schema. No divergence.
 
-**Convergence improving.** Conductor's Cycle 2 is a big step forward (includes Lisa3), but needs to correct data sources. Next Conductor pull of this v2.4.0 should resolve most discrepancies.
+Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct from Lisa's `reconcile-checkpoint-v1` (for ecosystem state recovery). These serve different purposes and do not need to converge.
 
 ---
 
-## Notable Changes From v2.4.0
+## Notable Changes From v2.5.0
 
-1. **convoy-001 COMPLETE:** Lisa Pipeline Hardening — 4 beads done (gate fix, templates, schema, reconcile gates).
-2. **gates.yaml v1.1:** 22→31 gates, 4→5 stages, ecosystem workflow added.
-3. **Reconcile gates automated:** 9 gates replace manual checklist. `validate.py --stage reconcile` now works.
-4. **Formal checkpoint schema:** JSON Schema at `checkpoint-schema.json`, validated against existing checkpoint.
-5. **All steering questions decided:** SQ8 (eco-convoy-NNN), SQ9 (batch later), SQ10 (Phase 1).
-6. **sq-c2-01 + sq-c2-02 implemented:** Schema tolerance in SKILL.md, reconcile gates canonical in gates.yaml.
-7. **G3 resolved:** Reconcile output templates created (3 files).
-8. **C2 partially self-corrected:** Lisa3 now has 31 gates/5 stages (Conductor claimed 29/5, was actually 22/4).
+1. **convoy-003 COMPLETE:** Conductor Ecosystem Integration — 3 beads done (gt-w5y2c, gt-k3m8n, gt-x9p4w).
+2. **All 9 beads done:** 3/3 convoys complete. No pending work items.
+3. **Q2 resolved:** Checkpoint schema — Hybrid SQLite + Bead File Updates.
+4. **4 new MCP tools:** conductor_checkpoint, conductor_resume_from_checkpoint, conductor_import_beads, conductor_complete_bead.
+5. **Enhanced heartbeat:** Now accepts tokenCount, tokenLimit, currentStage for context exhaustion warning.
+6. **Context exhaustion detection:** New observer pattern + decision rule + checkpoint-and-pause action.
+7. **Bead import pipeline:** Conductor reads .gt/beads/ and .gt/convoys/, maps to internal tasks, syncs status back.
+8. **48 new tests:** checkpoint-handler (5), context-exhaustion-detector (11), rules (2), sqlite-checkpoints (18), plus existing tests verified.
+9. **G7 identified:** Conductor semantic.json stale — needs /lisa:discover refresh.

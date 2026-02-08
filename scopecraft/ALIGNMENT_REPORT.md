@@ -1,77 +1,70 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-06 (reconcile v2.5.0)
-**Previous reconcile:** 2026-02-06 v2.4.0
+**Generated:** 2026-02-08 (reconcile v3.0.0)
+**Previous reconcile:** 2026-02-06 v2.5.0
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
-**Data source:** Git remote (both remotes up to date, no new commits)
-**Projects:** Lisa (local), Carlos (local, remote up to date), Conductor (no changes since 04caab3)
+**Data source:** Local filesystem (all 3 projects)
+**Projects:** Lisa (local), Carlos (local), Conductor (local, 1 new commit)
 
 ---
 
 ## Summary
 
-| Status | Count | Change from v2.4.0 |
+| Status | Count | Change from v2.5.0 |
 |--------|-------|---------------------|
-| Aligned | 16 | -- |
-| Misaligned | 1 | M5 decided (was needs-decision) |
-| Gaps | 0 | G3 resolved |
+| Aligned | 17 | +1 (A17: bead consumption) |
+| Misaligned | 1 | M5 unchanged (decided, not implemented) |
+| Gaps | 1 | +1 (G7: Conductor semantic.json stale) |
 
-**Overall assessment:** convoy-001 (Lisa Pipeline Hardening) complete. gates.yaml upgraded to v1.1 with 31 gates across 5 stages including automated reconcile gates. All 3 steering questions (SQ8-SQ10) decided. Conductor's sq-c2-01 (schema tolerance) and sq-c2-02 (reconcile gates canonical) are now implemented. 2 of 3 convoys complete, 6 of 9 beads done.
+**Overall assessment:** All 3 convoys complete, all 9 beads done. Convoy-003 (Conductor Ecosystem Integration) delivered checkpoint schema, bead import pipeline, and context exhaustion detection. Q2 (checkpoint schema) resolved. Conductor's semantic.json is now stale — it lists "Context rollover detection" and "Lisa bead/convoy consumption" as "planned" but both are implemented. Ecosystem is functionally converged; remaining work is housekeeping (naming convention, stale docs refresh).
 
 ---
 
-## Changes Since v2.4.0
+## Changes Since v2.5.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| convoy-001 | pending | **COMPLETE** | 4 beads done (gt-n7h3f, gt-t2v5j, gt-a1s6m, gt-e4q8b) |
-| gates.yaml | v1.0, 22 gates, 4 stages | **v1.1, 31 gates, 5 stages** | Reconcile stage automated, ecosystem workflow added |
-| Plan gate | `expect: 6` (failing) | `min: 6` (passing) | Tolerates reconcile outputs in scopecraft/ |
-| Reconcile templates | none | **3 files** in skills/reconcile/templates/ | G3 resolved |
-| Checkpoint schema | informal (in SKILL.md) | **Formal JSON Schema** (checkpoint-schema.json) | Validated against existing checkpoint |
-| SKILL.md | Manual checklist | **Gate table + schema tolerance section** | sq-c2-01 implemented |
-| SQ8 | needs-decision | **DECIDED** (eco-convoy-NNN) | M5 resolution path clear |
-| SQ9 | needs-decision | **DECIDED** (batch later) | Not urgent |
-| SQ10 | needs-decision | **DECIDED** (Phase 1) | Conductor OQ-1 answered |
-| Factual correction C2 | 22 gates/4 stages vs Conductor's 29/5 | **31 gates/5 stages** | Partially self-corrected — Lisa3 now closer to Conductor's claim |
+| convoy-003 | UNBLOCKED (0/3 beads) | **COMPLETE** (3/3 beads) | All ecosystem integration implemented |
+| gt-w5y2c | pending | **COMPLETE** | Checkpoint schema: Zod types + SQLite table + 2 MCP tools |
+| gt-k3m8n | pending | **COMPLETE** | Bead import: 3 SQLite methods + 2 MCP tools + CLI command |
+| gt-x9p4w | pending | **COMPLETE** | Context rollover: exhaustion detector + decision rules + checkpoint handler |
+| Q2 | blocking | **RESOLVED** | Hybrid SQLite + Bead File Updates — implemented in gt-w5y2c |
+| Conductor capabilities | 22 MCP tools | **26 MCP tools** | +conductor_checkpoint, +conductor_resume_from_checkpoint, +conductor_import_beads, +conductor_complete_bead |
+| Conductor heartbeat | basic (agentId, status) | **Enhanced** (+ tokenCount, tokenLimit, currentStage) | Enables context exhaustion detection |
+| Observer detection | 9 detection types | **10 detection types** | +context_exhaustion |
+| Observer actions | 7 action types | **8 action types** | +save_checkpoint_and_pause |
+| Conductor tests | existing only | **+48 new tests** | 4 new test files across observer + state packages |
 
 ---
 
-## Conductor Cycle 2 — Status Update
-
-v2.4.0 documented Conductor's Cycle 2 findings in detail (see prior version for full context). Here's what changed in v2.5.0:
-
-| Conductor Finding | v2.4.0 Status | v2.5.0 Status |
-|-------------------|---------------|---------------|
-| sq-c2-01 (checkpoint schema) | Responded: document tolerance | **IMPLEMENTED** — SKILL.md schema tolerance section added |
-| sq-c2-02 (merge gate definitions) | Responded: Lisa3 canonical | **IMPLEMENTED** — 9 reconcile gates in gates.yaml v1.1 |
-| sq-c2-03 (Carlos migration) | Already done | Unchanged |
-| C1 (Lisa3 version 1.1.0) | Corrected to 0.3.0 | Unchanged (still 0.3.0) |
-| C2 (29 gates/5 stages) | Corrected to 22/4 | **Partially self-corrected**: now 31/5 (closer to Conductor's 29/5) |
-| C3 (no semantic.json) | Corrected: exists | Unchanged |
-| C4 (Carlos should migrate) | Corrected: already done | Unchanged |
-
-**Remaining corrections for Conductor:** C1 (version) and C3 (semantic.json path) still need Conductor to read from repo not marketplace.
-
----
-
-## Alignments (Unchanged)
+## Alignments
 
 A1-A16 unchanged. See v2.3.0 for full list.
+
+### A17: Bead/Convoy Consumption Interface (NEW)
+Lisa defines bead format (`.gt/beads/gt-xxxxx.json`) and convoy format (`.gt/convoys/convoy-NNN.json`). Conductor now reads these via `conductor_import_beads` MCP tool and maps them to internal tasks. On completion, `conductor_complete_bead` syncs status back to bead files. The interface agreement between Lisa's bead schema and Conductor's import is verified by shared Zod schemas (`BeadSchema`, `ConvoySchema` in `@conductor/core`).
 
 ---
 
 ## Misalignments
 
 ### M5: Convoy Naming Collision (DECIDED — PRIORITY: MEDIUM)
-Ecosystem convoys collide with project convoys. **Decision (SQ8):** Use `eco-convoy-NNN` prefix for ecosystem-level convoys. Implementation pending.
+Ecosystem convoys collide with project convoys. **Decision (SQ8):** Use `eco-convoy-NNN` prefix for ecosystem-level convoys. Implementation pending — not urgent since ecosystem convoys are only in `scopecraft/` docs.
 
 ---
 
 ## Gaps
 
-None. G3 (reconcile output templates) resolved by gt-t2v5j.
+### G7: Conductor semantic.json Stale (NEW — PRIORITY: LOW)
+Conductor's `.gt/memory/semantic.json` (last scan: 2026-02-06T12:00) lists capabilities and roadmap status that are now outdated:
+- `roadmap_status.planned` includes "Lisa bead/convoy consumption" — now **implemented** (gt-k3m8n)
+- `roadmap_status.planned` includes "Context rollover detection and handoff" — now **implemented** (gt-x9p4w)
+- `capabilities.observer_agent.detection_types` missing "context_exhaustion"
+- `capabilities.observer_agent.autonomous_actions` missing "save_checkpoint_and_pause"
+- `capabilities.mcp_tools` missing checkpoint and bead tools
+
+**Resolution:** Re-run `/lisa:discover` on Conductor repo to refresh semantic.json. Low priority — functional alignment is correct, only the self-report doc is stale.
 
 ---
 
@@ -84,7 +77,8 @@ None. G3 (reconcile output templates) resolved by gt-t2v5j.
 | M3 | Reconcile not a pipeline stage | v2.0.0 |
 | M4 | Conductor schema divergence | v2.0.0 |
 | G1-G2, G4-G6 | Various gaps | v1.1.0-v2.1.0 |
-| G3 | No reconcile output templates | **v2.5.0** |
+| G3 | No reconcile output templates | v2.5.0 |
+| Q2 | Checkpoint schema undefined | **v3.0.0** |
 
 ---
 
@@ -95,17 +89,19 @@ None. G3 (reconcile output templates) resolved by gt-t2v5j.
 | # | Question | Decision | Resolved In |
 |---|----------|----------|-------------|
 | SQ1-SQ7 | Various | Various | v2.0.0-v2.2.0 |
-| SQ8 | Convoy naming convention | eco-convoy-NNN prefix | **v2.5.0** |
-| SQ9 | Carlos semantic.json refresh timing | Batch later, not urgent | **v2.5.0** |
-| SQ10 | Conductor bead consumption timing | Recommend Phase 1 | **v2.5.0** |
+| SQ8 | Convoy naming convention | eco-convoy-NNN prefix | v2.5.0 |
+| SQ9 | Carlos semantic.json refresh timing | Batch later, not urgent | v2.5.0 |
+| SQ10 | Conductor bead consumption timing | Recommend Phase 1 | v2.5.0 |
 
-### Conductor Cycle 2 Questions (Answered + Implemented)
+### Conductor Cycle 2 Questions (All Implemented)
 
 | # | Question | Response | Implementation |
 |---|----------|----------|----------------|
-| sq-c2-01 | Checkpoint schema alignment? | Document schema tolerance | **Done** (SKILL.md updated) |
-| sq-c2-02 | Merge reconcile gate definitions? | Lisa3 canonical | **Done** (9 gates in gates.yaml v1.1) |
-| sq-c2-03 | Carlos gates.yaml migration? | Already done | N/A (was already complete) |
+| sq-c2-01 | Checkpoint schema alignment? | Document schema tolerance | Done (SKILL.md updated) |
+| sq-c2-02 | Merge reconcile gate definitions? | Lisa3 canonical | Done (9 gates in gates.yaml v1.1) |
+| sq-c2-03 | Carlos gates.yaml migration? | Already done | N/A |
+
+No new steering questions.
 
 ---
 
@@ -115,9 +111,10 @@ None. G3 (reconcile output templates) resolved by gt-t2v5j.
 |----------|--------|-------|--------|
 | P0 | ~~convoy-001: Lisa Pipeline Hardening~~ | ~~Lisa~~ | **COMPLETE** |
 | P0 | ~~convoy-002: Carlos Interface Alignment~~ | ~~Carlos~~ | **COMPLETE** |
-| P1 | convoy-003: Conductor Ecosystem Integration | Conductor | UNBLOCKED |
+| P0 | ~~convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
+| P1 | Conductor semantic.json refresh (G7) | Conductor | NEW — re-run discover |
 | P1 | Carlos semantic.json refresh (SQ9) | Lisa/Carlos | Batched for later |
 | P2 | eco-convoy-NNN naming implementation (M5/SQ8) | Ecosystem | Decided, not urgent |
-| P2 | Conductor reads v2.5.0 to correct C1/C3 | Conductor | Next pull |
+| P2 | Conductor reads v3.0.0 to correct C1/C3 | Conductor | Next pull |
 
-**State:** 2/3 convoys complete, 6/9 beads done. All steering questions resolved. Ecosystem converging.
+**State:** 3/3 convoys complete, 9/9 beads done. All steering questions resolved. All open questions resolved. Ecosystem functionally converged.
