@@ -2,12 +2,12 @@
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
     "timestamp": "2026-02-08T21:00:00Z",
-    "version": "3.3.0",
-    "previous_version": "3.2.0",
+    "version": "3.3.1",
+    "previous_version": "3.3.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Conductor semantic.json refreshed (G7 resolved)"
+    "trigger": "Lisa semantic.json refreshed (gates 22→31, +reconcile stage, 32 evidence files)"
   },
   "projects": {
     "lisa": {
@@ -18,8 +18,8 @@
         "exists": true,
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
-        "last_scan": "2026-02-06T18:00:00Z",
-        "unchanged_since": "v2.1.0"
+        "last_scan": "2026-02-08T19:00:00Z",
+        "refreshed_in": "v3.3.1"
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
@@ -148,8 +148,7 @@
   "next_reconcile_triggers": [
     "Conductor answers cq-01, cq-02, cq-03",
     "Carlos convoy-007 bead completion (gt-eco01 or gt-eco03)",
-    "Any plugin version ship",
-    "Lisa3 semantic.json created (currently missing)"
+    "Any plugin version ship"
   ],
   "context_recovery": {
     "read_order": [
@@ -170,7 +169,8 @@
       "M5 RESOLVED: convoy naming collision → eco-convoy-NNN prefix applied",
       "G7 RESOLVED: Conductor semantic.json refreshed (2026-02-08T14:00), MCP tools corrected 22→19",
       "3 Carlos→Conductor questions pending: cq-01 (MCP format), cq-02 (context budget confirmation), cq-03 (model routing)",
-      "ALL 3 semantic.json files fresh — 0 misalignments, 0 gaps",
+      "ALL 3 semantic.json files fresh — Lisa 2026-02-08T19:00, Carlos 2026-02-08T12:00, Conductor 2026-02-08T14:00",
+      "0 misalignments, 0 gaps",
       "Ecosystem fully converged — remaining work is Carlos→Conductor integration (steps 6, 8)"
     ]
   }
