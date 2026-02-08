@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-08 (reconcile v3.1.0)
+**Generated:** 2026-02-08 (reconcile v3.2.0)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
@@ -19,11 +19,11 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
 | **Language** | Python | Python | TypeScript |
 | **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| **Last scan** | 2026-02-06T18:00 | 2026-02-06T19:00 | 2026-02-06T12:00 |
+| **Last scan** | 2026-02-06T18:00 | **2026-02-08T12:00** | 2026-02-06T12:00 |
 | **License** | MIT | MIT | MIT |
 | **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
-| **Own reconcile** | Yes (this report, v3.0.0) | Yes (project-level) | Yes (Cycle 2) |
-| **semantic.json fresh?** | Yes | Yes | **No** (stale since convoy-003) |
+| **Own reconcile** | Yes (this report, v3.2.0) | Yes (project-level, Cycle 3) | Yes (Cycle 3) |
+| **semantic.json fresh?** | Yes | **Yes** (refreshed 2026-02-08) | **No** (stale since convoy-003) |
 
 ---
 
@@ -50,7 +50,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 **Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, scopecraft/.checkpoint.json
 **Does not own:** Carlos analysis reports, Conductor state
 
-**No changes since v2.5.0.**
+**No changes since v3.1.0.**
 
 ---
 
@@ -58,21 +58,33 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 **Source:** `~/github/auge2u/carlos/.gt/memory/semantic.json`
 
-| Attribute | Value |
-|-----------|-------|
-| Name | carlos |
-| Role | specialist-fixer |
-| Version | 1.2.0 |
-| LOC | 11,200 |
-| Tests | 435 + 95 security |
-| Quality gates | gates.yaml v1.0 (9 gates) + validate_quality_gates.py |
-| Discovery cache | 24h TTL from .gt/memory/semantic.json |
+| Attribute | Value | Change from v3.1.0 |
+|-----------|-------|---------------------|
+| Name | carlos | — |
+| Role | specialist-fixer | — |
+| Version | 1.2.0 | — |
+| LOC | **11,022** | Was 11,200 (-178) |
+| Tests | 435 + 95 security | — |
+| Quality gates | gates.yaml v1.0 (9 gates) | — |
+| Discovery cache | 24h TTL from .gt/memory/semantic.json | — |
+| Last scan | **2026-02-08T12:00** | Was 2026-02-06T19:00 |
+| Agent context tokens | **~1,500** | Was ~2,521 (41% reduction) |
+| Convoy-007 | **60% (3/5 beads)** | Was 40% (2/5) |
+| Commits | **61** | Was ~54 |
 
 **Reads from:** .gt/memory/semantic.json, .gt/beads/*.json, scopecraft/*.md
 **Writes to:** scopecraft/*.md, quality gate results, analysis reports
 **Does not own:** .gt/beads/, .gt/convoys/, conductor state
 
-**No changes since v2.5.0.**
+### Carlos Convoy-007 (Project-Level)
+
+| Bead | Title | Status | Step |
+|------|-------|--------|------|
+| gt-cg7ya | gates.yaml in Lisa-compatible schema | Complete | 4 |
+| gt-r6d2k | Discovery cache via .gt/ freshness | Complete | 5 |
+| gt-eco02 | **Agent context footprint -41%** | **Complete** | **7** |
+| gt-eco01 | MCP agent registration | Planned (blocked: cq-01) | 6 |
+| gt-eco03 | Ecosystem model router | Planned (blocked: cq-03) | 8 |
 
 ---
 
@@ -96,7 +108,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 **Writes to:** Task queue state, file locks, cost events, agent lifecycle, escalation queue
 **Does not own:** .gt/ schema, scopecraft/ format, quality gate definitions, semantic memory generation
 
-**Key change:** convoy-003 commit `d6b9426` adds 1804 lines across 18 files. Semantic.json needs refresh to reflect new capabilities.
+**Conductor checkpoint updated to v3.2.0/Cycle 3** (commit 412a4f5): incorporates Carlos gt-eco02, alignment 96%, convoy-007 at 60%. Semantic.json still stale (G7).
 
 ---
 
@@ -110,9 +122,10 @@ All roles aligned. No conflicts.
 | Quality gate definition | Yes (gates.yaml v1.1) | Yes (gates.yaml v1.0) | No (overlay proposal) | None (M1 RESOLVED) |
 | Reconciliation | Yes (ecosystem root) | Yes (project-level) | Yes (ecosystem-level) | OK: complementary |
 | Bead/convoy creation | Yes | No | No | None |
-| Bead consumption | No | No | **Yes** (NEW) | None (A17) |
-| Context rollover | No | No | **Yes** (NEW) | None |
+| Bead consumption | No | No | **Yes** | None (A17) |
+| Context rollover | No | No | **Yes** | None |
 | Specialist analysis | No | Yes | No | None |
+| Agent context budget | No | **Yes** (41% reduced) | TBD (cq-02) | Pending confirmation |
 
 ---
 
@@ -125,29 +138,22 @@ All roles aligned. No conflicts.
 | Convoy schema | `eco-convoy-NNN` (ecosystem) / `convoy-NNN` (project) | N/A | **ConvoySchema Zod** (imports) | **FULL MATCH** (A17) |
 | Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` (different purpose) | OK: complementary |
 | Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
+| Agent context | N/A | **~1,500 tokens (3 agents)** | TBD (cq-02) | **Pending** |
 
 ---
 
 ## Schema Divergence Note
 
-All three projects now use `semantic-memory-v1` schema. No divergence.
+All three projects use `semantic-memory-v1` schema. No divergence.
 
 Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct from Lisa's `reconcile-checkpoint-v1` (for ecosystem state recovery). These serve different purposes and do not need to converge.
 
 ---
 
-## Notable Changes From v3.0.0
+## Notable Changes From v3.1.0
 
-1. **M5 resolved:** Ecosystem convoy files renamed from `convoy-NNN.json` to `eco-convoy-NNN.json`, eliminating naming collision with project-level convoys.
-
-### Changes From v2.5.0 → v3.0.0 (for reference)
-
-1. **convoy-003 COMPLETE:** Conductor Ecosystem Integration — 3 beads done (gt-w5y2c, gt-k3m8n, gt-x9p4w).
-2. **All 9 beads done:** 3/3 convoys complete. No pending work items.
-3. **Q2 resolved:** Checkpoint schema — Hybrid SQLite + Bead File Updates.
-4. **4 new MCP tools:** conductor_checkpoint, conductor_resume_from_checkpoint, conductor_import_beads, conductor_complete_bead.
-5. **Enhanced heartbeat:** Now accepts tokenCount, tokenLimit, currentStage for context exhaustion warning.
-6. **Context exhaustion detection:** New observer pattern + decision rule + checkpoint-and-pause action.
-7. **Bead import pipeline:** Conductor reads .gt/beads/ and .gt/convoys/, maps to internal tasks, syncs status back.
-8. **48 new tests:** checkpoint-handler (5), context-exhaustion-detector (11), rules (2), sqlite-checkpoints (18), plus existing tests verified.
-9. **G7 identified:** Conductor semantic.json stale — needs /lisa:discover refresh.
+1. **Carlos gt-eco02 complete:** Agent persona context footprint reduced 41% (287→119 lines, ~2,521→~1,500 tokens). Ecosystem step 7 done.
+2. **Carlos scan refreshed:** 2026-02-08T12:00, LOC corrected to 11,022.
+3. **Conductor checkpoint updated:** v3.2.0/Cycle 3, incorporates Carlos gt-eco02 and alignment 96%.
+4. **A18 added:** Agent context budget alignment confirmed.
+5. **Carlos→Conductor questions surfaced:** cq-01 (MCP format), cq-02 (context budget confirmation), cq-03 (model routing).
