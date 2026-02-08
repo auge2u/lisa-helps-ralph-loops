@@ -186,7 +186,7 @@ stages:
       - id: convoy_created
         name: "Convoy created (1+ required)"
         check: file_count
-        path: ".gt/convoys/convoy-*.json"
+        path: ".gt/convoys/*convoy-*.json"
         min: 1
         severity: blocker
 
