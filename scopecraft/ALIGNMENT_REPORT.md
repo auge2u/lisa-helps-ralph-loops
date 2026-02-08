@@ -1,47 +1,66 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-08 (reconcile v3.3.0)
-**Previous reconcile:** 2026-02-08 v3.2.0
+**Generated:** 2026-02-09 (reconcile v3.4.0)
+**Previous reconcile:** 2026-02-08 v3.3.1
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
-**Projects:** Lisa (local), Carlos (local), Conductor (local, semantic.json refreshed)
+**Projects:** Lisa (local), Carlos (local), Conductor (local)
 
 ---
 
 ## Summary
 
-| Status | Count | Change from v3.2.0 |
+| Status | Count | Change from v3.3.1 |
 |--------|-------|---------------------|
 | Aligned | 18 | unchanged |
 | Misaligned | 0 | unchanged |
-| Gaps | 0 | -1 (G7 RESOLVED: Conductor semantic.json refreshed) |
+| Gaps | 0 | unchanged |
 
-**Overall assessment:** G7 resolved — Conductor semantic.json refreshed with actual MCP tools (19, corrected from 22), +context_exhaustion detection, +save_checkpoint_and_pause action. All three projects now have fresh semantic.json. 0 misalignments, 0 gaps. Ecosystem fully converged.
+**Overall assessment:** cq-01 and cq-03 answered — Carlos convoy-007 beads gt-eco01 and gt-eco03 now unblocked. Carlos can proceed with MCP agent registration (step 6) and ecosystem model router (step 8). 0 misalignments, 0 gaps. Only cq-02 (context budget confirmation) still awaiting Conductor response.
 
 ---
 
-## Changes Since v3.2.0
+## Changes Since v3.3.1
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Conductor semantic.json | Stale (2026-02-06T12:00) | **Fresh (2026-02-08T14:00)** | G7 RESOLVED |
-| Conductor MCP tools | 22 (listed, inaccurate) | **19 (verified)** | Corrected to match codebase |
-| Conductor detection types | 9 | **10** (+context_exhaustion) | Convoy-003 reflected |
-| Conductor actions | 7 | **8** (+save_checkpoint_and_pause) | Convoy-003 reflected |
-| Conductor checkpoint | v3.2.0 / Cycle 3 | **v3.3.0 / Cycle 3.1** | Incorporates discovery refresh |
-| Conductor alignment | 94% | **96%** | +2 (semantic.json fresh, tools corrected) |
+| cq-01 | Open (blocks gt-eco01) | **ANSWERED** | gt-eco01 unblocked |
+| cq-03 | Open (blocks gt-eco03) | **ANSWERED** | gt-eco03 unblocked |
+| Carlos convoy-007 | 60% (2 blocked) | **60% (0 blocked)** | Ready for implementation |
 
-### Carlos gt-eco02 Details
+### cq-01 Decision: MCP Tool Registration Format
 
-| File | Before | After | Reduction |
-|------|--------|-------|-----------|
-| `agents/product-owner.md` | 67 lines / ~679 tokens | 38 lines / ~450 tokens | 43% |
-| `agents/tech-auditor.md` | 108 lines / ~867 tokens | 38 lines / ~520 tokens | 65% |
-| `agents/market-fit-auditor.md` | 112 lines / ~975 tokens | 43 lines / ~530 tokens | 62% |
-| **Total agents** | **287 lines / ~2,521 tokens** | **119 lines / ~1,500 tokens** | **41%** |
+**Question:** How should Carlos's 3 agent personas register with Conductor?
 
-Preserved: all frontmatter, scoring frameworks, execution rules, decision logic. Compressed: verbose examples, redundant bullet lists, boilerplate sections. SKILL.md (~2,250 tokens) untouched.
+**Answer:** Register each persona as a separate agent via `conductor_request_access()`:
+
+| Field | Value | Example (tech-auditor) |
+|-------|-------|----------------------|
+| `agentId` | `carlos-{persona}` | `carlos-tech-auditor` |
+| `agentName` | Display name | `Carlos Tech Auditor` |
+| `agentType` | `custom` | `custom` |
+| `capabilities[]` | Persona-specific | `["security_audit", "tech_debt_assessment", "infrastructure_review"]` |
+| `requestedRole` | `agent` | `agent` |
+| `metadata` | Persona + routing hints | `{ persona: "tech-auditor", modelTier: "opus", contextBudget: 520 }` |
+| `instructionsFile` | Path to persona `.md` | `plugins/carlos/agents/tech-auditor.md` |
+
+**Rationale:** Conductor's existing agent registration API (`conductor_request_access`) already supports capabilities arrays, metadata JSON, and instruction files. No Conductor code changes needed. Carlos implements registration logic in gt-eco01. Task routing happens via `conductor_list_tasks` + `conductor_claim_task` (agents self-select based on capabilities match).
+
+### cq-03 Decision: Model Routing Ownership
+
+**Question:** Who owns model routing — Carlos or Conductor?
+
+**Answer:** **Carlos owns the implementation; Conductor consumes the decisions.**
+
+- Carlos maintains `model_router.py` (495 lines) as the canonical routing implementation
+- Maps `(TaskType, Complexity) → ModelTier` with configurable routing tables
+- Loosely coupled — no imports from other Carlos modules, can serve as ecosystem utility
+- Conductor reads `metadata.modelTier` from agent profiles during task-agent matching
+- No duplication: Carlos decides which model tier, Conductor applies the decision to agent assignment
+- Ecosystem design doc explicitly states: "model_router.py serves the whole stack, not just Carlos"
+
+**Implementation path:** Carlos exposes routing via gt-eco03 (ecosystem model router). Conductor consumes via agent metadata — existing `conductor_list_agents` already returns metadata. No Conductor code changes needed for Phase 1.
 
 ---
 
@@ -105,13 +124,13 @@ Conductor's semantic.json refreshed to 2026-02-08T14:00. Corrected MCP tool list
 | sq-c2-02 | Merge reconcile gate definitions? | Lisa3 canonical | Done (9 gates in gates.yaml v1.1) |
 | sq-c2-03 | Carlos gates.yaml migration? | Already done | N/A |
 
-### Carlos Questions for Conductor (Pending)
+### Carlos Questions for Conductor
 
-| # | Question | Status |
-|---|----------|--------|
-| cq-01 | MCP tool registration format for agent personas | Open (blocks step 6) |
-| cq-02 | Is 41% context reduction sufficient? | **Carlos acted** (gt-eco02); awaiting confirmation |
-| cq-03 | Model routing ownership | Open (blocks step 8) |
+| # | Question | Status | Decision |
+|---|----------|--------|----------|
+| cq-01 | MCP tool registration format for agent personas | **ANSWERED** (v3.4.0) | Register as separate agents via conductor_request_access() |
+| cq-02 | Is 41% context reduction sufficient? | **Carlos acted**; awaiting confirmation | Carlos compressed to ~1,500 tokens independently |
+| cq-03 | Model routing ownership | **ANSWERED** (v3.4.0) | Carlos owns implementation, Conductor consumes via metadata |
 
 ---
 
@@ -123,7 +142,9 @@ Conductor's semantic.json refreshed to 2026-02-08T14:00. Corrected MCP tool list
 | P0 | ~~eco-convoy-002: Carlos Interface Alignment~~ | ~~Carlos~~ | **COMPLETE** |
 | P0 | ~~eco-convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Conductor semantic.json refresh (G7)~~ | ~~Conductor~~ | **COMPLETE** (v3.3.0) |
-| P1 | Carlos convoy-007 remaining beads (gt-eco01, gt-eco03) | Carlos | Blocked by Conductor (cq-01, cq-03) |
+| P1 | Carlos gt-eco01: MCP agent registration | Carlos | **UNBLOCKED** (cq-01 answered) |
+| P1 | Carlos gt-eco03: Ecosystem model router | Carlos | **UNBLOCKED** (cq-03 answered) |
 | P1 | Carlos marketplace submission (gt-mkt04) | Carlos | Unblocked, pending |
+| P2 | Conductor confirms cq-02 (context budget) | Conductor | Awaiting response |
 
-**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. Carlos convoy-007 at 60% (3/5 project beads). 0 misalignments, 0 gaps. All semantic.json files fresh. All ecosystem steering questions resolved. 3 Carlos→Conductor questions pending.
+**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. Carlos convoy-007 at 60% (3/5 project beads), **0 blocked** (cq-01 and cq-03 answered). 0 misalignments, 0 gaps. All semantic.json files fresh. 1 Carlos→Conductor question remaining (cq-02, non-blocking).

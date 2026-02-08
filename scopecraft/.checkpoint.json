@@ -1,13 +1,13 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-08T21:00:00Z",
-    "version": "3.3.1",
-    "previous_version": "3.3.0",
+    "timestamp": "2026-02-09T00:00:00Z",
+    "version": "3.4.0",
+    "previous_version": "3.3.1",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Lisa semantic.json refreshed (gates 22→31, +reconcile stage, 32 evidence files)"
+    "data_source": "local filesystem (all 3 projects) + Conductor codebase research",
+    "trigger": "cq-01 and cq-03 answered — Carlos convoy-007 beads unblocked"
   },
   "projects": {
     "lisa": {
@@ -53,7 +53,7 @@
         "agent_tokens_before": 2521,
         "agent_tokens_after": 1500,
         "reduction": "41%",
-        "convoy_007_progress": "60% (3/5 beads)"
+        "convoy_007_progress": "60% (3/5 beads), gt-eco01 and gt-eco03 UNBLOCKED"
       },
       "alignment": "aligned"
     },
@@ -112,7 +112,7 @@
         "beads_complete": 3,
         "beads_pending": 2,
         "progress": "60%",
-        "pending_beads": ["gt-eco01 (blocked: cq-01)", "gt-eco03 (blocked: cq-03)"]
+        "pending_beads": ["gt-eco01 (unblocked: cq-01 answered)", "gt-eco03 (unblocked: cq-03 answered)"]
       }
     }
   },
@@ -140,14 +140,17 @@
       {"id": "SQ10", "question": "Conductor bead consumption timing", "decision": "Phase 1 (recommend)", "resolved": "v2.5.0"}
     ],
     "open_questions": [
-      {"id": "cq-01", "from": "carlos", "to": "conductor", "question": "MCP tool registration format for agent personas", "status": "open", "blocks": "gt-eco01"},
-      {"id": "cq-02", "from": "carlos", "to": "conductor", "question": "Is 41% agent context reduction sufficient?", "status": "carlos-acted", "note": "Carlos compressed independently; awaiting Conductor confirmation"},
-      {"id": "cq-03", "from": "carlos", "to": "conductor", "question": "Model routing ownership", "status": "open", "blocks": "gt-eco03"}
+      {"id": "cq-02", "from": "carlos", "to": "conductor", "question": "Is 41% agent context reduction sufficient?", "status": "carlos-acted", "note": "Carlos compressed independently; awaiting Conductor confirmation"}
+    ],
+    "answered_questions": [
+      {"id": "cq-01", "from": "carlos", "to": "conductor", "question": "MCP tool registration format for agent personas", "status": "answered", "decision": "Register each persona as separate agent via conductor_request_access(). agentId: carlos-{persona}, agentType: custom, capabilities[]: persona-specific, metadata: {persona, modelTier, contextBudget}, instructionsFile: persona .md path. No Conductor changes needed — existing agent registration API is sufficient.", "resolved": "v3.4.0", "unblocks": "gt-eco01"},
+      {"id": "cq-03", "from": "carlos", "to": "conductor", "question": "Model routing ownership", "status": "answered", "decision": "Carlos owns model_router.py as canonical implementation (TaskType × Complexity → ModelTier). Conductor consumes routing decisions via agent metadata.modelTier field — no duplication of routing logic. Carlos maintains routing tables; Conductor applies them during agent-task matching.", "resolved": "v3.4.0", "unblocks": "gt-eco03"}
     ]
   },
   "next_reconcile_triggers": [
-    "Conductor answers cq-01, cq-02, cq-03",
-    "Carlos convoy-007 bead completion (gt-eco01 or gt-eco03)",
+    "Carlos implements gt-eco01 (MCP agent registration)",
+    "Carlos implements gt-eco03 (ecosystem model router)",
+    "Conductor confirms cq-02 (context budget sufficient?)",
     "Any plugin version ship"
   ],
   "context_recovery": {
@@ -168,10 +171,13 @@
       "A18: Agent context budget alignment confirmed",
       "M5 RESOLVED: convoy naming collision → eco-convoy-NNN prefix applied",
       "G7 RESOLVED: Conductor semantic.json refreshed (2026-02-08T14:00), MCP tools corrected 22→19",
-      "3 Carlos→Conductor questions pending: cq-01 (MCP format), cq-02 (context budget confirmation), cq-03 (model routing)",
+      "cq-01 ANSWERED: Register personas as separate agents via conductor_request_access(), agentType custom, capabilities[] per persona",
+      "cq-03 ANSWERED: Carlos owns model_router.py, Conductor consumes via metadata.modelTier",
+      "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
       "ALL 3 semantic.json files fresh — Lisa 2026-02-08T19:00, Carlos 2026-02-08T12:00, Conductor 2026-02-08T14:00",
       "0 misalignments, 0 gaps",
-      "Ecosystem fully converged — remaining work is Carlos→Conductor integration (steps 6, 8)"
+      "Carlos convoy-007 gt-eco01 and gt-eco03 UNBLOCKED — ready for implementation",
+      "Ecosystem fully converged — Carlos can proceed with steps 6 and 8"
     ]
   }
 }

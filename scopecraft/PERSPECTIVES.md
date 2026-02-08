@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-08 (reconcile v3.3.0)
+**Generated:** 2026-02-09 (reconcile v3.4.0)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
@@ -141,7 +141,9 @@ All roles aligned. No conflicts.
 | Convoy schema | `eco-convoy-NNN` (ecosystem) / `convoy-NNN` (project) | N/A | **ConvoySchema Zod** (imports) | **FULL MATCH** (A17) |
 | Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` (different purpose) | OK: complementary |
 | Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
-| Agent context | N/A | **~1,500 tokens (3 agents)** | TBD (cq-02) | **Pending** |
+| Agent context | N/A | **~1,500 tokens (3 agents)** | TBD (cq-02) | **Pending** (non-blocking) |
+| Agent registration | N/A | **conductor_request_access()** (cq-01 answered) | Existing API sufficient | **FULL MATCH** |
+| Model routing | N/A | **Carlos owns model_router.py** (cq-03 answered) | Consumes via metadata.modelTier | **FULL MATCH** |
 
 ---
 
@@ -153,13 +155,17 @@ Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct f
 
 ---
 
-## Notable Changes From v3.2.0
+## Notable Changes From v3.3.1
 
-1. **Conductor semantic.json refreshed:** 2026-02-08T14:00, G7 RESOLVED. MCP tools corrected 22→19, convoy-003 capabilities moved from planned to completed.
-2. **Conductor alignment:** 94%→96% (+2, semantic.json fresh + tools corrected).
-3. **All semantic.json files now fresh:** Lisa (2026-02-06T18:00), Carlos (2026-02-08T12:00), Conductor (2026-02-08T14:00).
-4. **0 gaps remaining:** All misalignments and gaps resolved ecosystem-wide.
-5. **Conductor checkpoint:** v3.3.0/Cycle 3.1, reflects discovery refresh.
+1. **cq-01 ANSWERED:** Carlos personas register as separate agents via `conductor_request_access()`. No Conductor changes needed.
+2. **cq-03 ANSWERED:** Carlos owns `model_router.py`; Conductor consumes via `metadata.modelTier`. No duplication.
+3. **Carlos convoy-007 unblocked:** gt-eco01 (step 6) and gt-eco03 (step 8) can proceed.
+4. **Interface agreement expanded:** +2 rows (agent registration, model routing) — both FULL MATCH.
+
+### Previous Notable Changes (v3.3.0)
+
+1. Conductor semantic.json refreshed: 2026-02-08T14:00, G7 RESOLVED. MCP tools corrected 22→19.
+2. All semantic.json files fresh. 0 gaps remaining.
 
 ### Previous Notable Changes (v3.2.0)
 
