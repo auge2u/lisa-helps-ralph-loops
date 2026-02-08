@@ -1,37 +1,36 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-08 (reconcile v3.2.0)
-**Previous reconcile:** 2026-02-08 v3.1.0
+**Generated:** 2026-02-08 (reconcile v3.3.0)
+**Previous reconcile:** 2026-02-08 v3.2.0
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
-**Projects:** Lisa (local), Carlos (local, 2 new commits), Conductor (local, 1 new commit)
+**Projects:** Lisa (local), Carlos (local), Conductor (local, semantic.json refreshed)
 
 ---
 
 ## Summary
 
-| Status | Count | Change from v3.1.0 |
+| Status | Count | Change from v3.2.0 |
 |--------|-------|---------------------|
-| Aligned | 18 | +1 (A18: agent context budget) |
+| Aligned | 18 | unchanged |
 | Misaligned | 0 | unchanged |
-| Gaps | 1 | unchanged (G7: Conductor semantic.json stale) |
+| Gaps | 0 | -1 (G7 RESOLVED: Conductor semantic.json refreshed) |
 
-**Overall assessment:** Carlos completed ecosystem step 7 (gt-eco02: agent context footprint reduced 41%). Conductor checkpoint updated to v3.2.0/Cycle 3 with Carlos's latest state. All ecosystem convoys remain complete (9/9 beads). Carlos project-level convoy-007 now at 60% (3/5 beads). G7 persists (Conductor semantic.json stale). Ecosystem functionally converged.
+**Overall assessment:** G7 resolved — Conductor semantic.json refreshed with actual MCP tools (19, corrected from 22), +context_exhaustion detection, +save_checkpoint_and_pause action. All three projects now have fresh semantic.json. 0 misalignments, 0 gaps. Ecosystem fully converged.
 
 ---
 
-## Changes Since v3.1.0
+## Changes Since v3.2.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Carlos alignment | 95% | **96%** | +1 (step 7 done) |
-| Carlos LOC | 11,200 | **11,022** | -178 lines (agent compression) |
-| Carlos last scan | 2026-02-06T19:00 | **2026-02-08T12:00** | Fresh |
-| Carlos convoy-007 | 40% (2/5) | **60% (3/5)** | gt-eco02 complete |
-| Carlos agent tokens | ~2,521 | **~1,500** | 41% reduction |
-| Conductor checkpoint | v3.1.0 / Cycle 2.1 | **v3.2.0 / Cycle 3** | Incorporates gt-eco02 |
-| A18 | N/A | **NEW** | Agent context budget alignment |
+| Conductor semantic.json | Stale (2026-02-06T12:00) | **Fresh (2026-02-08T14:00)** | G7 RESOLVED |
+| Conductor MCP tools | 22 (listed, inaccurate) | **19 (verified)** | Corrected to match codebase |
+| Conductor detection types | 9 | **10** (+context_exhaustion) | Convoy-003 reflected |
+| Conductor actions | 7 | **8** (+save_checkpoint_and_pause) | Convoy-003 reflected |
+| Conductor checkpoint | v3.2.0 / Cycle 3 | **v3.3.0 / Cycle 3.1** | Incorporates discovery refresh |
+| Conductor alignment | 94% | **96%** | +2 (semantic.json fresh, tools corrected) |
 
 ### Carlos gt-eco02 Details
 
@@ -64,12 +63,10 @@ None. All misalignments resolved.
 
 ## Gaps
 
-### G7: Conductor semantic.json Stale (Unchanged — PRIORITY: LOW)
-Conductor's `.gt/memory/semantic.json` (last scan: 2026-02-06T12:00) is outdated:
-- `roadmap_status.planned` includes items now **implemented** (bead consumption, context rollover)
-- Missing convoy-003 capabilities (4 new MCP tools, enhanced heartbeat, context exhaustion)
+None. All gaps resolved.
 
-**Resolution:** Re-run `/lisa:discover` on Conductor repo. Low priority — functional alignment is correct.
+### G7: RESOLVED - Conductor semantic.json Refreshed
+Conductor's semantic.json refreshed to 2026-02-08T14:00. Corrected MCP tool list (19 actual, was 22 listed), added convoy-003 capabilities (context_exhaustion, save_checkpoint_and_pause, 4 ecosystem MCP tools), moved bead consumption and context rollover from planned to completed in roadmap_status.
 
 ---
 
@@ -85,6 +82,7 @@ Conductor's `.gt/memory/semantic.json` (last scan: 2026-02-06T12:00) is outdated
 | G1-G2, G4-G6 | Various gaps | v1.1.0-v2.1.0 |
 | G3 | No reconcile output templates | v2.5.0 |
 | Q2 | Checkpoint schema undefined | v3.0.0 |
+| G7 | Conductor semantic.json stale | v3.3.0 |
 
 ---
 
@@ -124,9 +122,8 @@ Conductor's `.gt/memory/semantic.json` (last scan: 2026-02-06T12:00) is outdated
 | P0 | ~~eco-convoy-001: Lisa Pipeline Hardening~~ | ~~Lisa~~ | **COMPLETE** |
 | P0 | ~~eco-convoy-002: Carlos Interface Alignment~~ | ~~Carlos~~ | **COMPLETE** |
 | P0 | ~~eco-convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
-| P1 | Conductor semantic.json refresh (G7) | Conductor | Pending — re-run discover |
+| P0 | ~~Conductor semantic.json refresh (G7)~~ | ~~Conductor~~ | **COMPLETE** (v3.3.0) |
 | P1 | Carlos convoy-007 remaining beads (gt-eco01, gt-eco03) | Carlos | Blocked by Conductor (cq-01, cq-03) |
 | P1 | Carlos marketplace submission (gt-mkt04) | Carlos | Unblocked, pending |
-| P2 | Conductor reads v3.2.0 to update stale points | Conductor | Next pull |
 
-**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. Carlos convoy-007 at 60% (3/5 project beads). 0 misalignments, 1 gap (G7). All ecosystem steering questions resolved. 3 Carlos→Conductor questions pending.
+**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. Carlos convoy-007 at 60% (3/5 project beads). 0 misalignments, 0 gaps. All semantic.json files fresh. All ecosystem steering questions resolved. 3 Carlos→Conductor questions pending.

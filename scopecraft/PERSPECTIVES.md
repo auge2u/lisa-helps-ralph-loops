@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-08 (reconcile v3.2.0)
+**Generated:** 2026-02-08 (reconcile v3.3.0)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill
@@ -19,11 +19,11 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
 | **Language** | Python | Python | TypeScript |
 | **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| **Last scan** | 2026-02-06T18:00 | **2026-02-08T12:00** | 2026-02-06T12:00 |
+| **Last scan** | 2026-02-06T18:00 | **2026-02-08T12:00** | **2026-02-08T14:00** |
 | **License** | MIT | MIT | MIT |
 | **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
-| **Own reconcile** | Yes (this report, v3.2.0) | Yes (project-level, Cycle 3) | Yes (Cycle 3) |
-| **semantic.json fresh?** | Yes | **Yes** (refreshed 2026-02-08) | **No** (stale since convoy-003) |
+| **Own reconcile** | Yes (this report, v3.3.0) | Yes (project-level, Cycle 3) | Yes (Cycle 3.1) |
+| **semantic.json fresh?** | Yes | **Yes** (refreshed 2026-02-08) | **Yes** (refreshed 2026-02-08) |
 
 ---
 
@@ -92,23 +92,26 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 **Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json`
 
-| Attribute | Value | Actual (post convoy-003) |
-|-----------|-------|--------------------------|
-| Name | conductor | conductor |
-| Status | alpha | alpha |
-| Version | 0.1.0 | 0.1.0 |
-| MCP tools | 22 (listed) | **26** (+4 new) |
-| Detection types | 9 | **10** (+context_exhaustion) |
-| Autonomous actions | 7 | **8** (+save_checkpoint_and_pause) |
-| Bead consumption | "planned" | **implemented** (gt-k3m8n) |
-| Context rollover | "planned" | **implemented** (gt-x9p4w) |
-| Checkpoint schema | not mentioned | **implemented** (gt-w5y2c) |
+| Attribute | Value | Change from v3.2.0 |
+|-----------|-------|---------------------|
+| Name | conductor | — |
+| Status | alpha | — |
+| Version | 0.1.0 | — |
+| MCP tools | **19** (verified) | Was 22 (inaccurate) — corrected to match codebase |
+| Detection types | **10** | Was 9 (+context_exhaustion) |
+| Autonomous actions | **8** | Was 7 (+save_checkpoint_and_pause) |
+| Bead consumption | **implemented** (gt-k3m8n) | Was "planned" in semantic.json |
+| Context rollover | **implemented** (gt-x9p4w) | Was "planned" in semantic.json |
+| Checkpoint schema | **implemented** (gt-w5y2c) | Was missing from semantic.json |
+| Last scan | **2026-02-08T14:00** | Was 2026-02-06T12:00 (stale) |
+| Observer src_files | **28** | Was 26 (+2 convoy-003) |
+| Dashboard src_files | **48** | Was 80 (corrected) |
 
 **Reads from:** .gt/beads/*.json, .gt/convoys/*.json, .gt/memory/semantic.json, scopecraft/
 **Writes to:** Task queue state, file locks, cost events, agent lifecycle, escalation queue
 **Does not own:** .gt/ schema, scopecraft/ format, quality gate definitions, semantic memory generation
 
-**Conductor checkpoint updated to v3.2.0/Cycle 3** (commit 412a4f5): incorporates Carlos gt-eco02, alignment 96%, convoy-007 at 60%. Semantic.json still stale (G7).
+**Conductor semantic.json refreshed** (2026-02-08T14:00): MCP tools corrected to 19 (was 22), convoy-003 capabilities reflected in completed roadmap items, package file counts corrected. G7 RESOLVED. Checkpoint updated to v3.3.0/Cycle 3.1.
 
 ---
 
@@ -150,10 +153,17 @@ Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct f
 
 ---
 
-## Notable Changes From v3.1.0
+## Notable Changes From v3.2.0
 
-1. **Carlos gt-eco02 complete:** Agent persona context footprint reduced 41% (287→119 lines, ~2,521→~1,500 tokens). Ecosystem step 7 done.
-2. **Carlos scan refreshed:** 2026-02-08T12:00, LOC corrected to 11,022.
-3. **Conductor checkpoint updated:** v3.2.0/Cycle 3, incorporates Carlos gt-eco02 and alignment 96%.
-4. **A18 added:** Agent context budget alignment confirmed.
-5. **Carlos→Conductor questions surfaced:** cq-01 (MCP format), cq-02 (context budget confirmation), cq-03 (model routing).
+1. **Conductor semantic.json refreshed:** 2026-02-08T14:00, G7 RESOLVED. MCP tools corrected 22→19, convoy-003 capabilities moved from planned to completed.
+2. **Conductor alignment:** 94%→96% (+2, semantic.json fresh + tools corrected).
+3. **All semantic.json files now fresh:** Lisa (2026-02-06T18:00), Carlos (2026-02-08T12:00), Conductor (2026-02-08T14:00).
+4. **0 gaps remaining:** All misalignments and gaps resolved ecosystem-wide.
+5. **Conductor checkpoint:** v3.3.0/Cycle 3.1, reflects discovery refresh.
+
+### Previous Notable Changes (v3.2.0)
+
+1. Carlos gt-eco02 complete: agent context footprint reduced 41% (287→119 lines, ~2,521→~1,500 tokens).
+2. Carlos scan refreshed: 2026-02-08T12:00, LOC corrected to 11,022.
+3. A18 added: Agent context budget alignment confirmed.
+4. Carlos→Conductor questions surfaced: cq-01 (MCP format), cq-02 (context budget), cq-03 (model routing).
