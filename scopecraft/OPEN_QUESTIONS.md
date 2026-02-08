@@ -14,15 +14,16 @@
 
 ## Blocking Questions
 
-### Q2: What is the checkpoint schema for context rollover?
-**Context:** When a CLI agent's context window fills, Conductor needs to checkpoint state and hand off to a fresh session. The checkpoint format must be sufficient to resume work.
-**Impact:** Blocks context rollover implementation (Phase 3, Story 9)
-**Proposed Resolution:**
-- Option A: Extend `.gt/` state files with agent progress markers
-- Option B: Separate `.conductor/checkpoints/` directory with agent-specific state
-- Option C: Use `.agent/scratchpad.md` pattern (already used by Lisa/Carlos)
-**Stakeholders Needed:** Conductor architect, Lisa maintainer
-**Deadline:** Before Phase 3 starts
+(none remaining)
+
+---
+
+## Resolved Questions (continued)
+
+### Q2: What is the checkpoint schema for context rollover? — RESOLVED
+**Decision:** Hybrid SQLite + Bead File Updates. Conductor uses its existing SQLite state store with a new `agent_checkpoints` table for runtime checkpoint data (id, projectId, agentId, taskId, beadId, checkpointType, stage, context JSON). On bead completion, status is synced back to `.gt/beads/{id}.json` for Lisa compatibility. Two MCP tools: `conductor_checkpoint` (save) and `conductor_resume_from_checkpoint` (read).
+**Date:** 2026-02-08
+**Implemented in:** convoy-003 bead gt-w5y2c
 
 ---
 
