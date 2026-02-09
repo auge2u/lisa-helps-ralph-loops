@@ -2,7 +2,7 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-09 (reconcile v3.6.0)
+**Generated:** 2026-02-09 (reconcile v3.6.2)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
 **Reconcile method:** Lisa Stage 5 skill (full re-scan)
@@ -19,7 +19,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
 | **Language** | Python | Python | TypeScript |
 | **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| **Last scan** | **2026-02-08T19:00** | **2026-02-08T12:00** | **2026-02-08T14:00** |
+| **Last scan** | **2026-02-08T19:00** | **2026-02-09T12:00** | **2026-02-08T14:00** |
 | **License** | MIT | MIT | MIT |
 | **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates) | Yes (v1.1, ecosystem overlay) |
 | **Own reconcile** | Yes (this report, v3.3.0) | Yes (project-level, Cycle 3) | Yes (Cycle 3.1) |
@@ -64,10 +64,10 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | Role | specialist-fixer | — |
 | Version | 1.2.0 | — |
 | LOC | **11,022** | — |
-| Tests | 435 + 95 security + 78 ecosystem | +78 (gt-eco01 + gt-eco03) |
+| Tests | **448** + 95 security | +13 (gt-eco01 + gt-eco03) |
 | Quality gates | gates.yaml v1.0 (9 gates) | — |
 | Discovery cache | 24h TTL from .gt/memory/semantic.json | — |
-| Last scan | **2026-02-08T12:00** | Stale (pre gt-eco01/gt-eco03) |
+| Last scan | **2026-02-09T12:00** | Refreshed (fc18ddd) |
 | Agent context tokens | **~1,500** | — |
 | Convoy-007 | **COMPLETE (5/5 beads)** | Was 60% (3/5) |
 | Commits | **63** | +2 (gt-eco01, gt-eco03) |
@@ -164,7 +164,7 @@ Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct f
 
 ### Staleness Notes
 
-1. **Carlos semantic.json** (2026-02-08T12:00) does not reflect gt-eco01 or gt-eco03 commits. Self-report is behind reality. Non-blocking — code is committed and tested.
+1. ~~**Carlos semantic.json**~~ — RESOLVED (refreshed 2026-02-09T12:00, fc18ddd). Now reflects conductor_integration.py, PERSONA_ROUTING, 448 tests, 15 modules.
 2. **Conductor roadmap_status.planned** still lists "Carlos specialist routing (awaiting cq-01, cq-03)" — these are now answered and implemented. Non-blocking.
 
 ### Previous Notable Changes (v3.4.0-v3.5.0)

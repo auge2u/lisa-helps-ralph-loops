@@ -1,7 +1,7 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-09 (reconcile v3.6.1 — full re-scan)
-**Previous reconcile:** 2026-02-09 v3.6.0
+**Generated:** 2026-02-09 (reconcile v3.6.2 — Carlos semantic.json refreshed)
+**Previous reconcile:** 2026-02-09 v3.6.1
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
@@ -11,23 +11,23 @@
 
 ## Summary
 
-| Status | Count | Change from v3.6.0 |
+| Status | Count | Change from v3.6.1 |
 |--------|-------|---------------------|
 | Aligned | 20 | unchanged |
 | Misaligned | 0 | unchanged |
 | Gaps | 0 | unchanged |
 
-**Overall assessment:** Full re-scan confirms v3.6.0 state is clean. 20 alignments, 0 misalignments, 0 gaps. All 3 ecosystem convoys complete, all 9 ecosystem beads done, Carlos convoy-007 complete (5/5 beads). 2 staleness notes (Carlos semantic.json pre-dates gt-eco01/gt-eco03; Conductor roadmap_status.planned has stale entry) — both non-blocking.
+**Overall assessment:** Carlos semantic.json refreshed (fc18ddd, 2026-02-09T12:00) — now reflects gt-eco01, gt-eco03, conductor_integration.py, PERSONA_ROUTING, 448 tests. Staleness note cleared. 1 remaining staleness note (Conductor roadmap_status.planned) — non-blocking. All 3 ecosystem convoys complete, Carlos convoy-007 complete (5/5 beads). 0 misalignments, 0 gaps.
 
 ---
 
-## Changes Since v3.6.0
+## Changes Since v3.6.1
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Full re-scan | v3.6.0 (incremental) | **v3.6.1 (full re-scan)** | Verified clean |
-| PERSPECTIVES.md | Stale (v3.4.0) | **Updated to v3.6.0** | Convoy-007 complete |
-| Carlos semantic.json | Assumed fresh | **Stale note added** | Pre-dates gt-eco01/03 |
+| Carlos semantic.json | Stale (2026-02-08T12:00) | **Refreshed (2026-02-09T12:00, fc18ddd)** | Staleness cleared |
+| Carlos test_count | 435 | **448** | +13 (gt-eco01/03 tests) |
+| Carlos python_modules | 14 | **15** | +conductor_integration.py |
 
 ### gt-eco03: Ecosystem Model Router (DONE)
 
