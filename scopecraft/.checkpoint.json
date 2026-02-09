@@ -2,12 +2,12 @@
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
     "timestamp": "2026-02-09T00:00:00Z",
-    "version": "3.4.0",
-    "previous_version": "3.3.1",
+    "version": "3.5.0",
+    "previous_version": "3.4.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "local filesystem (all 3 projects) + Conductor codebase research",
-    "trigger": "cq-01 and cq-03 answered — Carlos convoy-007 beads unblocked"
+    "data_source": "local filesystem (all 3 projects)",
+    "trigger": "Carlos implements gt-eco01 (MCP agent registration) — commit cf78f8f"
   },
   "projects": {
     "lisa": {
@@ -48,12 +48,20 @@
         "stages": 1,
         "schema_compatible": "lisa v1.0"
       },
+      "gt_eco01": {
+        "commit": "cf78f8f",
+        "description": "Conductor agent registration for 3 Carlos personas",
+        "status": "DONE",
+        "files_added": ["plugins/carlos/hooks/conductor_integration.py", "plugins/carlos/tests/test_conductor_integration.py"],
+        "files_modified": ["plugins/carlos/hooks/orchestrator.py"],
+        "tests": "24 passing"
+      },
       "gt_eco02": {
         "commit": "8af292d",
         "agent_tokens_before": 2521,
         "agent_tokens_after": 1500,
         "reduction": "41%",
-        "convoy_007_progress": "60% (3/5 beads), gt-eco01 and gt-eco03 UNBLOCKED"
+        "convoy_007_progress": "80% (4/5 beads), gt-eco03 remaining"
       },
       "alignment": "aligned"
     },
@@ -109,10 +117,11 @@
     "carlos_project": {
       "convoy_007": {
         "total_beads": 5,
-        "beads_complete": 3,
-        "beads_pending": 2,
-        "progress": "60%",
-        "pending_beads": ["gt-eco01 (unblocked: cq-01 answered)", "gt-eco03 (unblocked: cq-03 answered)"]
+        "beads_complete": 4,
+        "beads_pending": 1,
+        "progress": "80%",
+        "completed_beads": ["gt-eco01 (cf78f8f)"],
+        "pending_beads": ["gt-eco03 (unblocked: cq-03 answered)"]
       }
     }
   },
@@ -148,7 +157,6 @@
     ]
   },
   "next_reconcile_triggers": [
-    "Carlos implements gt-eco01 (MCP agent registration)",
     "Carlos implements gt-eco03 (ecosystem model router)",
     "Conductor confirms cq-02 (context budget sufficient?)",
     "Any plugin version ship"
@@ -165,7 +173,7 @@
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
       "ALL 3 ECOSYSTEM CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
       "ALL 9 ECOSYSTEM BEADS DONE: no pending ecosystem work items",
-      "Carlos convoy-007 (project-level) at 60%: 3/5 beads done, 2 blocked by Conductor questions (cq-01, cq-03)",
+      "Carlos convoy-007 (project-level) at 80%: 4/5 beads done, gt-eco01 DONE (cf78f8f), gt-eco03 remaining",
       "Carlos gt-eco02: agent context reduced 41% (2,521→1,500 tokens)",
       "Carlos semantic.json refreshed (2026-02-08T12:00)",
       "A18: Agent context budget alignment confirmed",
@@ -176,8 +184,8 @@
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
       "ALL 3 semantic.json files fresh — Lisa 2026-02-08T19:00, Carlos 2026-02-08T12:00, Conductor 2026-02-08T14:00",
       "0 misalignments, 0 gaps",
-      "Carlos convoy-007 gt-eco01 and gt-eco03 UNBLOCKED — ready for implementation",
-      "Ecosystem fully converged — Carlos can proceed with steps 6 and 8"
+      "Carlos gt-eco01 DONE (cf78f8f) — 3 personas registered as custom agents with conductor_request_access payloads",
+      "Carlos convoy-007 gt-eco03 remaining — ecosystem model router (step 8)"
     ]
   }
 }
