@@ -1,7 +1,7 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-09 (reconcile v3.6.0)
-**Previous reconcile:** 2026-02-09 v3.5.0
+**Generated:** 2026-02-09 (reconcile v3.6.1 — full re-scan)
+**Previous reconcile:** 2026-02-09 v3.6.0
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
@@ -11,22 +11,23 @@
 
 ## Summary
 
-| Status | Count | Change from v3.5.0 |
+| Status | Count | Change from v3.6.0 |
 |--------|-------|---------------------|
-| Aligned | 20 | +1 (A20: gt-eco03) |
+| Aligned | 20 | unchanged |
 | Misaligned | 0 | unchanged |
 | Gaps | 0 | unchanged |
 
-**Overall assessment:** Carlos gt-eco03 implemented (commit 5c09457) — ecosystem model router with routing matrix export, persona routing, and Conductor metadata. Carlos convoy-007 now **COMPLETE** (5/5 beads). All ecosystem integration work done. 0 misalignments, 0 gaps.
+**Overall assessment:** Full re-scan confirms v3.6.0 state is clean. 20 alignments, 0 misalignments, 0 gaps. All 3 ecosystem convoys complete, all 9 ecosystem beads done, Carlos convoy-007 complete (5/5 beads). 2 staleness notes (Carlos semantic.json pre-dates gt-eco01/gt-eco03; Conductor roadmap_status.planned has stale entry) — both non-blocking.
 
 ---
 
-## Changes Since v3.5.0
+## Changes Since v3.6.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| gt-eco03 | Unblocked, pending | **DONE** (5c09457) | Convoy-007 → 100% |
-| Carlos convoy-007 | 80% (4/5) | **COMPLETE (5/5)** | All ecosystem beads done |
+| Full re-scan | v3.6.0 (incremental) | **v3.6.1 (full re-scan)** | Verified clean |
+| PERSPECTIVES.md | Stale (v3.4.0) | **Updated to v3.6.0** | Convoy-007 complete |
+| Carlos semantic.json | Assumed fresh | **Stale note added** | Pre-dates gt-eco01/03 |
 
 ### gt-eco03: Ecosystem Model Router (DONE)
 

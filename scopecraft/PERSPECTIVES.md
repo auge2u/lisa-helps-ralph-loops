@@ -2,10 +2,10 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-09 (reconcile v3.4.0)
+**Generated:** 2026-02-09 (reconcile v3.6.0)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
-**Reconcile method:** Lisa Stage 5 skill
+**Reconcile method:** Lisa Stage 5 skill (full re-scan)
 
 ---
 
@@ -63,28 +63,28 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | Name | carlos | — |
 | Role | specialist-fixer | — |
 | Version | 1.2.0 | — |
-| LOC | **11,022** | Was 11,200 (-178) |
-| Tests | 435 + 95 security | — |
+| LOC | **11,022** | — |
+| Tests | 435 + 95 security + 78 ecosystem | +78 (gt-eco01 + gt-eco03) |
 | Quality gates | gates.yaml v1.0 (9 gates) | — |
 | Discovery cache | 24h TTL from .gt/memory/semantic.json | — |
-| Last scan | **2026-02-08T12:00** | Was 2026-02-06T19:00 |
-| Agent context tokens | **~1,500** | Was ~2,521 (41% reduction) |
-| Convoy-007 | **60% (3/5 beads)** | Was 40% (2/5) |
-| Commits | **61** | Was ~54 |
+| Last scan | **2026-02-08T12:00** | Stale (pre gt-eco01/gt-eco03) |
+| Agent context tokens | **~1,500** | — |
+| Convoy-007 | **COMPLETE (5/5 beads)** | Was 60% (3/5) |
+| Commits | **63** | +2 (gt-eco01, gt-eco03) |
 
 **Reads from:** .gt/memory/semantic.json, .gt/beads/*.json, scopecraft/*.md
 **Writes to:** scopecraft/*.md, quality gate results, analysis reports
 **Does not own:** .gt/beads/, .gt/convoys/, conductor state
 
-### Carlos Convoy-007 (Project-Level)
+### Carlos Convoy-007 (Project-Level) — COMPLETE
 
-| Bead | Title | Status | Step |
-|------|-------|--------|------|
-| gt-cg7ya | gates.yaml in Lisa-compatible schema | Complete | 4 |
-| gt-r6d2k | Discovery cache via .gt/ freshness | Complete | 5 |
-| gt-eco02 | **Agent context footprint -41%** | **Complete** | **7** |
-| gt-eco01 | MCP agent registration | Planned (blocked: cq-01) | 6 |
-| gt-eco03 | Ecosystem model router | Planned (blocked: cq-03) | 8 |
+| Bead | Title | Status | Step | Commit |
+|------|-------|--------|------|--------|
+| gt-cg7ya | gates.yaml in Lisa-compatible schema | Complete | 4 | 7adbda0 |
+| gt-r6d2k | Discovery cache via .gt/ freshness | Complete | 5 | ccec69f |
+| gt-eco01 | **Conductor agent registration** | **Complete** | **6** | **cf78f8f** |
+| gt-eco02 | **Agent context footprint -41%** | **Complete** | **7** | **8af292d** |
+| gt-eco03 | **Ecosystem model router** | **Complete** | **8** | **5c09457** |
 
 ---
 
@@ -142,8 +142,9 @@ All roles aligned. No conflicts.
 | Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` (different purpose) | OK: complementary |
 | Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
 | Agent context | N/A | **~1,500 tokens (3 agents)** | TBD (cq-02) | **Pending** (non-blocking) |
-| Agent registration | N/A | **conductor_request_access()** (cq-01 answered) | Existing API sufficient | **FULL MATCH** |
-| Model routing | N/A | **Carlos owns model_router.py** (cq-03 answered) | Consumes via metadata.modelTier | **FULL MATCH** |
+| Agent registration | N/A | **conductor_request_access()** (gt-eco01 DONE) | Existing API sufficient | **FULL MATCH** |
+| Model routing | N/A | **Carlos owns model_router.py** (gt-eco03 DONE) | Consumes via metadata.modelTier | **FULL MATCH** |
+| Ecosystem metadata | N/A | **get_ecosystem_metadata()** (gt-eco03) | Reads metadata.modelTier | **FULL MATCH** |
 
 ---
 
@@ -155,21 +156,23 @@ Conductor's `AgentCheckpointSchema` (for runtime context rollover) is distinct f
 
 ---
 
-## Notable Changes From v3.3.1
+## Notable Changes From v3.5.0
 
-1. **cq-01 ANSWERED:** Carlos personas register as separate agents via `conductor_request_access()`. No Conductor changes needed.
-2. **cq-03 ANSWERED:** Carlos owns `model_router.py`; Conductor consumes via `metadata.modelTier`. No duplication.
-3. **Carlos convoy-007 unblocked:** gt-eco01 (step 6) and gt-eco03 (step 8) can proceed.
-4. **Interface agreement expanded:** +2 rows (agent registration, model routing) — both FULL MATCH.
+1. **gt-eco03 DONE (5c09457):** Ecosystem model router — `PERSONA_ROUTING`, `get_routing_matrix_metadata()`, `get_ecosystem_metadata()`. 23 new tests (78 total).
+2. **Carlos convoy-007 COMPLETE:** 5/5 beads done. All ecosystem integration work finished.
+3. **Interface agreement expanded:** +1 row (ecosystem metadata) — FULL MATCH.
 
-### Previous Notable Changes (v3.3.0)
+### Staleness Notes
 
-1. Conductor semantic.json refreshed: 2026-02-08T14:00, G7 RESOLVED. MCP tools corrected 22→19.
-2. All semantic.json files fresh. 0 gaps remaining.
+1. **Carlos semantic.json** (2026-02-08T12:00) does not reflect gt-eco01 or gt-eco03 commits. Self-report is behind reality. Non-blocking — code is committed and tested.
+2. **Conductor roadmap_status.planned** still lists "Carlos specialist routing (awaiting cq-01, cq-03)" — these are now answered and implemented. Non-blocking.
 
-### Previous Notable Changes (v3.2.0)
+### Previous Notable Changes (v3.4.0-v3.5.0)
 
-1. Carlos gt-eco02 complete: agent context footprint reduced 41% (287→119 lines, ~2,521→~1,500 tokens).
-2. Carlos scan refreshed: 2026-02-08T12:00, LOC corrected to 11,022.
-3. A18 added: Agent context budget alignment confirmed.
-4. Carlos→Conductor questions surfaced: cq-01 (MCP format), cq-02 (context budget), cq-03 (model routing).
+1. cq-01 and cq-03 ANSWERED (v3.4.0). Carlos gt-eco01 DONE (v3.5.0, cf78f8f).
+2. All 3 semantic.json files fresh. 0 gaps, 0 misalignments.
+
+### Previous Notable Changes (v3.2.0-v3.3.0)
+
+1. Carlos gt-eco02 complete: agent context -41%. Conductor semantic.json refreshed (G7 RESOLVED).
+2. A18 added. Carlos→Conductor questions surfaced (cq-01, cq-02, cq-03).
