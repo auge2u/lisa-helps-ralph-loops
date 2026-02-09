@@ -1,72 +1,131 @@
 # Ecosystem Roadmap
 
-## Phase 1 — Foundation Alignment
-**Objective (Outcome):** All three plugins have self-describing semantic memory and Lisa can read them all for reconciliation.
-**Customer value:** First unified view of ecosystem state; context recovery works across projects.
-**Deliverables:**
-- Lisa `.gt/memory/semantic.json` populated (this repo)
-- Carlos `.gt/memory/semantic.json` populated (done)
-- Conductor `.gt/memory/semantic.json` populated
-- Ecosystem `scopecraft/` created in Lisa root (this document set)
-- First `/lisa:reconcile` produces alignment report + checkpoint
-**Dependencies:** None (each plugin already works standalone)
-**Risks + mitigations:**
-- Conductor may not be far enough along for meaningful semantic.json -> Use placeholder with known gaps documented
-- Semantic.json schema may need ecosystem-level fields -> Carlos already added `ecosystem_role`; standardize across all three
-**Metrics / KRs:**
-- All 3 semantic.json files pass Lisa discover quality gates
-- Reconcile produces `.checkpoint.json` and `ALIGNMENT_REPORT.md`
-**Definition of Done:** `/lisa:reconcile` runs successfully across all three projects, producing a checkpoint and alignment report.
+**Last Updated:** 2026-02-10 (post-Conductor GA refresh)
 
-## Phase 2 — Interface Contracts
-**Objective (Outcome):** Carlos reads Lisa's `.gt/` state and Lisa's `gates.yaml`; shared formats are validated end-to-end.
-**Customer value:** No duplicate discovery work; consistent quality standards across plugins.
-**Deliverables:**
-- Carlos reads `.gt/memory/semantic.json` before running discovery (skip if fresh)
-- Carlos quality gates align with `gates.yaml` format (can validate Lisa outputs)
-- `scopecraft/` output format validated by both Lisa and Carlos
-- Interface contract tests exist for `.gt/` schema and `scopecraft/` format
-**Dependencies:** Phase 1 (semantic.json populated, reconcile working)
-**Risks + mitigations:**
-- Carlos has hardcoded quality gates vs. Lisa's declarative gates.yaml -> Incremental migration: Carlos reads gates.yaml if present, falls back to hardcoded
-- Schema drift between plugins -> Add schema version to `.gt/` files; reconcile detects version mismatches
-**Metrics / KRs:**
-- Carlos skips discovery when fresh semantic.json exists (latency reduction measurable)
-- Zero quality gate definition duplication between Lisa and Carlos
-**Definition of Done:** Running Carlos against a Lisa-discovered project uses existing `.gt/` state without re-scanning.
+## Overview
 
-## Phase 3 — Conductor Integration
-**Objective (Outcome):** Conductor can assign Lisa beads/convoys to agents and route analysis tasks to Carlos.
-**Customer value:** Multi-agent work execution from structured work items; specialist routing for quality.
-**Deliverables:**
-- Conductor MCP tools: `conductor_claim_task`, `conductor_complete_task`, `conductor_heartbeat`, `conductor_lock_file`
-- Conductor reads `.gt/beads/*.json` and `.gt/convoys/*.json` for task assignment
-- Conductor routes quality validation to Carlos agent personas
-- Context rollover works for at least one CLI agent type
-- Personality curation table maps task types to agent/model tiers
-**Dependencies:** Phase 2 (interface contracts stable)
-**Risks + mitigations:**
-- MCP protocol may change -> Conductor owns adapter layer; Lisa/Carlos are insulated
-- Context rollover is hard to test -> Start with simplest case: single agent, single bead, checkpoint + resume
-**Metrics / KRs:**
-- At least 1 convoy successfully assigned, executed, and completed via Conductor
-- Context rollover preserves state across at least 1 agent restart
-**Definition of Done:** End-to-end flow: Lisa structures work -> Conductor assigns to agent -> Agent completes bead -> Carlos validates output.
+This roadmap takes Lisa from **Alpha (v0.3.0)** to **Beta (v1.0.0)** — the transition from "working pipeline" to "publishable ecosystem root."
 
-## Phase 4 — Ecosystem Maturity
-**Objective (Outcome):** Full ecosystem operational with reconciliation cadence, cost tracking, and e2b integration for cheap labor.
-**Customer value:** Autonomous multi-agent development with quality guarantees and cost control.
+### Current Status Summary
+
+| Phase | Status | Key Achievement |
+|-------|--------|-----------------|
+| Phase 1: Foundation | **Complete** | All 3 semantic.json populated, reconcile operational |
+| Phase 2: Interface Contracts | **Complete** | Carlos gates.yaml aligned, discovery cache, shared schemas |
+| Phase 3: Conductor Integration | **Complete** | Conductor GA, 24 MCP tools, ecosystem convoys done |
+| Phase 4: Publish & Migrate | Next | Marketplace submission, prductr-com org transfer |
+
+```
+          Phase 1-3
+          COMPLETE ──► Phase 4 ────► Phase 5 ────► Phase 6
+                       Publish &      Standalone     Ecosystem
+                       Migrate        Hardening      Maturity
+                       (3 weeks)      (4 weeks)      (ongoing)
+```
+
+---
+
+## Completed Phases (1-3)
+
+### Phase 1 — Foundation Alignment (COMPLETE)
+All 3 semantic.json populated. Reconcile v4.0.0 produced. 24 alignments, 0 misalignments, 1 LOW gap.
+
+### Phase 2 — Interface Contracts (COMPLETE)
+Carlos gates.yaml v1.0 follows Lisa schema. Discovery cache working. All interface contracts aligned.
+
+### Phase 3 — Conductor Integration (COMPLETE)
+Conductor GA (v1.0.0). 24 MCP tools. Context rollover. Bead import pipeline. Carlos personas registered. Model routing. 5 convoys complete. 1,374 tests.
+
+---
+
+## Phase 4 — Publish and Migrate (3 weeks)
+
+**Objective (Outcome):** Lisa published on Claude Code marketplace, all 3 repos transferred to prductr-com organization.
+
+**Customer Value:** External users can install Lisa, run pipeline stages, and benefit from ecosystem coordination.
+
 **Deliverables:**
-- e2b sandbox integration for mechanical tasks (file scanning, linting, test running)
-- Cost tracking (subscription-based for CLI agents, token-based for API)
+- Lisa plugin submitted to Claude Code marketplace
+- Repository transferred from auge2u/lisa3 to prductr-com/lisa3
+- CI/CD configured in new org
+- Ecosystem config (`~/.lisa/ecosystem.json`) documentation updated
+- Getting started guide for new users
+- Reconcile handles new org paths gracefully
+
+**Dependencies:**
+- prductr-com GitHub org created
+- Marketplace submission process understood
+- Carlos marketplace submission in parallel (gt-mkt04)
+
+**Risks + Mitigations:**
+- Marketplace rejection -> Review submission requirements early; fix any issues
+- Path changes break reconcile -> Add path resolution that follows git remotes, not filesystem paths
+- Users confused by 3-plugin ecosystem -> Standalone getting-started that works with Lisa only
+
+**Metrics / KRs:**
+- Lisa installable via Claude Code marketplace
+- Repository accessible at prductr-com/lisa3
+- Getting started guide enables first pipeline run
+- Reconcile works after path change
+
+**Definition of Done:** A new user installs Lisa from marketplace, runs `/lisa:discover` on their project, and gets a populated `.gt/memory/semantic.json`.
+
+---
+
+## Phase 5 — Standalone Hardening (4 weeks)
+
+**Objective (Outcome):** Lisa works reliably as a standalone plugin without Carlos or Conductor.
+
+**Customer Value:** Users get value from Lisa without installing the full ecosystem.
+
+**Deliverables:**
+- Graceful degradation when ecosystem partners absent
+- Error messages guide users toward ecosystem benefits without requiring them
+- Validate.py runs without PyYAML (fallback mode)
+- Pipeline stages work on projects without `.gt/` pre-existing state
+- External validation: test on 10+ diverse open-source repos
+- Edge case documentation
+
+**Dependencies:**
+- Phase 4 complete (plugin published)
+- External user feedback
+
+**Risks + Mitigations:**
+- Pipeline assumptions don't hold for diverse projects -> Test broadly; add fallbacks for missing docs/configs
+- Gates too strict for small projects -> Consider project size profiles (from Carlos Phase 4)
+- PyYAML dependency blocks users -> Fallback to JSON-only validation
+
+**Metrics / KRs:**
+- Pipeline completes on 10+ diverse repos without errors
+- Zero hard dependencies on Carlos or Conductor
+- validate.py runs in fallback mode without PyYAML
+
+**Definition of Done:** A user with only Lisa installed can run the full pipeline (discover → plan → structure) on any Python/TypeScript/Go project.
+
+---
+
+## Phase 6 — Ecosystem Maturity (ongoing)
+
+**Objective (Outcome):** Full ecosystem operational with reconciliation cadence, cost tracking, and e2b integration.
+
+**Customer Value:** Autonomous multi-agent development with quality guarantees and cost control.
+
+**Deliverables:**
 - Reconcile cadence established (on version ship, on architecture change, on new plugin)
-- Conflict resolution pipeline (Conductor queues -> specialist review -> human escalation)
+- e2b sandbox integration for mechanical tasks (via Conductor)
+- Cost tracking (model routing serves entire ecosystem)
 - Model routing serves entire ecosystem (not just Carlos)
-**Dependencies:** Phase 3 (Conductor operational)
-**Risks + mitigations:**
+- Conflict resolution pipeline (Conductor queues -> specialist review -> human escalation)
+
+**Dependencies:** Phase 5 (standalone stable), Conductor deployed (Phase 1 of Conductor roadmap)
+
+**Risks + Mitigations:**
 - e2b API instability -> e2b is optional; Conductor falls back to CLI agents
-- Cost tracking complexity -> Start with simple per-run estimates, not real-time metering
+- Cost tracking complexity -> Start with simple per-run estimates
+
 **Metrics / KRs:**
 - 60-70% cost reduction vs. high-tier-only model usage
 - Reconcile detects drift within 1 session of a breaking change
+- End-to-end: Lisa structure -> Conductor assign -> Agent complete -> Carlos validate
+
 **Definition of Done:** A multi-project development session uses all three plugins together, with measurable cost savings and quality validation.
