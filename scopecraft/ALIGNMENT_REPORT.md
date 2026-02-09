@@ -1,7 +1,7 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-09 (reconcile v3.6.2 — Carlos semantic.json refreshed)
-**Previous reconcile:** 2026-02-09 v3.6.1
+**Generated:** 2026-02-09 (reconcile v3.6.3 — all staleness cleared)
+**Previous reconcile:** 2026-02-09 v3.6.2
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
@@ -11,23 +11,23 @@
 
 ## Summary
 
-| Status | Count | Change from v3.6.1 |
+| Status | Count | Change from v3.6.2 |
 |--------|-------|---------------------|
 | Aligned | 20 | unchanged |
 | Misaligned | 0 | unchanged |
 | Gaps | 0 | unchanged |
 
-**Overall assessment:** Carlos semantic.json refreshed (fc18ddd, 2026-02-09T12:00) — now reflects gt-eco01, gt-eco03, conductor_integration.py, PERSONA_ROUTING, 448 tests. Staleness note cleared. 1 remaining staleness note (Conductor roadmap_status.planned) — non-blocking. All 3 ecosystem convoys complete, Carlos convoy-007 complete (5/5 beads). 0 misalignments, 0 gaps.
+**Overall assessment:** Conductor semantic.json refreshed (a9bca30, 2026-02-09T13:00) — roadmap_status.planned updated, integration_points.carlos reflects gt-eco01/gt-eco03. All staleness notes cleared. All 3 semantic.json files fresh. All 3 ecosystem convoys complete, Carlos convoy-007 complete (5/5 beads). 0 misalignments, 0 gaps, 0 staleness notes.
 
 ---
 
-## Changes Since v3.6.1
+## Changes Since v3.6.2
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Carlos semantic.json | Stale (2026-02-08T12:00) | **Refreshed (2026-02-09T12:00, fc18ddd)** | Staleness cleared |
-| Carlos test_count | 435 | **448** | +13 (gt-eco01/03 tests) |
-| Carlos python_modules | 14 | **15** | +conductor_integration.py |
+| Conductor semantic.json | 2026-02-08T14:00 | **2026-02-09T13:00 (a9bca30)** | Final staleness cleared |
+| Conductor roadmap_status | "awaiting cq-01, cq-03" | **Reflects implementations** | Accurate |
+| Conductor integration_points.carlos | Generic | **Specific (gt-eco01/gt-eco03)** | Accurate |
 
 ### gt-eco03: Ecosystem Model Router (DONE)
 
