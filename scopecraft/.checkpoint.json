@@ -2,12 +2,12 @@
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
     "timestamp": "2026-02-09T00:00:00Z",
-    "version": "3.5.0",
-    "previous_version": "3.4.0",
+    "version": "3.6.0",
+    "previous_version": "3.5.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Carlos implements gt-eco01 (MCP agent registration) — commit cf78f8f"
+    "trigger": "Carlos gt-eco03 done (ecosystem model router) — commit 5c09457. Convoy-007 100% complete."
   },
   "projects": {
     "lisa": {
@@ -56,12 +56,19 @@
         "files_modified": ["plugins/carlos/hooks/orchestrator.py"],
         "tests": "24 passing"
       },
+      "gt_eco03": {
+        "commit": "5c09457",
+        "description": "Ecosystem model router — routing matrix export, persona routing, Conductor metadata",
+        "status": "DONE",
+        "files_modified": ["plugins/carlos/hooks/model_router.py", "plugins/carlos/hooks/conductor_integration.py", "plugins/carlos/tests/test_model_router.py", "plugins/carlos/tests/test_conductor_integration.py"],
+        "tests": "23 new (78 total across both files)"
+      },
       "gt_eco02": {
         "commit": "8af292d",
         "agent_tokens_before": 2521,
         "agent_tokens_after": 1500,
         "reduction": "41%",
-        "convoy_007_progress": "80% (4/5 beads), gt-eco03 remaining"
+        "convoy_007_progress": "100% (5/5 beads) — COMPLETE"
       },
       "alignment": "aligned"
     },
@@ -97,7 +104,7 @@
     "aligned": 3,
     "mostly_aligned": 0,
     "divergent": 0,
-    "alignments": 18,
+    "alignments": 20,
     "misalignments": 0,
     "gaps": 0
   },
@@ -117,11 +124,12 @@
     "carlos_project": {
       "convoy_007": {
         "total_beads": 5,
-        "beads_complete": 4,
-        "beads_pending": 1,
-        "progress": "80%",
-        "completed_beads": ["gt-eco01 (cf78f8f)"],
-        "pending_beads": ["gt-eco03 (unblocked: cq-03 answered)"]
+        "beads_complete": 5,
+        "beads_pending": 0,
+        "progress": "100%",
+        "status": "COMPLETE",
+        "completed_beads": ["gt-eco01 (cf78f8f)", "gt-eco03 (5c09457)"],
+        "pending_beads": []
       }
     }
   },
@@ -157,9 +165,10 @@
     ]
   },
   "next_reconcile_triggers": [
-    "Carlos implements gt-eco03 (ecosystem model router)",
     "Conductor confirms cq-02 (context budget sufficient?)",
-    "Any plugin version ship"
+    "Any plugin version ship",
+    "Carlos semantic.json refresh (post gt-eco03)",
+    "Any new ecosystem convoy"
   ],
   "context_recovery": {
     "read_order": [
@@ -173,19 +182,21 @@
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
       "ALL 3 ECOSYSTEM CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
       "ALL 9 ECOSYSTEM BEADS DONE: no pending ecosystem work items",
-      "Carlos convoy-007 (project-level) at 80%: 4/5 beads done, gt-eco01 DONE (cf78f8f), gt-eco03 remaining",
+      "Carlos convoy-007 COMPLETE: 5/5 beads done — gt-eco01 (cf78f8f), gt-eco03 (5c09457), gt-eco02 (8af292d), gt-cg7ya (7adbda0), gt-r6d2k (ccec69f)",
+      "Carlos gt-eco03 DONE (5c09457) — routing matrix export, persona routing, Conductor metadata; 23 new tests (78 total)",
+      "Carlos gt-eco01 DONE (cf78f8f) — 3 personas registered as custom agents with conductor_request_access payloads; 24 tests",
       "Carlos gt-eco02: agent context reduced 41% (2,521→1,500 tokens)",
       "Carlos semantic.json refreshed (2026-02-08T12:00)",
       "A18: Agent context budget alignment confirmed",
+      "A19: Conductor agent registration confirmed (gt-eco01)",
+      "A20: Ecosystem model router confirmed (gt-eco03)",
       "M5 RESOLVED: convoy naming collision → eco-convoy-NNN prefix applied",
       "G7 RESOLVED: Conductor semantic.json refreshed (2026-02-08T14:00), MCP tools corrected 22→19",
       "cq-01 ANSWERED: Register personas as separate agents via conductor_request_access(), agentType custom, capabilities[] per persona",
       "cq-03 ANSWERED: Carlos owns model_router.py, Conductor consumes via metadata.modelTier",
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
       "ALL 3 semantic.json files fresh — Lisa 2026-02-08T19:00, Carlos 2026-02-08T12:00, Conductor 2026-02-08T14:00",
-      "0 misalignments, 0 gaps",
-      "Carlos gt-eco01 DONE (cf78f8f) — 3 personas registered as custom agents with conductor_request_access payloads",
-      "Carlos convoy-007 gt-eco03 remaining — ecosystem model router (step 8)"
+      "0 misalignments, 0 gaps"
     ]
   }
 }

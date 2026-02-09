@@ -1,7 +1,7 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-09 (reconcile v3.5.0)
-**Previous reconcile:** 2026-02-09 v3.4.0
+**Generated:** 2026-02-09 (reconcile v3.6.0)
+**Previous reconcile:** 2026-02-09 v3.5.0
 **Ecosystem root:** lisa3 (this repo)
 **Reconcile method:** Lisa Stage 5 skill
 **Data source:** Local filesystem (all 3 projects)
@@ -11,36 +11,43 @@
 
 ## Summary
 
-| Status | Count | Change from v3.4.0 |
+| Status | Count | Change from v3.5.0 |
 |--------|-------|---------------------|
-| Aligned | 19 | +1 (A19: gt-eco01) |
+| Aligned | 20 | +1 (A20: gt-eco03) |
 | Misaligned | 0 | unchanged |
 | Gaps | 0 | unchanged |
 
-**Overall assessment:** Carlos gt-eco01 implemented (commit cf78f8f) — 3 agent personas now have Conductor registration payloads via `conductor_request_access`. Convoy-007 at 80% (4/5 beads). gt-eco03 (ecosystem model router) is the sole remaining bead. 0 misalignments, 0 gaps.
+**Overall assessment:** Carlos gt-eco03 implemented (commit 5c09457) — ecosystem model router with routing matrix export, persona routing, and Conductor metadata. Carlos convoy-007 now **COMPLETE** (5/5 beads). All ecosystem integration work done. 0 misalignments, 0 gaps.
 
 ---
 
-## Changes Since v3.4.0
+## Changes Since v3.5.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| gt-eco01 | Unblocked, pending | **DONE** (cf78f8f) | Convoy-007 → 80% |
-| Carlos convoy-007 | 60% (3/5, 0 blocked) | **80% (4/5)** | gt-eco03 remaining |
+| gt-eco03 | Unblocked, pending | **DONE** (5c09457) | Convoy-007 → 100% |
+| Carlos convoy-007 | 80% (4/5) | **COMPLETE (5/5)** | All ecosystem beads done |
 
-### gt-eco01: Conductor Agent Registration (DONE)
+### gt-eco03: Ecosystem Model Router (DONE)
 
-**Commit:** `cf78f8f` on Carlos `main`
+**Commit:** `5c09457` on Carlos `main`
 
-Carlos's 3 agent personas now have structured registration payloads for Conductor's `conductor_request_access` MCP tool:
+Carlos's `model_router.py` now exports routing decisions for the entire ecosystem:
 
-| Persona | agentId | agentType | Role | Capabilities | Model Tier |
-|---------|---------|-----------|------|-------------|-----------|
-| tech-auditor | `carlos-tech-auditor` | custom | contributor | 7 (tech_debt, security_audit, ...) | sonnet |
-| market-fit-auditor | `carlos-market-fit-auditor` | custom | contributor | 7 (market_fit, product_strategy, ...) | sonnet |
-| product-owner | `carlos-product-owner` | custom | lead | 8 (roadmap, prioritization, ...) | opus |
+| Feature | Description |
+|---------|-------------|
+| `PERSONA_ROUTING` | Maps each persona to default model tier and typical tasks |
+| `get_persona_model_tier()` | Persona name → tier string lookup |
+| `get_routing_matrix_metadata()` | Full routing matrix export (carlos-routing-v1 schema) |
+| `route_conductor_orchestration()` | 5-task pipeline plan for Conductor orchestration |
+| `get_ecosystem_metadata()` | Combined agent identity + routing metadata per persona |
+| `get_all_ecosystem_metadata()` | All 3 personas' ecosystem metadata |
 
-**Implementation:** Static `PERSONA_REGISTRY` in `conductor_integration.py` with `get_mcp_payload()` helpers. Dynamic frontmatter parsing fallback. `Orchestrator.get_conductor_registrations()` exposes payloads. 24 tests passing.
+**Implementation:** Routing matrix has 32 (TaskType x Complexity) combinations across 3 model tiers. Persona routing integrates with `conductor_integration.py` via `get_ecosystem_metadata()`. Conductor consumes via `metadata.modelTier` field — no Conductor code changes needed. 23 new tests (78 total across both test files).
+
+### Previous: gt-eco01 (v3.5.0)
+
+Carlos's 3 agent personas registered with Conductor via `conductor_request_access` MCP tool (commit cf78f8f). Static `PERSONA_REGISTRY` + dynamic frontmatter fallback. 24 tests.
 
 ### cq-01 Decision: MCP Tool Registration Format
 
@@ -81,7 +88,11 @@ Carlos's 3 agent personas now have structured registration payloads for Conducto
 
 A1-A17 unchanged. See v2.3.0-v3.0.0 for full list.
 
-### A19: Conductor Agent Registration (NEW in v3.5.0)
+### A20: Ecosystem Model Router (NEW in v3.6.0)
+
+Carlos gt-eco03 implements the cq-03 decision: Carlos owns `model_router.py` as canonical routing implementation. Exports `PERSONA_ROUTING` dict, `get_routing_matrix_metadata()` (carlos-routing-v1 schema), and `get_ecosystem_metadata()` combining agent identity with routing preferences. Conductor consumes via `metadata.modelTier` — no duplication of routing logic. 32 routing combinations, 3 model tiers, 3 persona routing entries. 23 new tests.
+
+### A19: Conductor Agent Registration (v3.5.0)
 
 Carlos gt-eco01 implements the cq-01 decision: each persona registers as a separate custom agent via `conductor_request_access()`. MCP payloads include only the 5 fields the tool accepts (`agentId`, `agentName`, `agentType`, `capabilities`, `requestedRole`). Extended metadata (model tier, context budget, instructions file) is structured for future use when Conductor exposes those fields. No Conductor changes needed.
 
@@ -160,8 +171,8 @@ Conductor's semantic.json refreshed to 2026-02-08T14:00. Corrected MCP tool list
 | P0 | ~~eco-convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Conductor semantic.json refresh (G7)~~ | ~~Conductor~~ | **COMPLETE** (v3.3.0) |
 | P0 | ~~Carlos gt-eco01: MCP agent registration~~ | ~~Carlos~~ | **COMPLETE** (cf78f8f) |
-| P1 | Carlos gt-eco03: Ecosystem model router | Carlos | Unblocked (cq-03 answered) |
+| P0 | ~~Carlos gt-eco03: Ecosystem model router~~ | ~~Carlos~~ | **COMPLETE** (5c09457) |
 | P1 | Carlos marketplace submission (gt-mkt04) | Carlos | Unblocked, pending |
 | P2 | Conductor confirms cq-02 (context budget) | Conductor | Awaiting response |
 
-**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. Carlos convoy-007 at 80% (4/5 project beads) — gt-eco01 DONE, gt-eco03 remaining. 0 misalignments, 0 gaps. All semantic.json files fresh. 1 Carlos→Conductor question remaining (cq-02, non-blocking).
+**State:** 3/3 ecosystem convoys complete, 9/9 ecosystem beads done. **Carlos convoy-007 COMPLETE** (5/5 project beads). 0 misalignments, 0 gaps. All semantic.json files fresh. 1 Carlos→Conductor question remaining (cq-02, non-blocking). All ecosystem integration work is done.
