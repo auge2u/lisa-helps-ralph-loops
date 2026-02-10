@@ -1,9 +1,9 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-10 (reconcile v5.0.0 — Lisa Phase 4-6)
-**Previous reconcile:** 2026-02-09 v4.0.0
+**Generated:** 2026-02-10 (reconcile v5.0.1 — G9 resolved)
+**Previous reconcile:** 2026-02-10 v5.0.0
 **Ecosystem root:** lisa3 (this repo)
-**Reconcile method:** Lisa Stage 5 skill (incremental — Carlos and Conductor scanned, Lisa full re-scan)
+**Reconcile method:** Lisa Stage 5 skill (incremental — Lisa semantic.json refreshed, Carlos/Conductor unchanged)
 **Data source:** Local filesystem (all 3 projects)
 **Projects:** Lisa (local), Carlos (local), Conductor (local)
 
@@ -11,48 +11,25 @@
 
 ## Summary
 
-| Status | Count | Change from v4.0.0 |
+| Status | Count | Change from v5.0.0 |
 |--------|-------|---------------------|
-| Aligned | 26 | +2 |
+| Aligned | 26 | unchanged |
 | Misaligned | 0 | unchanged |
-| Gaps | 2 | +1 (LOW) |
+| Gaps | 1 | -1 (G9 resolved) |
 
-**Overall assessment:** Lisa completed Phase 4-6 implementation (ship, harden, mature). Key changes: validate.py now works without PyYAML (fallback mode), reconcile supports standalone/incremental modes, ecosystem.json upgraded to v2 schema with git remote URLs, getting started guide added, deprecated plugin archived. Carlos added min/max gate support. Conductor unchanged since GA. Lisa's semantic.json is now stale and should be refreshed to reflect Phase 4-6 changes.
+**Overall assessment:** Lisa semantic.json refreshed (commit c8971e0), resolving G9 staleness. All Phase 4-6 changes now reflected in self-report: validate.py fallback mode, reconcile standalone/incremental modes, ecosystem-config-v2, getting started guide, marketplace readiness. Only G8 (LOW, Conductor MCP tool categories) remains. Carlos and Conductor unchanged.
 
 ---
 
-## Changes Since v4.0.0
+## Changes Since v5.0.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Lisa commits | 75dadf8 | **0ace0b4** | 2 new (Phase 4-6 implementation) |
-| Lisa ecosystem.json | v1 schema | **v2 schema** (remote field) | Portable project identification |
-| Lisa validate.py | PyYAML required | **Fallback mode** (works without PyYAML) | Lower barrier to entry |
-| Lisa reconcile SKILL.md | Basic | **Standalone + incremental + git remote** | Robust for new users |
-| Lisa checkpoint-schema | Basic | **+git_hash, remote, scan_mode** | Incremental reconcile support |
-| Lisa plugin.json | Minimal | **+category, keywords, email** | Marketplace-ready |
-| Lisa docs | README only | **+GETTING_STARTED.md, DEPRECATED.md** | Better onboarding |
-| Carlos commits | fc18ddd | **37c7cb7** | 5 new (min/max gate, semantic refresh, Cycle 4) |
-| Carlos gates.yaml | v1.0 (9 gates) | v1.0 (9 gates, **+max on phases_in_range**) | Enhanced gate flexibility |
+| Lisa commits | 0ace0b4 | **c8971e0** | 2 new (reconcile v5.0.0 + semantic.json refresh) |
+| Lisa semantic.json | Stale (2026-02-08) | **Refreshed (2026-02-10)** | G9 resolved |
+| Lisa semantic.json sections | 11 sections | **15 sections** (+validation, reconcile, documentation, plugin_structure) | Complete self-report |
+| Carlos commits | 37c7cb7 | 37c7cb7 | No changes |
 | Conductor commits | 1fdaebf | 1fdaebf | No changes |
-
-### Lisa Phase 4-6 Highlights
-
-**Phase 4 (Clean, Document, Ship):**
-- README.md completely rewritten for v0.3.0 with `/lisa:` commands, 5-stage pipeline, ecosystem table
-- CHANGELOG.md v0.3.0 entry (added, changed, deprecated, breaking)
-- plugin.json updated with marketplace fields (category, keywords, email)
-- `docs/GETTING_STARTED.md` — install to first output in 15 minutes
-
-**Phase 5 (Harden & Validate):**
-- `validate.py` PyYAML fallback mode — hardcoded JSON-only gates when PyYAML unavailable
-- Deprecated plugin archived with `DEPRECATED.md` migration guide
-
-**Phase 6 (Ecosystem Maturity):**
-- `ecosystem.json` upgraded to v2 schema (`remote` field for portable project identification)
-- Reconcile SKILL.md: standalone mode, incremental mode (git hash comparison), git remote fallback
-- `checkpoint-schema.json`: added `git_hash`, `remote`, `scan_mode` per project
-- SKILL.md error handling expanded (graceful degradation for missing partners)
 
 ---
 
@@ -86,20 +63,9 @@ Conductor's GA semantic.json lists 24 MCP tools across 4 categories but omits ac
 **Resolution:** Conductor adds missing categories in next semantic.json refresh.
 **Status:** unchanged
 
-### G9: Lisa Semantic.json Stale (LOW) — NEW
+### G9: Lisa Semantic.json Stale — RESOLVED (v5.0.1)
 
-Lisa's `.gt/memory/semantic.json` was last scanned on 2026-02-08T19:00. Since then, significant changes were made in commits 00aeade and 0ace0b4 (Phase 4-6 implementation):
-- validate.py fallback mode (works without PyYAML)
-- Reconcile standalone/incremental/git-remote modes
-- ecosystem-config-v2 schema support
-- checkpoint-schema.json extended (git_hash, remote, scan_mode)
-- docs/GETTING_STARTED.md added
-- plugin.json marketplace fields (category, keywords, email)
-- README.md rewritten
-
-**Functional impact:** Low. Semantic.json accurately describes capabilities and pipeline structure. Missing details are about new features (fallback mode, standalone mode) and documentation improvements.
-**Resolution:** Run `/lisa:discover` to refresh semantic.json with Phase 4-6 changes.
-**Status:** new
+Resolved in commit c8971e0. Lisa semantic.json refreshed via `/lisa:discover` on 2026-02-10T15:00. Now includes 4 new sections (validation, reconcile, documentation, plugin_structure), updated tech_stack (PyYAML optional), marketplace fields (category, keywords), and 41 files analyzed (was 31).
 
 ---
 
@@ -116,6 +82,7 @@ Lisa's `.gt/memory/semantic.json` was last scanned on 2026-02-08T19:00. Since th
 | G3 | No reconcile output templates | v2.5.0 |
 | Q2 | Checkpoint schema undefined | v3.0.0 |
 | G7 | Conductor semantic.json stale | v3.3.0 |
+| G9 | Lisa semantic.json stale | v5.0.1 |
 
 ---
 
@@ -157,11 +124,11 @@ Lisa's `.gt/memory/semantic.json` was last scanned on 2026-02-08T19:00. Since th
 | P0 | ~~eco-convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Conductor GA release (v1.0.0)~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Carlos convoy-007~~ | ~~Carlos~~ | **COMPLETE** (5/5) |
-| P1 | Lisa: refresh semantic.json (G9) | Lisa | NEW — run `/lisa:discover` |
+| P0 | ~~Lisa: refresh semantic.json (G9)~~ | ~~Lisa~~ | **RESOLVED** (c8971e0) |
 | P1 | Lisa: marketplace submission | Lisa | Unblocked (plugin.json ready) |
 | P1 | Conductor: add access_control/cost_tracking to semantic.json (G8) | Conductor | LOW, non-blocking |
 | P1 | Carlos marketplace submission (gt-mkt04) | Carlos | Unblocked, pending |
 | P1 | Conductor: consume Carlos specialist routing (Steps 6-8) | Conductor | Planned |
 | P2 | Conductor confirms cq-02 (context budget) | Conductor | Awaiting response |
 
-**State:** All 3 ecosystem convoys complete (9/9 beads). Carlos convoy-007 complete (5/5 beads). Conductor GA (v1.0.0) — 5 project convoys complete (19/22 beads). Lisa Phase 4-6 implemented (2 new commits). 26 alignments, 0 misalignments, 2 LOW gaps. Ecosystem focus shifting from internal wiring to publication and adoption.
+**State:** All 3 ecosystem convoys complete (9/9 beads). Carlos convoy-007 complete (5/5 beads). Conductor GA (v1.0.0) — 5 project convoys complete (19/22 beads). Lisa Phase 4-6 implemented, semantic.json refreshed. 26 alignments, 0 misalignments, 1 LOW gap. All semantic.json files fresh. Ecosystem focus: publication and adoption.

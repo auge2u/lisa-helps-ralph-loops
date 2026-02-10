@@ -1,46 +1,36 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-10T12:00:00Z",
-    "version": "5.0.0",
-    "previous_version": "4.0.0",
+    "timestamp": "2026-02-10T15:30:00Z",
+    "version": "5.0.1",
+    "previous_version": "5.0.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Lisa Phase 4-6 implementation (commits 00aeade, 0ace0b4) — README, CHANGELOG, validate.py fallback, reconcile standalone/incremental, ecosystem-config-v2, getting started guide, marketplace readiness."
+    "trigger": "Lisa semantic.json refreshed (commit c8971e0) — resolves G9 staleness. Incremental reconcile: Carlos and Conductor unchanged."
   },
   "projects": {
     "lisa": {
       "path": "~/github/auge2u/lisa3",
       "remote": "https://github.com/auge2u/lisa-helps-ralph-loops",
-      "git_hash": "0ace0b4",
+      "git_hash": "c8971e0",
       "status": "found",
-      "source": "local filesystem (2 new commits since v4.0.0)",
+      "source": "local filesystem (2 new commits since v5.0.0: reconcile + discover refresh)",
       "scan_mode": "full",
       "semantic_json": {
         "exists": true,
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
-        "last_scan": "2026-02-08T19:00:00Z",
-        "stale": true,
-        "stale_reason": "Phase 4-6 changes not reflected (validate.py fallback, standalone/incremental reconcile, ecosystem-config-v2, getting started guide, marketplace fields)"
+        "last_scan": "2026-02-10T15:00:00Z",
+        "stale": false,
+        "sections": 15,
+        "files_analyzed": 41
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
         "version": "1.1",
         "gates": 31,
         "stages": 5
-      },
-      "phase_4_6": {
-        "readme_rewritten": true,
-        "changelog_added": true,
-        "validate_fallback": true,
-        "reconcile_standalone": true,
-        "reconcile_incremental": true,
-        "ecosystem_config_v2": true,
-        "getting_started_guide": true,
-        "marketplace_ready": true,
-        "deprecated_plugin_archived": true
       },
       "alignment": "aligned"
     },
@@ -49,8 +39,8 @@
       "remote": "https://github.com/auge2u/carlos",
       "git_hash": "37c7cb7",
       "status": "found",
-      "source": "local filesystem (5 new commits since v4.0.0 fc18ddd)",
-      "scan_mode": "full",
+      "source": "local filesystem (unchanged since v5.0.0)",
+      "scan_mode": "cached",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
@@ -73,8 +63,8 @@
       "remote": "https://github.com/habitusnet/conductor",
       "git_hash": "1fdaebf",
       "status": "found",
-      "source": "local filesystem (no new commits since v4.0.0)",
-      "scan_mode": "incremental",
+      "source": "local filesystem (unchanged since v5.0.0)",
+      "scan_mode": "cached",
       "semantic_json": {
         "exists": true,
         "version": "1.0.0",
@@ -99,7 +89,7 @@
     "divergent": 0,
     "alignments": 26,
     "misalignments": 0,
-    "gaps": 2
+    "gaps": 1
   },
   "work_structure": {
     "ecosystem": {
@@ -147,15 +137,6 @@
       "functional_impact": "None — Carlos gt-eco01 registrations work",
       "resolution": "Conductor adds missing categories back in next semantic.json refresh",
       "status": "unchanged"
-    },
-    {
-      "id": "G9",
-      "severity": "low",
-      "description": "Lisa semantic.json stale — last_scan 2026-02-08T19:00, but Phase 4-6 implementation added validate.py fallback mode, reconcile standalone/incremental/git-remote modes, ecosystem-config-v2, getting started guide, marketplace-ready plugin.json, rewritten README, and CHANGELOG.",
-      "affects": ["lisa"],
-      "functional_impact": "Low — semantic.json accurately describes pipeline and capabilities; missing details are about new features and documentation",
-      "resolution": "Run /lisa:discover to refresh semantic.json",
-      "status": "new"
     }
   ],
   "resolved": [
@@ -171,7 +152,8 @@
     {"id": "G6", "resolved_in": "v2.1.0"},
     {"id": "Q2", "resolved_in": "v3.0.0", "description": "Checkpoint schema — Hybrid SQLite + Bead File Updates"},
     {"id": "M5", "resolved_in": "v3.1.0", "description": "Convoy naming collision — eco-convoy-NNN prefix applied"},
-    {"id": "G7", "resolved_in": "v3.3.0", "description": "Conductor semantic.json stale — refreshed with corrected MCP tools (19) and convoy-003 capabilities"}
+    {"id": "G7", "resolved_in": "v3.3.0", "description": "Conductor semantic.json stale — refreshed with corrected MCP tools (19) and convoy-003 capabilities"},
+    {"id": "G9", "resolved_in": "v5.0.1", "description": "Lisa semantic.json stale — refreshed via /lisa:discover (c8971e0), 4 new sections, 41 files analyzed"}
   ],
   "decisions": {
     "resolved_questions": [
@@ -188,7 +170,6 @@
     ]
   },
   "next_reconcile_triggers": [
-    "Lisa semantic.json refresh (resolve G9)",
     "Lisa marketplace submission",
     "Conductor resolves G8 (add missing MCP tool categories to semantic.json)",
     "Conductor confirms cq-02 (context budget sufficient?)",
@@ -208,19 +189,15 @@
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
       "LISA PHASE 4-6 COMPLETE: README, CHANGELOG, validate.py fallback, reconcile standalone/incremental, ecosystem-config-v2, getting started guide, marketplace readiness",
+      "LISA SEMANTIC.JSON REFRESHED: 2026-02-10T15:00, 15 sections, 41 files analyzed, G9 resolved",
       "CONDUCTOR GA (v1.0.0): 5 convoys complete, 1,374 tests, 24 MCP tools, v1.0.0 tag",
       "ALL 3 ECOSYSTEM CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
       "ALL 9 ECOSYSTEM BEADS DONE: no pending ecosystem work items",
-      "Carlos convoy-007 COMPLETE: 5/5 beads done, gates.yaml +max support (37c7cb7)",
-      "ecosystem.json upgraded to v2 schema (remote field per project)",
-      "validate.py works without PyYAML (fallback mode with JSON-only checks)",
-      "Reconcile supports standalone mode (no ecosystem.json), incremental mode (git hash comparison), git remote fallback",
-      "checkpoint-schema.json extended: git_hash, remote, scan_mode per project",
+      "ALL SEMANTIC.JSON FILES FRESH: Lisa 2026-02-10, Carlos 2026-02-09, Conductor 2026-02-09",
       "G8 (LOW): Conductor semantic.json missing access_control/cost_tracking tool categories",
-      "G9 (LOW): Lisa semantic.json stale — last scan 2026-02-08, Phase 4-6 changes not reflected",
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
-      "26 alignments, 0 misalignments, 2 LOW gaps",
-      "Ecosystem focus: shifting from internal wiring to publication and adoption"
+      "26 alignments, 0 misalignments, 1 LOW gap",
+      "Ecosystem focus: publication and adoption"
     ]
   }
 }

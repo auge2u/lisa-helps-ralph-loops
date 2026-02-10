@@ -2,10 +2,10 @@
 
 Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
 
-**Generated:** 2026-02-10 (reconcile v5.0.0 — Lisa Phase 4-6)
+**Generated:** 2026-02-10 (reconcile v5.0.1 — G9 resolved)
 **Data source:** Local filesystem (all projects cloned)
 **Projects scanned:** 3 attempted, 3 found (all local)
-**Reconcile method:** Lisa Stage 5 skill (incremental — Lisa full re-scan, Carlos/Conductor checked via git hash)
+**Reconcile method:** Lisa Stage 5 skill (incremental — Lisa semantic.json refreshed, Carlos/Conductor unchanged)
 
 ---
 
@@ -19,12 +19,12 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 | **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
 | **Language** | Python | Python | TypeScript |
 | **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| **Last scan** | 2026-02-08T19:00 | 2026-02-09T18:00 | 2026-02-09T14:45 |
-| **Git hash** | 0ace0b4 | 37c7cb7 | 1fdaebf |
+| **Last scan** | **2026-02-10T15:00** | 2026-02-09T18:00 | 2026-02-09T14:45 |
+| **Git hash** | **c8971e0** | 37c7cb7 | 1fdaebf |
 | **License** | MIT | MIT | MIT |
 | **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates, +max support) | Yes (v1.1, ecosystem overlay) |
 | **Own reconcile** | Yes (this report) | Yes (Cycle 4) | Yes (Cycle 7) |
-| **semantic.json fresh?** | **Stale** (G9) | Yes | Yes |
+| **semantic.json fresh?** | **Yes** (G9 resolved) | Yes | Yes |
 
 ---
 
@@ -51,16 +51,7 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 **Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, scopecraft/.checkpoint.json
 **Does not own:** Carlos analysis reports, Conductor state
 
-**Changes since v4.0.0 (not yet reflected in semantic.json):**
-- validate.py PyYAML fallback mode (hardcoded JSON-only gates when PyYAML unavailable)
-- Reconcile SKILL.md: standalone mode, incremental mode, git remote fallback
-- ecosystem-config-v2 schema support (remote field per project)
-- checkpoint-schema.json: +git_hash, +remote, +scan_mode fields
-- docs/GETTING_STARTED.md (new)
-- plugin.json: +category, +keywords, +email (marketplace-ready)
-- README.md rewritten for v0.3.0
-- CHANGELOG.md v0.3.0 entry
-- plugins/lisa-loops-memory/DEPRECATED.md (migration guide)
+**Refreshed in v5.0.1** (commit c8971e0). New sections added: `validation` (PyYAML fallback, check types, path security), `reconcile` (standalone/incremental modes, git remote fallback, checkpoint fields), `documentation` (README, CHANGELOG, getting started), `plugin_structure` (active/deprecated plugins, file counts). 41 files analyzed (was 31). All Phase 4-6 changes now reflected.
 
 ---
 
@@ -173,10 +164,9 @@ Carlos gates.yaml v1.0 now supports `max` parameter on `file_count` and `pattern
 
 ---
 
-## Notable Changes From v4.0.0
+## Notable Changes From v5.0.0
 
-1. **Lisa Phase 4-6 implementation:** README rewritten, CHANGELOG added, validate.py fallback mode, reconcile standalone/incremental modes, ecosystem-config-v2, getting started guide, marketplace-ready plugin.json.
-2. **Carlos gates.yaml enhanced:** min/max support on file_count gate (37c7cb7). Semantic.json rescanned (ded0a2c, last_scan now 2026-02-09T18:00).
-3. **Conductor unchanged:** Still at 1fdaebf, no new commits since GA.
-4. **Ecosystem config v2:** All 3 projects now have git remote URLs in `~/.lisa/ecosystem.json`.
-5. **Lisa semantic.json stale (G9):** Last scan 2026-02-08, missing Phase 4-6 changes.
+1. **Lisa semantic.json refreshed (G9 resolved):** Discovery scan on 2026-02-10T15:00 added 4 new sections (validation, reconcile, documentation, plugin_structure), updated tech_stack (PyYAML optional), 41 files analyzed. Commit c8971e0.
+2. **Carlos unchanged:** Still at 37c7cb7.
+3. **Conductor unchanged:** Still at 1fdaebf.
+4. **All semantic.json files now fresh** across all 3 projects.
