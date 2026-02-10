@@ -9,13 +9,15 @@
     "description": "Staged migration system that analyzes codebases, extracts work items as Beads, bundles them into Convoys, and generates .gt/ directory structure for multi-agent execution via Gastown.",
     "repository": "https://github.com/auge2u/lisa-helps-ralph-loops",
     "license": "MIT",
-    "status": "alpha"
+    "status": "alpha",
+    "category": "productivity",
+    "keywords": ["gastown", "migration", "multi-agent", "beads", "convoys", "roadmap", "rescue", "semantic-memory"]
   },
   "tech_stack": {
     "runtime": "Python 3.10+",
-    "primary_dependency": "PyYAML",
-    "testing": "pytest (pytest -v)",
-    "validation": "validate.py (loads gates.yaml)",
+    "primary_dependency": "PyYAML (optional — fallback mode without it)",
+    "testing": "pytest (pytest -v, 25 tests)",
+    "validation": "validate.py (834 lines, loads gates.yaml, PyYAML-free fallback mode)",
     "output_format": "JSON (.gt/ state files) + Markdown (scopecraft/)",
     "versioning": "scripts/bump-version.sh (syncs plugin.json + marketplace.json + CHANGELOG.md)"
   },
@@ -26,7 +28,7 @@
       "target project files (package.json, README.md, docs/, etc.)",
       "carlos/.gt/memory/semantic.json (for reconcile)",
       "conductor/.gt/memory/semantic.json (for reconcile)",
-      "~/.lisa/ecosystem.json (project paths for reconcile)"
+      "~/.lisa/ecosystem.json (ecosystem-config-v2, project paths + git remotes for reconcile)"
     ],
     "writes_to": [
       ".gt/research/ (stage 0)",
@@ -72,6 +74,28 @@
     "gate_stages": ["research", "discover", "plan", "structure", "reconcile"],
     "gate_source": "gates.yaml v1.1 (declarative, single source of truth)"
   },
+  "validation": {
+    "validator": "plugins/lisa/hooks/validate.py",
+    "lines_of_code": 834,
+    "gates_config": "plugins/lisa/gates.yaml (v1.1, 31 gates, 5 stages)",
+    "pyyaml_fallback": true,
+    "fallback_description": "When PyYAML is not installed, validate.py runs in fallback mode using built-in subset of gates (file_exists, file_count, json_valid, json_field_present, json_field_count). Pattern-based checks skipped with warning.",
+    "check_types": ["file_exists", "file_count", "json_valid", "json_field_present", "json_field_count", "pattern_exists", "pattern_count", "cross_reference"],
+    "exit_codes": {"pass": 0, "blocker_failed": 1, "warning_failed": 2, "security_error": 3},
+    "path_security": "All validated paths must resolve within working directory. Allowed: ., .gt, scopecraft"
+  },
+  "reconcile": {
+    "ecosystem_config": "~/.lisa/ecosystem.json (ecosystem-config-v2)",
+    "ecosystem_config_v2_features": ["remote field per project (git remote URL)", "backward compatible with v1"],
+    "standalone_mode": "Works with 0-1 projects when ecosystem.json missing or single-project",
+    "incremental_mode": "Compares git hashes from prior checkpoint; skips unchanged projects",
+    "git_remote_fallback": "When path not found, tries matching git remote get-url origin",
+    "checkpoint_schema": "reconcile-checkpoint-v1 (plugins/lisa/skills/reconcile/checkpoint-schema.json)",
+    "checkpoint_fields": ["git_hash per project", "remote URL per project", "scan_mode (full/incremental/cached)"],
+    "output_templates": 3,
+    "quality_gates": 9,
+    "graceful_degradation": "Missing partners produce informational message, not error"
+  },
   "pipeline": {
     "stages": [
       {"number": 0, "name": "research", "output": ".gt/research/", "agent": "archaeologist"},
@@ -86,6 +110,23 @@
       "ecosystem": ["reconcile"]
     }
   },
+  "documentation": {
+    "readme": "README.md (rewritten for v0.3.0, install + commands + output structure + ecosystem)",
+    "changelog": "CHANGELOG.md (v0.1.0, v0.2.0, v0.3.0 with added/changed/deprecated/breaking)",
+    "getting_started": "docs/GETTING_STARTED.md (install to first output in 15 minutes)",
+    "architecture": "docs/ARCHITECTURE_V2.md (5-stage pipeline design)",
+    "claude_md": "CLAUDE.md (development commands, architecture, file relationships)"
+  },
+  "plugin_structure": {
+    "active_plugin": "plugins/lisa/ (v0.3.0)",
+    "deprecated_plugin": "plugins/lisa-loops-memory/ (v0.2.0, DEPRECATED.md with migration table)",
+    "marketplace_registry": ".claude-plugin/marketplace.json (lists both, deprecated flag on legacy)",
+    "commands": 8,
+    "deprecated_commands": 6,
+    "skill_files": 5,
+    "template_dirs": 5,
+    "total_plugin_files": 39
+  },
   "gastown_concepts": {
     "bead": "Work item with ID gt-xxxxx, acceptance criteria, evidence",
     "convoy": "Bundle of 3-7 related beads for assignment (eco-convoy-NNN for ecosystem, convoy-NNN for project)",
@@ -99,7 +140,7 @@
   "constraints": [
     "Works offline after initial clone",
     "All outputs are local files (no database required)",
-    "Python 3.10+ with PyYAML dependency",
+    "Python 3.10+ (PyYAML optional — fallback mode available)",
     "Plugins must degrade gracefully when ecosystem partners are absent",
     "Allowed output directories: ., .gt, scopecraft (enforced by validate.py)"
   ],
@@ -120,9 +161,13 @@
     }
   },
   "evidence": {
-    "last_scan": "2026-02-08T19:00:00Z",
+    "last_scan": "2026-02-10T15:00:00Z",
     "files_analyzed": [
+      "README.md",
+      "CHANGELOG.md",
       "CLAUDE.md",
+      "docs/GETTING_STARTED.md",
+      "docs/ARCHITECTURE_V2.md",
       "plugins/lisa/.claude-plugin/plugin.json",
       ".claude-plugin/marketplace.json",
       "plugins/lisa/gates.yaml",
@@ -152,10 +197,15 @@
       "plugins/lisa/skills/plan/templates/RISK_REGISTER_FORMAT.md",
       "plugins/lisa/skills/plan/templates/METRICS_FORMAT.md",
       "plugins/lisa/skills/plan/templates/OPEN_QUESTIONS_FORMAT.md",
+      "plugins/lisa-loops-memory/DEPRECATED.md",
       "tests/test_validate_quality_gates.py",
-      "scripts/bump-version.sh"
+      "scripts/bump-version.sh",
+      "~/.lisa/ecosystem.json",
+      "scopecraft/.checkpoint.json",
+      "scopecraft/ALIGNMENT_REPORT.md",
+      "scopecraft/PERSPECTIVES.md"
     ],
-    "previous_scan": "2026-02-06T18:00:00Z (v0.3.0, 22 gates, pre-convoy-001)",
-    "delta_since_previous": "gates.yaml v1.1 (22→31 gates, +reconcile stage 9 gates), convoy glob fix (*convoy-*.json), reconcile templates + checkpoint schema added, ecosystem workflow added, 8 new commits (convoy-001 through v3.3.0 reconcile)"
+    "previous_scan": "2026-02-08T19:00:00Z (v0.3.0, 31 gates, pre-Phase-4-6)",
+    "delta_since_previous": "Phase 4-6 implementation: README rewritten, CHANGELOG v0.3.0 added, docs/GETTING_STARTED.md created, validate.py PyYAML fallback mode (834 lines), reconcile SKILL.md standalone/incremental/git-remote modes, checkpoint-schema.json +git_hash/remote/scan_mode, ecosystem.json → v2 schema (remote field), plugin.json +category/keywords/email, DEPRECATED.md for legacy plugin, reconcile v5.0.0 (26 alignments, 0 misalignments, 2 LOW gaps). 4 new commits (00aeade through 62e3fde)."
   }
 }
