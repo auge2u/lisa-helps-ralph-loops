@@ -55,6 +55,15 @@
             "type": "string",
             "description": "Project path (~ prefix for portability)"
           },
+          "remote": {
+            "type": "string",
+            "description": "Git remote origin URL for portable project identification"
+          },
+          "git_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{7,40}$",
+            "description": "Git commit hash at time of scan (for incremental reconcile)"
+          },
           "status": {
             "enum": ["found", "not-found"],
             "description": "Whether the project was reachable"
@@ -62,6 +71,10 @@
           "source": {
             "type": "string",
             "description": "How project was accessed"
+          },
+          "scan_mode": {
+            "enum": ["full", "incremental", "cached"],
+            "description": "Whether this project was fully scanned or used cached state"
           },
           "semantic_json": {
             "type": "object",

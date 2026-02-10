@@ -3,18 +3,24 @@
 Unified Validator for Lisa Plugin
 
 Validates outputs against quality gates defined in gates.yaml.
-Supports all 4 stages: research, discover, plan, structure.
+Supports all 5 stages: research, discover, plan, structure, reconcile.
 
 Usage:
-    python validate.py [--stage research|discover|plan|structure|all]
+    python validate.py [--stage research|discover|plan|structure|reconcile|all]
     python validate.py --stage discover --format json
-    python validate.py --all --format markdown
+    python validate.py --workflow migrate --format markdown
 
 Exit codes:
     0 - All gates passed
     1 - Blocker gates failed
     2 - Warning gates failed (but no blockers)
     3 - Security error
+
+PyYAML fallback:
+    When PyYAML is not installed, the validator runs in fallback mode using
+    a built-in subset of gates (file_exists, file_count, json_valid,
+    json_field_present, json_field_count). Pattern-based checks are skipped
+    with a warning. Install PyYAML for full validation: pip install pyyaml
 """
 
 import argparse
@@ -548,11 +554,93 @@ class UnifiedValidator:
         return value
 
 
+def _build_fallback_config() -> GatesConfig:
+    """Build a fallback gates config for when PyYAML is not available.
+
+    Covers JSON-based and file-based checks only. Pattern-based checks
+    (pattern_exists, pattern_count) require PyYAML to load gates.yaml.
+    """
+    return GatesConfig(
+        version="fallback",
+        stages={
+            "discover": {
+                "description": "Generate semantic memory (fallback mode)",
+                "output_dir": ".gt/memory",
+                "gates": [
+                    {"id": "semantic_valid", "name": "Semantic memory is valid JSON",
+                     "check": "json_valid", "path": ".gt/memory/semantic.json", "severity": "blocker"},
+                    {"id": "project_identified", "name": "Project name identified",
+                     "check": "json_field_present", "path": ".gt/memory/semantic.json",
+                     "field": "project.name", "severity": "blocker"},
+                    {"id": "tech_stack_detected", "name": "Tech stack detected (2+ fields)",
+                     "check": "json_field_count", "path": ".gt/memory/semantic.json",
+                     "field": "tech_stack", "min": 2, "count_non_null": True, "severity": "blocker"},
+                    {"id": "evidence_recorded", "name": "Evidence files recorded",
+                     "check": "json_field_count", "path": ".gt/memory/semantic.json",
+                     "field": "evidence.files_analyzed", "min": 1, "severity": "warning"},
+                ],
+            },
+            "plan": {
+                "description": "Generate roadmap (fallback mode)",
+                "output_dir": "scopecraft",
+                "gates": [
+                    {"id": "outputs_exist", "name": "All required plan outputs exist (6+ files)",
+                     "check": "file_count", "path": "scopecraft/*.md", "min": 6, "severity": "blocker"},
+                ],
+            },
+            "structure": {
+                "description": "Create beads and convoys (fallback mode)",
+                "output_dir": ".gt",
+                "gates": [
+                    {"id": "beads_extracted", "name": "Beads extracted (1+ required)",
+                     "check": "file_count", "path": ".gt/beads/gt-*.json", "min": 1, "severity": "blocker"},
+                    {"id": "convoy_created", "name": "Convoy created (1+ required)",
+                     "check": "file_count", "path": ".gt/convoys/*convoy-*.json", "min": 1, "severity": "blocker"},
+                ],
+            },
+            "reconcile": {
+                "description": "Ecosystem reconciliation (fallback mode)",
+                "output_dir": "scopecraft",
+                "gates": [
+                    {"id": "checkpoint_valid", "name": "Checkpoint is valid JSON",
+                     "check": "json_valid", "path": "scopecraft/.checkpoint.json", "severity": "blocker"},
+                    {"id": "checkpoint_schema", "name": "Checkpoint has reconcile-checkpoint-v1 schema",
+                     "check": "json_field_present", "path": "scopecraft/.checkpoint.json",
+                     "field": "$schema", "severity": "blocker"},
+                    {"id": "config_loaded", "name": "Checkpoint confirms ecosystem config was loaded",
+                     "check": "json_field_present", "path": "scopecraft/.checkpoint.json",
+                     "field": "reconcile.ecosystem_root", "severity": "blocker"},
+                    {"id": "projects_found", "name": "2+ projects found in checkpoint",
+                     "check": "json_field_count", "path": "scopecraft/.checkpoint.json",
+                     "field": "projects", "min": 2, "severity": "blocker"},
+                    {"id": "alignment_report_exists", "name": "Alignment report generated",
+                     "check": "file_exists", "path": "scopecraft/ALIGNMENT_REPORT.md", "severity": "blocker"},
+                    {"id": "perspectives_exists", "name": "Perspectives generated",
+                     "check": "file_exists", "path": "scopecraft/PERSPECTIVES.md", "severity": "blocker"},
+                ],
+            },
+        },
+        workflows={
+            "migrate": {"description": "Standard migration (fallback)", "stages": ["discover", "plan", "structure"]},
+            "ecosystem": {"description": "Ecosystem reconciliation (fallback)", "stages": ["reconcile"]},
+        },
+        exit_codes={"pass": 0, "blocker_failed": 1, "warning_failed": 2, "security_error": 3},
+    )
+
+
 def load_gates_config(config_path: Path) -> Optional[GatesConfig]:
-    """Load gates configuration from YAML file."""
+    """Load gates configuration from YAML file.
+
+    Falls back to built-in config when PyYAML is not available.
+    """
     if not HAS_YAML:
-        print("Error: PyYAML is required. Install with: pip install pyyaml", file=sys.stderr)
-        return None
+        print("Warning: PyYAML not installed. Running in fallback mode (JSON/file checks only).",
+              file=sys.stderr)
+        print("         Pattern-based checks skipped. Install PyYAML for full validation:",
+              file=sys.stderr)
+        print("         pip install pyyaml", file=sys.stderr)
+        print(file=sys.stderr)
+        return _build_fallback_config()
 
     if not config_path.exists():
         print(f"Error: Gates config not found: {config_path}", file=sys.stderr)
@@ -701,12 +789,12 @@ def main():
                 config_path = candidate
                 break
 
-        if config_path is None:
+        if config_path is None and HAS_YAML:
             print("Error: Could not find gates.yaml. Specify with --config", file=sys.stderr)
             sys.exit(1)
 
-    # Load configuration
-    config = load_gates_config(config_path)
+    # Load configuration (falls back to built-in config if PyYAML unavailable)
+    config = load_gates_config(config_path or Path("gates.yaml"))
     if config is None:
         sys.exit(1)
 

@@ -33,16 +33,17 @@ Output templates: [`templates/`](templates/) | Checkpoint schema: [`checkpoint-s
 
 The reconcile skill reads project locations from `~/.lisa/ecosystem.json`.
 
-### Schema: ecosystem-config-v1
+### Schema: ecosystem-config-v2
 
 ```json
 {
-  "$schema": "ecosystem-config-v1",
+  "$schema": "ecosystem-config-v2",
   "name": "ecosystem-name",
   "projects": [
     {
       "name": "project-name",
       "path": "~/github/org/repo",
+      "remote": "https://github.com/org/repo",
       "role": "role-description",
       "active": true,
       "notes": "optional context"
@@ -52,9 +53,33 @@ The reconcile skill reads project locations from `~/.lisa/ecosystem.json`.
 }
 ```
 
+**New in v2:** The `remote` field (optional) specifies the git remote URL. When present, reconcile can locate projects even if cloned to non-standard paths by matching `git remote get-url origin`. The `path` field remains the primary lookup; `remote` is a fallback for project identification and portability.
+
+**Backward compatibility:** `ecosystem-config-v1` (without `remote` field) is still fully supported. Reconcile will not fail on v1 configs.
+
 **Path handling:** All paths use `~/` for portability. Expand tildes to absolute paths before file access. Example: `~/github/auge2u/lisa3` becomes `/Users/<user>/github/auge2u/lisa3`.
 
+### Standalone Mode
+
+When `~/.lisa/ecosystem.json` is missing or contains only one project, reconcile runs in **standalone mode**:
+- Reports on the single project only (current directory)
+- Reads local `.gt/memory/semantic.json` and `scopecraft/` artifacts
+- Produces a simplified ALIGNMENT_REPORT.md (no cross-project comparison)
+- Checkpoint records single-project state for context recovery
+- Prints informational message: "Running in standalone mode (1 project). Add projects to ~/.lisa/ecosystem.json for ecosystem reconciliation."
+
 ## Reconciliation Procedure
+
+### Step 0: Check for Incremental Mode
+
+If a prior checkpoint exists (`scopecraft/.checkpoint.json`):
+1. Read each project's last known git commit hash from `checkpoint.projects.<name>.git_hash`
+2. For each active project with a known path, check current `git rev-parse HEAD`
+3. If the hash matches, the project is **unchanged** -- skip re-scanning its semantic.json (use cached state from checkpoint)
+4. If the hash differs or is missing, mark as **changed** -- perform full scan
+5. If `--force` flag is set (or user explicitly requests full re-scan), skip this optimization and scan everything
+
+This makes reconcile faster for large ecosystems where most projects haven't changed.
 
 ### Step 1: Load Ecosystem Config
 
@@ -62,8 +87,11 @@ The reconcile skill reads project locations from `~/.lisa/ecosystem.json`.
 2. Validate it has `projects` array with at least 1 entry
 3. Expand all `~` paths to absolute paths
 4. Note which projects are `active: true`
+5. For each project with a `remote` field, if the `path` doesn't exist, try to locate the repo by scanning common clone directories for a matching `git remote get-url origin`
 
-**If `~/.lisa/ecosystem.json` is missing:** Stop and instruct user to create it. Provide the schema above.
+**If `~/.lisa/ecosystem.json` is missing:**
+- If the current directory has `.gt/memory/semantic.json`, run in **standalone mode** (see above)
+- Otherwise, stop and instruct user to create the config. Provide the schema above.
 
 ### Step 2: Gather Semantic Memory
 
@@ -327,13 +355,16 @@ The `reconcile-checkpoint-v1` schema (see [`checkpoint-schema.json`](checkpoint-
 
 | Error | Response |
 |-------|----------|
-| `~/.lisa/ecosystem.json` missing | Stop. Print schema and ask user to create it. |
-| Project path doesn't exist locally | Warn, try GitHub API, record as `"source": "GitHub API"` or `"not-found"` |
-| `semantic.json` missing for a project | Record `semantic_json.exists: false`, continue with other projects |
-| `semantic.json` malformed | Record error in checkpoint, skip project's comparison |
-| Different schema than expected | Extract common fields, flag divergence as a finding |
-| No prior checkpoint | First reconcile — skip "Changes Since" section |
-| Fewer than 2 projects reachable | Warn but still produce report (limited comparison) |
+| `~/.lisa/ecosystem.json` missing | If local `.gt/memory/semantic.json` exists, run in standalone mode. Otherwise, stop and print schema for user. |
+| `~/.lisa/ecosystem.json` has only 1 project | Run in standalone mode with informational message. |
+| Project path doesn't exist locally | Check `remote` field if present; try GitHub API; record as `"source": "GitHub API"` or `"not-found"` |
+| `semantic.json` missing for a project | Record `semantic_json.exists: false`, continue with other projects. Do not crash. |
+| `semantic.json` malformed | Record error in checkpoint, skip project's comparison. Do not crash. |
+| Different schema than expected | Extract common fields, flag divergence as a finding (not an error) |
+| No prior checkpoint | First reconcile -- skip "Changes Since" section and incremental check |
+| Fewer than 2 projects reachable | Warn but still produce report (standalone comparison against own state) |
+| Git not available | Skip git hash check, skip remote lookup, fall back to path-only |
+| Ecosystem partner not installed | Informational message: "Carlos not found -- Lisa works standalone. Install Carlos for specialist analysis." Do not error. |
 
 ## Quality Gates
 
