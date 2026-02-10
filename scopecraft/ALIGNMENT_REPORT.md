@@ -1,9 +1,9 @@
 # Ecosystem Alignment Report
 
-**Generated:** 2026-02-09 (reconcile v4.0.0 — Conductor GA)
-**Previous reconcile:** 2026-02-09 v3.6.3
+**Generated:** 2026-02-10 (reconcile v5.0.0 — Lisa Phase 4-6)
+**Previous reconcile:** 2026-02-09 v4.0.0
 **Ecosystem root:** lisa3 (this repo)
-**Reconcile method:** Lisa Stage 5 skill (full re-scan)
+**Reconcile method:** Lisa Stage 5 skill (incremental — Carlos and Conductor scanned, Lisa full re-scan)
 **Data source:** Local filesystem (all 3 projects)
 **Projects:** Lisa (local), Carlos (local), Conductor (local)
 
@@ -11,66 +11,62 @@
 
 ## Summary
 
-| Status | Count | Change from v3.6.3 |
+| Status | Count | Change from v4.0.0 |
 |--------|-------|---------------------|
-| Aligned | 24 | +4 |
+| Aligned | 26 | +2 |
 | Misaligned | 0 | unchanged |
-| Gaps | 1 | +1 (LOW) |
+| Gaps | 2 | +1 (LOW) |
 
-**Overall assessment:** Conductor reached **General Availability (v1.0.0)** — the ecosystem orchestration layer is now production-ready. 5 internal convoys complete (19/22 beads), 1,374 tests, 24 MCP tools across 4 categories. Carlos completed Cycle 4 reconcile with test count correction. All ecosystem convoys remain complete. 1 new LOW-severity gap (Conductor semantic.json MCP tool listing incomplete — access_control/cost_tracking categories dropped from listing but tools still exist in code).
+**Overall assessment:** Lisa completed Phase 4-6 implementation (ship, harden, mature). Key changes: validate.py now works without PyYAML (fallback mode), reconcile supports standalone/incremental modes, ecosystem.json upgraded to v2 schema with git remote URLs, getting started guide added, deprecated plugin archived. Carlos added min/max gate support. Conductor unchanged since GA. Lisa's semantic.json is now stale and should be refreshed to reflect Phase 4-6 changes.
 
 ---
 
-## Changes Since v3.6.3
+## Changes Since v4.0.0
 
 | Item | Previous | Current | Impact |
 |------|----------|---------|--------|
-| Conductor version | 0.1.0 | **1.0.0** | GA release |
-| Conductor status | alpha | **ga** | Production-ready |
-| Conductor convoys | eco-convoy-003 only | **5 project convoys** (19/22 beads) | Full implementation |
-| Conductor MCP tools | 19 (5 categories) | **24 (4 categories)** | Restructured + expanded |
-| Conductor tests | ~1,100 (estimated) | **1,374** (verified) | Comprehensive coverage |
-| Conductor last scan | 2026-02-09T13:00 | **2026-02-09T14:45** | GA refresh |
-| Carlos tests | 448 | **482** | Corrected (09b9274) |
-| Carlos reconcile | Cycle 3 | **Cycle 4** | Full ecosystem (2193f6e) |
+| Lisa commits | 75dadf8 | **0ace0b4** | 2 new (Phase 4-6 implementation) |
+| Lisa ecosystem.json | v1 schema | **v2 schema** (remote field) | Portable project identification |
+| Lisa validate.py | PyYAML required | **Fallback mode** (works without PyYAML) | Lower barrier to entry |
+| Lisa reconcile SKILL.md | Basic | **Standalone + incremental + git remote** | Robust for new users |
+| Lisa checkpoint-schema | Basic | **+git_hash, remote, scan_mode** | Incremental reconcile support |
+| Lisa plugin.json | Minimal | **+category, keywords, email** | Marketplace-ready |
+| Lisa docs | README only | **+GETTING_STARTED.md, DEPRECATED.md** | Better onboarding |
+| Carlos commits | fc18ddd | **37c7cb7** | 5 new (min/max gate, semantic refresh, Cycle 4) |
+| Carlos gates.yaml | v1.0 (9 gates) | v1.0 (9 gates, **+max on phases_in_range**) | Enhanced gate flexibility |
+| Conductor commits | 1fdaebf | 1fdaebf | No changes |
 
-### Conductor GA Highlights
+### Lisa Phase 4-6 Highlights
 
-**Convoy-003: Multi-Agent Hardening** — Concurrent file locks (133 tests), zone enforcement, agent health monitoring, task reassignment. Plus ecosystem integration: checkpoint/rollover, bead import, context exhaustion detection.
+**Phase 4 (Clean, Document, Ship):**
+- README.md completely rewritten for v0.3.0 with `/lisa:` commands, 5-stage pipeline, ecosystem table
+- CHANGELOG.md v0.3.0 entry (added, changed, deprecated, breaking)
+- plugin.json updated with marketplace fields (category, keywords, email)
+- `docs/GETTING_STARTED.md` — install to first output in 15 minutes
 
-**Convoy-004: Multi-Tenancy & Oversight** — Organization isolation with RBAC, 4 autonomy levels (full_auto/supervised/assisted/manual), priority-based escalation queue. 85 new tests, 2,790 lines.
+**Phase 5 (Harden & Validate):**
+- `validate.py` PyYAML fallback mode — hardcoded JSON-only gates when PyYAML unavailable
+- Deprecated plugin archived with `DEPRECATED.md` migration guide
 
-**Convoy-005: GA Launch Prep** — Getting Started guide, MCP API reference (all tools documented), CHANGELOG, publishing infrastructure, GitHub Actions publish workflow, Cloudflare/Vercel deployment configs. v1.0.0 tag published.
-
-**Tech stack upgrades:** TypeScript 5.9.3, Turborepo 2.8.3, Next.js 16.1.6, Vitest 4.0.18. Deployment target: +Vercel.
+**Phase 6 (Ecosystem Maturity):**
+- `ecosystem.json` upgraded to v2 schema (`remote` field for portable project identification)
+- Reconcile SKILL.md: standalone mode, incremental mode (git hash comparison), git remote fallback
+- `checkpoint-schema.json`: added `git_hash`, `remote`, `scan_mode` per project
+- SKILL.md error handling expanded (graceful degradation for missing partners)
 
 ---
 
 ## Alignments
 
-A1-A20 unchanged. See v2.3.0-v3.6.0 for full list.
+A1-A24 unchanged from v4.0.0.
 
-### A21: Conductor GA Release (NEW in v4.0.0)
+### A25: Lisa Marketplace Readiness (NEW in v5.0.0)
 
-Conductor reached General Availability with v1.0.0 tag. All 5 internal convoys complete (convoy-001 through convoy-005). Phases 0-4 fully implemented: Dashboard MVP, E2B sandbox hardening, multi-agent hardening, multi-tenancy & oversight, GA launch prep. 1,374 tests passing. Production deployment configurations for Vercel, Firebase, and Cloudflare.
+Lisa plugin.json now includes `category`, `keywords`, and author `email` fields required for Claude Code Plugin Marketplace submission. README rewritten with clear install instructions and 5-stage pipeline overview. Getting started guide provides end-to-end walkthrough. Deprecated plugin archived with migration table from old to new commands.
 
-### A22: Conductor MCP Tool Expansion (NEW in v4.0.0)
+### A26: Ecosystem Config v2 (NEW in v5.0.0)
 
-MCP tools expanded from 19 to 24 with restructured categories. Task management now covers full lifecycle (claim→start→complete/fail/block). New oversight category enables autonomous agent management (reassign, pause/resume, escalate, broadcast). Zone-based coordination tools (get_zones, check_conflicts) support file ownership isolation. Health monitoring (health_status) completes the coordination suite.
-
-### A23: Conductor Convoy Structure (NEW in v4.0.0)
-
-Conductor completed 5 project-level convoys with 22 beads (19 complete, 3 deferred) following Lisa bead schema (gt-xxxxx format). Convoy structure validated through Lisa Stage 5 reconcile. Demonstrates ecosystem work structure in practice across a TypeScript monorepo.
-
-### A24: Carlos Cycle 4 Reconcile (NEW in v4.0.0)
-
-Carlos completed its own full-ecosystem Cycle 4 reconcile (commit 2193f6e). Reports 98% alignment across all 3 projects, all project-level misalignments resolved, convoy-007 confirmed complete (5/5 beads). Test count corrected to 482 in semantic.json (commit 09b9274).
-
-### A18-A20: Unchanged
-
-- A18: Agent context budget (Carlos 41% reduction, ~1,500 tokens)
-- A19: Conductor agent registration (gt-eco01, Carlos personas via conductor_request_access)
-- A20: Ecosystem model router (gt-eco03, Carlos owns routing, Conductor consumes)
+`~/.lisa/ecosystem.json` upgraded to `ecosystem-config-v2` schema with `remote` field per project (git remote URL). Reconcile SKILL.md documents the new schema, backward compatibility with v1, standalone mode when config missing, and git remote fallback for project location. `checkpoint-schema.json` updated with `git_hash`, `remote`, `scan_mode` fields to support incremental reconcile. All three projects now have remote URLs recorded.
 
 ---
 
@@ -82,18 +78,28 @@ None. All misalignments resolved.
 
 ## Gaps
 
-### G8: Conductor Semantic.json MCP Tool Listing Incomplete (LOW)
+### G8: Conductor Semantic.json MCP Tool Listing Incomplete (LOW) — UNCHANGED
 
-Conductor's GA semantic.json lists 24 MCP tools across 4 categories (task_management, coordination, oversight, ecosystem) but omits the access_control category (conductor_request_access, conductor_check_access, conductor_check_locks, conductor_get_onboarding_config) and cost_tracking category (conductor_report_usage, conductor_get_budget) that existed in previous versions.
+Conductor's GA semantic.json lists 24 MCP tools across 4 categories but omits access_control (conductor_request_access, conductor_check_access, etc.) and cost_tracking (conductor_report_usage, conductor_get_budget) categories.
 
-**Functional impact:** None. Verified `conductor_request_access` still exists in `packages/mcp-server/src/server.ts` (line 570). Carlos gt-eco01 registrations will work.
+**Functional impact:** None. Tools still exist in code.
+**Resolution:** Conductor adds missing categories in next semantic.json refresh.
+**Status:** unchanged
 
-**Documentation impact:** Conductor's self-report undercounts its actual MCP tool count. Text says "21 tools" but arrays total 24, and actual codebase has additional uncategorized tools.
+### G9: Lisa Semantic.json Stale (LOW) — NEW
 
-**Resolution:** Conductor should add access_control and cost_tracking back to semantic.json in next refresh.
+Lisa's `.gt/memory/semantic.json` was last scanned on 2026-02-08T19:00. Since then, significant changes were made in commits 00aeade and 0ace0b4 (Phase 4-6 implementation):
+- validate.py fallback mode (works without PyYAML)
+- Reconcile standalone/incremental/git-remote modes
+- ecosystem-config-v2 schema support
+- checkpoint-schema.json extended (git_hash, remote, scan_mode)
+- docs/GETTING_STARTED.md added
+- plugin.json marketplace fields (category, keywords, email)
+- README.md rewritten
 
-### G7: RESOLVED - Conductor semantic.json Refreshed (v3.3.0)
-Previous resolution still valid — tool counts were corrected then, now restructured for GA.
+**Functional impact:** Low. Semantic.json accurately describes capabilities and pipeline structure. Missing details are about new features (fallback mode, standalone mode) and documentation improvements.
+**Resolution:** Run `/lisa:discover` to refresh semantic.json with Phase 4-6 changes.
+**Status:** new
 
 ---
 
@@ -151,9 +157,11 @@ Previous resolution still valid — tool counts were corrected then, now restruc
 | P0 | ~~eco-convoy-003: Conductor Ecosystem Integration~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Conductor GA release (v1.0.0)~~ | ~~Conductor~~ | **COMPLETE** |
 | P0 | ~~Carlos convoy-007~~ | ~~Carlos~~ | **COMPLETE** (5/5) |
+| P1 | Lisa: refresh semantic.json (G9) | Lisa | NEW — run `/lisa:discover` |
+| P1 | Lisa: marketplace submission | Lisa | Unblocked (plugin.json ready) |
 | P1 | Conductor: add access_control/cost_tracking to semantic.json (G8) | Conductor | LOW, non-blocking |
 | P1 | Carlos marketplace submission (gt-mkt04) | Carlos | Unblocked, pending |
 | P1 | Conductor: consume Carlos specialist routing (Steps 6-8) | Conductor | Planned |
 | P2 | Conductor confirms cq-02 (context budget) | Conductor | Awaiting response |
 
-**State:** All 3 ecosystem convoys complete (9/9 beads). Carlos convoy-007 complete (5/5 beads). **Conductor GA (v1.0.0)** — 5 project convoys complete (19/22 beads). 24 alignments, 0 misalignments, 1 LOW gap. All semantic.json files fresh. Ecosystem orchestration layer is production-ready.
+**State:** All 3 ecosystem convoys complete (9/9 beads). Carlos convoy-007 complete (5/5 beads). Conductor GA (v1.0.0) — 5 project convoys complete (19/22 beads). Lisa Phase 4-6 implemented (2 new commits). 26 alignments, 0 misalignments, 2 LOW gaps. Ecosystem focus shifting from internal wiring to publication and adoption.

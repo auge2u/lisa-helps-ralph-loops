@@ -1,25 +1,29 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-09T16:00:00Z",
-    "version": "4.0.0",
-    "previous_version": "3.6.3",
+    "timestamp": "2026-02-10T12:00:00Z",
+    "version": "5.0.0",
+    "previous_version": "4.0.0",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Conductor GA release (v1.0.0) — 21 new commits, alpha→ga, 5 convoys complete. Carlos Cycle 4 reconcile + test count correction."
+    "trigger": "Lisa Phase 4-6 implementation (commits 00aeade, 0ace0b4) — README, CHANGELOG, validate.py fallback, reconcile standalone/incremental, ecosystem-config-v2, getting started guide, marketplace readiness."
   },
   "projects": {
     "lisa": {
       "path": "~/github/auge2u/lisa3",
+      "remote": "https://github.com/auge2u/lisa-helps-ralph-loops",
+      "git_hash": "0ace0b4",
       "status": "found",
-      "source": "local filesystem",
+      "source": "local filesystem (2 new commits since v4.0.0)",
+      "scan_mode": "full",
       "semantic_json": {
         "exists": true,
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-08T19:00:00Z",
-        "refreshed_in": "v3.3.1"
+        "stale": true,
+        "stale_reason": "Phase 4-6 changes not reflected (validate.py fallback, standalone/incremental reconcile, ecosystem-config-v2, getting started guide, marketplace fields)"
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
@@ -27,82 +31,62 @@
         "gates": 31,
         "stages": 5
       },
+      "phase_4_6": {
+        "readme_rewritten": true,
+        "changelog_added": true,
+        "validate_fallback": true,
+        "reconcile_standalone": true,
+        "reconcile_incremental": true,
+        "ecosystem_config_v2": true,
+        "getting_started_guide": true,
+        "marketplace_ready": true,
+        "deprecated_plugin_archived": true
+      },
       "alignment": "aligned"
     },
     "carlos": {
       "path": "~/github/auge2u/carlos",
+      "remote": "https://github.com/auge2u/carlos",
+      "git_hash": "37c7cb7",
       "status": "found",
-      "source": "local filesystem (2 new commits since v3.6.3)",
+      "source": "local filesystem (5 new commits since v4.0.0 fc18ddd)",
+      "scan_mode": "full",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
         "schema": "semantic-memory-v1",
-        "last_scan": "2026-02-09T12:00:00Z",
-        "test_count": 482,
-        "note": "test count corrected in 09b9274, data current despite timestamp"
+        "last_scan": "2026-02-09T18:00:00Z",
+        "test_count": 482
       },
       "gates_yaml": {
         "path": "plugins/carlos/gates.yaml",
         "version": "1.0",
         "gates": 9,
         "stages": 1,
-        "schema_compatible": "lisa v1.0"
-      },
-      "cycle_4_reconcile": {
-        "commit": "2193f6e",
-        "description": "Full ecosystem reconcile — 98% alignment, all misalignments resolved",
-        "convoy_007": "COMPLETE (5/5 beads)"
+        "schema_compatible": "lisa v1.0",
+        "new_features": "min/max support on file_count (37c7cb7)"
       },
       "alignment": "aligned"
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
+      "remote": "https://github.com/habitusnet/conductor",
+      "git_hash": "1fdaebf",
       "status": "found",
-      "source": "local filesystem (21 new commits since v3.6.3: a9bca30..1fdaebf)",
+      "source": "local filesystem (no new commits since v4.0.0)",
+      "scan_mode": "incremental",
       "semantic_json": {
         "exists": true,
         "version": "1.0.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-09T14:45:00Z",
         "project_status": "ga",
-        "stale": false,
-        "refreshed_in": "v4.0.0"
+        "stale": false
       },
       "gates_yaml": {
         "path": "scopecraft/gates.yaml",
         "version": "1.1",
         "type": "ecosystem overlay"
-      },
-      "ga_release": {
-        "version": "1.0.0",
-        "tag": "v1.0.0",
-        "convoys_complete": 5,
-        "beads_total": 22,
-        "beads_complete": 19,
-        "beads_deferred": 3,
-        "tests": 1374,
-        "mcp_tools_listed": 24,
-        "mcp_tools_actual": "24+ (access_control and cost_tracking tools exist but uncategorized)"
-      },
-      "tech_stack_upgrades": {
-        "typescript": "5.7.2 → 5.9.3",
-        "turborepo": "2.3.3 → 2.8.3",
-        "nextjs": "15.1.0 → 16.1.6",
-        "vitest": "4.0.16 → 4.0.18"
-      },
-      "new_capabilities": [
-        "Organization isolation (multi-tenant RBAC)",
-        "Autonomy levels (full_auto/supervised/assisted/manual)",
-        "Escalation queue (priority-based)",
-        "Zone-based file ownership",
-        "Health monitoring",
-        "Task reassignment",
-        "Capability matching"
-      ],
-      "cycle_7_reconcile": {
-        "alignment_score": 100,
-        "self_reported_misalignments": 5,
-        "note": "Conductor's own reconcile notes internal data quality issues (test count, tool count in semantic.json)"
       },
       "alignment": "aligned"
     }
@@ -113,9 +97,9 @@
     "aligned": 3,
     "mostly_aligned": 0,
     "divergent": 0,
-    "alignments": 24,
+    "alignments": 26,
     "misalignments": 0,
-    "gaps": 1
+    "gaps": 2
   },
   "work_structure": {
     "ecosystem": {
@@ -158,10 +142,19 @@
     {
       "id": "G8",
       "severity": "low",
-      "description": "Conductor semantic.json MCP tool listing incomplete — access_control and cost_tracking categories dropped in GA restructure. Tools still exist in code (conductor_request_access verified in server.ts:570).",
+      "description": "Conductor semantic.json MCP tool listing incomplete — access_control and cost_tracking categories dropped in GA restructure. Tools still exist in code.",
       "affects": ["conductor"],
       "functional_impact": "None — Carlos gt-eco01 registrations work",
       "resolution": "Conductor adds missing categories back in next semantic.json refresh",
+      "status": "unchanged"
+    },
+    {
+      "id": "G9",
+      "severity": "low",
+      "description": "Lisa semantic.json stale — last_scan 2026-02-08T19:00, but Phase 4-6 implementation added validate.py fallback mode, reconcile standalone/incremental/git-remote modes, ecosystem-config-v2, getting started guide, marketplace-ready plugin.json, rewritten README, and CHANGELOG.",
+      "affects": ["lisa"],
+      "functional_impact": "Low — semantic.json accurately describes pipeline and capabilities; missing details are about new features and documentation",
+      "resolution": "Run /lisa:discover to refresh semantic.json",
       "status": "new"
     }
   ],
@@ -195,6 +188,8 @@
     ]
   },
   "next_reconcile_triggers": [
+    "Lisa semantic.json refresh (resolve G9)",
+    "Lisa marketplace submission",
     "Conductor resolves G8 (add missing MCP tool categories to semantic.json)",
     "Conductor confirms cq-02 (context budget sufficient?)",
     "Carlos marketplace submission (gt-mkt04)",
@@ -212,23 +207,20 @@
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "CONDUCTOR GA (v1.0.0): alpha → ga, 5 convoys complete, 1,374 tests, 24 MCP tools, v1.0.0 tag",
+      "LISA PHASE 4-6 COMPLETE: README, CHANGELOG, validate.py fallback, reconcile standalone/incremental, ecosystem-config-v2, getting started guide, marketplace readiness",
+      "CONDUCTOR GA (v1.0.0): 5 convoys complete, 1,374 tests, 24 MCP tools, v1.0.0 tag",
       "ALL 3 ECOSYSTEM CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
       "ALL 9 ECOSYSTEM BEADS DONE: no pending ecosystem work items",
-      "Carlos convoy-007 COMPLETE: 5/5 beads done",
-      "Carlos Cycle 4 reconcile: 98% alignment, all misalignments resolved (2193f6e)",
-      "Carlos test count: 482 (corrected from 448 in 09b9274)",
-      "Conductor 5 project convoys: Dashboard MVP, E2B Hardening, Multi-Agent, Multi-Tenancy, GA Launch",
-      "Conductor MCP tools restructured: 4 categories (task_management 8, coordination 7, oversight 5, ecosystem 4)",
-      "Conductor tech upgrades: TypeScript 5.9.3, Turborepo 2.8.3, Next.js 16.1.6, +Vercel",
-      "G8 (LOW): Conductor semantic.json missing access_control/cost_tracking tool categories — tools exist in code",
-      "A21: Conductor GA release confirmed",
-      "A22: Conductor MCP tool expansion confirmed",
-      "A23: Conductor convoy structure confirmed",
-      "A24: Carlos Cycle 4 reconcile confirmed",
+      "Carlos convoy-007 COMPLETE: 5/5 beads done, gates.yaml +max support (37c7cb7)",
+      "ecosystem.json upgraded to v2 schema (remote field per project)",
+      "validate.py works without PyYAML (fallback mode with JSON-only checks)",
+      "Reconcile supports standalone mode (no ecosystem.json), incremental mode (git hash comparison), git remote fallback",
+      "checkpoint-schema.json extended: git_hash, remote, scan_mode per project",
+      "G8 (LOW): Conductor semantic.json missing access_control/cost_tracking tool categories",
+      "G9 (LOW): Lisa semantic.json stale — last scan 2026-02-08, Phase 4-6 changes not reflected",
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
-      "All 3 semantic.json files fresh — Lisa 2026-02-08T19:00, Carlos 2026-02-09T12:00, Conductor 2026-02-09T14:45",
-      "24 alignments, 0 misalignments, 1 LOW gap"
+      "26 alignments, 0 misalignments, 2 LOW gaps",
+      "Ecosystem focus: shifting from internal wiring to publication and adoption"
     ]
   }
 }
