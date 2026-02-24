@@ -1,11 +1,7 @@
 # Ecosystem Perspectives
 
-Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared side-by-side.
-
-**Generated:** 2026-02-10 (reconcile v5.0.1 — G9 resolved)
-**Data source:** Local filesystem (all projects cloned)
-**Projects scanned:** 3 attempted, 3 found (all local)
-**Reconcile method:** Lisa Stage 5 skill (incremental — Lisa semantic.json refreshed, Carlos/Conductor unchanged)
+**Generated:** 2026-02-24 (reconcile v6.0.0)
+**Projects scanned:** 3 attempted, 3 found
 
 ---
 
@@ -13,160 +9,127 @@ Aggregated self-reports from each plugin's `.gt/memory/semantic.json`, compared 
 
 | Field | Lisa | Carlos | Conductor |
 |-------|------|--------|-----------|
-| **Status** | Found (local) | Found (local) | Found (local) |
-| **Version** | 0.3.0 | 1.2.0 | 1.0.0 |
-| **Stage** | alpha | beta | ga |
-| **Type** | claude-code-plugin | claude-code-plugin | framework (monorepo) |
-| **Language** | Python | Python | TypeScript |
-| **Schema** | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| **Last scan** | **2026-02-10T15:00** | 2026-02-09T18:00 | 2026-02-09T14:45 |
-| **Git hash** | **c8971e0** | 37c7cb7 | 1fdaebf |
-| **License** | MIT | MIT | MIT |
-| **gates.yaml** | Yes (v1.1, 31 gates, 5 stages) | Yes (v1.0, 9 gates, +max support) | Yes (v1.1, ecosystem overlay) |
-| **Own reconcile** | Yes (this report) | Yes (Cycle 4) | Yes (Cycle 7) |
-| **semantic.json fresh?** | **Yes** (G9 resolved) | Yes | Yes |
+| Status | found | found | found |
+| Version | 0.3.0 | 1.2.0 | 1.0.0 |
+| Release status | alpha | beta | ga |
+| Schema | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
+| Last scan | 2026-02-10 (**stale**) | 2026-02-09 | 2026-02-09 |
+| Primary language | Python | Python | TypeScript |
+| Git hash | 361b0b5 | df3b763 | 80ed6b2 |
+| Semantic freshness | STALE (G10) | ok | ok |
 
 ---
 
 ## Lisa Self-Report
 
-**Source:** `~/github/auge2u/lisa3/.gt/memory/semantic.json`
+**Source:** `.gt/memory/semantic.json` (scanned 2026-02-10, stale since 2026-02-24 changes)
 
-| Attribute | Value | Change from v4.0.0 |
-|-----------|-------|---------------------|
-| Name | lisa | — |
-| Role | pipeline-and-memory | — |
-| Version | 0.3.0 | — |
-| Standalone command | `/lisa:migrate` | — |
-| Ecosystem root | Yes | — |
-| Commands | 8 | — |
-| Agents | 2 (archaeologist, migrator) | — |
-| Skills | 5 (research, discover, plan, structure, reconcile) | — |
-| Quality gates | 31 across 5 stages | — |
-| Gate source | gates.yaml v1.1 (declarative) | — |
-| Checkpoint schema | Formal JSON Schema | — |
-| Templates | 3 reconcile output templates | — |
+| Attribute | Value |
+|-----------|-------|
+| Role | pipeline-and-memory |
+| Ecosystem root | Yes |
+| Standalone command | `/lisa:migrate` |
+| Pipeline stages | research(0), discover(1), plan(2), structure(3), reconcile(5) |
+| Quality gates | 31 (gates.yaml v1.1) |
+| Tests | 25 (pytest, legacy validator) |
+| Validator | validate.py (834 lines, PyYAML fallback) |
 
-**Reads from:** target project files, carlos/.gt/memory/semantic.json, conductor/.gt/memory/semantic.json
-**Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, scopecraft/.checkpoint.json
+**Reads from:** target project files, carlos/.gt/memory/semantic.json, conductor/.gt/memory/semantic.json, ~/.lisa/ecosystem.json
+
+**Writes to:** .gt/research/, .gt/memory/, scopecraft/, .gt/beads/, .gt/convoys/, scopecraft/.checkpoint.json, scopecraft/ALIGNMENT_REPORT.md
+
 **Does not own:** Carlos analysis reports, Conductor state
 
-**Refreshed in v5.0.1** (commit c8971e0). New sections added: `validation` (PyYAML fallback, check types, path security), `reconcile` (standalone/incremental modes, git remote fallback, checkpoint fields), `documentation` (README, CHANGELOG, getting started), `plugin_structure` (active/deprecated plugins, file counts). 41 files analyzed (was 31). All Phase 4-6 changes now reflected.
+**Notable since last scan (not yet in semantic.json):**
+- bump-version.sh fixed (was pointing at lisa-loops-memory)
+- CLAUDE.md: full Ecosystem Position section added
+- Bead schema: aligned with real bd Issue type (priority int, AC string, issue_type)
+- structure/SKILL.md: bd/bv/gt CLI integration documented
+- ~/github/steveyegge/beads and ~/github/steveyegge/gastown cloned as canonical refs
 
 ---
 
 ## Carlos Self-Report
 
-**Source:** `~/github/auge2u/carlos/.gt/memory/semantic.json`
+**Source:** `~/github/auge2u/carlos/.gt/memory/semantic.json` (scanned 2026-02-09)
 
-| Attribute | Value | Change from v4.0.0 |
-|-----------|-------|---------------------|
-| Name | carlos | — |
-| Role | specialist-fixer | — |
-| Version | 1.2.0 | — |
-| LOC | 11,422 | — |
-| Tests | 482 + 95 security | — |
-| Quality gates | gates.yaml v1.0 (9 gates) | +max support on file_count |
-| Discovery cache | 24h TTL | — |
-| Last scan | 2026-02-09T18:00 | Was 2026-02-09T12:00 |
-| Agent context tokens | ~1,500 | — |
-| Convoy-007 | COMPLETE (5/5 beads) | — |
-| Own reconcile | Cycle 4 (2026-02-09) | — |
+| Attribute | Value |
+|-----------|-------|
+| Role | specialist-fixer |
+| Ecosystem root | No (lisa3 is root) |
+| Standalone command | `/carlos:roadmap` |
+| Python modules | 15 |
+| Python LOC | ~11,422 |
+| Tests | 482 (pytest, 80% coverage enforced) |
+| Agent personas | product-owner (Opus), tech-auditor (Sonnet), market-fit-auditor (Sonnet) |
 
 **Reads from:** .gt/memory/semantic.json, .gt/beads/*.json, scopecraft/*.md
+
 **Writes to:** scopecraft/*.md, quality gate results, analysis reports
+
 **Does not own:** .gt/beads/, .gt/convoys/, conductor state
 
-### Carlos New Commits (since v4.0.0)
-
-| Commit | Description |
-|--------|-------------|
-| 1df05cd | Refresh scopecraft roadmap to v1.2.0 |
-| 09b9274 | Test count corrected 448 → 482 |
-| 2193f6e | Cycle 4 reconcile — full ecosystem, 98% alignment |
-| ded0a2c | Semantic.json discovery scan refresh (68 commits) |
-| 37c7cb7 | **Add min/max support to file_count gate** |
+**Notable since last scan:** CLAUDE.md Ecosystem Position section added (df3b763) — no code changes
 
 ---
 
 ## Conductor Self-Report
 
-**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json`
+**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json` (scanned 2026-02-09)
 
-| Attribute | Value | Change from v4.0.0 |
-|-----------|-------|---------------------|
-| Name | conductor | — |
-| Status | ga | — |
-| Version | 1.0.0 | — |
-| TypeScript | 5.9.3 | — |
-| MCP tools | 24 listed (4 categories) | — |
-| Tests | 1,374 | — |
-| Packages | 10 | — |
-| Convoys | 5 complete | — |
-| Beads | 22 total (19 complete, 3 deferred) | — |
-| Last scan | 2026-02-09T14:45 | — |
-| Own reconcile | Cycle 7 | — |
-
-**No changes since v4.0.0.**
+| Attribute | Value |
+|-----------|-------|
+| Role | orchestration-and-oversight |
+| Ecosystem root | No (lisa3 is root) |
+| Status | GA (v1.0.0) |
+| MCP tools | 21 (conductor_import_beads, conductor_claim_task, etc.) |
+| Language | TypeScript (Turborepo monorepo) |
+| Database | SQLite (local) / PostgreSQL Neon (production) |
+| Tests | ~1,374 (Vitest) |
 
 **Reads from:** .gt/beads/*.json, .gt/convoys/*.json, .gt/memory/semantic.json, scopecraft/
-**Writes to:** Task queue state, file locks, cost events, agent lifecycle, escalation queue
-**Does not own:** .gt/ schema, scopecraft/ format, quality gate definitions, semantic memory generation
+
+**Writes to:** Task queue state (SQLite/PostgreSQL), file locks, cost events, agent lifecycle state, escalation queue
+
+**Does not own:** .gt/ directory schema, scopecraft/ output format, quality gate definitions
+
+**Notable since last scan:** CLAUDE.md Ecosystem Position section added (80ed6b2) — no code changes, G8 (MCP categories) still open
 
 ---
 
 ## Ecosystem Role Comparison
 
-All roles aligned. No conflicts.
-
 | Responsibility | Lisa | Carlos | Conductor | Conflict? |
 |----------------|------|--------|-----------|-----------|
-| Pipeline ownership | Yes | No | No | None |
-| Quality gate definition | Yes (gates.yaml v1.1) | Yes (gates.yaml v1.0) | No (overlay) | None |
-| Reconciliation | Yes (ecosystem root) | Yes (project-level) | Yes (ecosystem-level) | OK: complementary |
-| Bead/convoy creation | Yes | No | No | None |
-| Bead consumption | No | No | Yes (GA) | None |
-| Context rollover | No | No | Yes (GA) | None |
-| Specialist analysis | No | Yes | No | None |
-| Agent context budget | No | Yes (41% reduced) | TBD (cq-02) | Pending |
-| Organization isolation | No | No | Yes (GA) | None |
-| Autonomous oversight | No | No | Yes (GA) | None |
-| Zone-based coordination | No | No | Yes (GA) | None |
-| **Marketplace readiness** | **Yes** (plugin.json ready) | Pending (gt-mkt04) | N/A | None |
-| **Standalone validation** | **Yes** (PyYAML fallback) | Yes | Yes | None |
+| .gt/ schema ownership | ✅ owns | reads only | reads only | No |
+| gates.yaml ownership | ✅ owns | enforces (compatible schema) | reads | No |
+| Bead/convoy creation | ✅ structure stage | ❌ | imports via conductor_import_beads | No |
+| scopecraft/ writing | ✅ plan stage | ✅ refines | ❌ reads only | No |
+| Roadmap generation | ✅ plan stage | ✅ (richer) | ❌ | No (complementary) |
+| Agent lifecycle | ❌ | ❌ | ✅ owns | No |
+| Context rollover | ✅ stage checkpoints | ❌ | ✅ owns | No (complementary) |
+| Model routing | ❌ | ✅ model_router.py | consumes | No |
+| Reconcile (ecosystem) | ✅ stage 5 | ❌ | ❌ | No |
 
 ---
 
 ## Interface Agreement Check
 
-| Interface | Lisa | Carlos | Conductor | Match? |
-|-----------|------|--------|-----------|--------|
-| gates.yaml | v1.1, canonical source | v1.0, Lisa-compatible (+max) | v1.1 overlay | **FULL MATCH** |
-| Bead schema | `gt-xxxxx` format | reads beads | BeadSchema Zod (imports) | **FULL MATCH** |
-| Convoy schema | `eco-convoy-NNN` / `convoy-NNN` | N/A | ConvoySchema Zod (imports) | **FULL MATCH** |
-| Checkpoint schema | `reconcile-checkpoint-v1` | N/A | `AgentCheckpointSchema` | OK: complementary |
-| Ecosystem config | **v2** (remote field) | reads | reads | **FULL MATCH** |
-| Heartbeat | N/A | N/A | Enhanced (+token tracking) | OK: backward compatible |
-| Agent context | N/A | ~1,500 tokens | TBD (cq-02) | Pending (non-blocking) |
-| Agent registration | N/A | conductor_request_access() | Tool exists in code | **FULL MATCH** |
-| Model routing | N/A | Carlos owns model_router.py | Consumes via metadata.modelTier | **FULL MATCH** |
-| Ecosystem metadata | N/A | get_ecosystem_metadata() | Reads metadata.modelTier | **FULL MATCH** |
-| MCP task lifecycle | N/A | N/A | 8 tools (claim→complete/fail) | New in GA |
-| Oversight tools | N/A | N/A | 5 tools (reassign, escalate) | New in GA |
+| Interface | Lisa says | Carlos says | Conductor says | Match? |
+|-----------|-----------|-------------|----------------|--------|
+| .gt/beads/*.json | writes (stage 3) | reads | reads + imports | ✅ |
+| scopecraft/ | writes (stage 2) | reads + refines | reads as context bundles | ✅ |
+| .gt/memory/semantic.json | writes (stage 1) | reads (discovery cache) | reads (personality curation) | ✅ |
+| gates.yaml | owns (Lisa schema v1.1) | enforces (compatible v1.0) | reads (overlay) | ✅ |
+| Conductor MCP tools | not used | callable via task routing | owns/serves | ✅ |
 
 ---
 
-## Schema Divergence Note
+## Upstream Ecosystem Reference (New in v6.0.0)
 
-All three projects use `semantic-memory-v1` schema. No divergence.
+| Repo | Purpose | Local path |
+|------|---------|------------|
+| steveyegge/beads | Canonical `bd` Issue schema (`internal/types/types.go`) | ~/github/steveyegge/beads |
+| steveyegge/gastown | Architecture reference (`docs/overview.md`) | ~/github/steveyegge/gastown |
 
-Carlos gates.yaml v1.0 now supports `max` parameter on `file_count` and `pattern_count` gates (commit 37c7cb7). Lisa gates.yaml v1.1 already supported this — Carlos is now aligned with Lisa's gate feature set.
-
----
-
-## Notable Changes From v5.0.0
-
-1. **Lisa semantic.json refreshed (G9 resolved):** Discovery scan on 2026-02-10T15:00 added 4 new sections (validation, reconcile, documentation, plugin_structure), updated tech_stack (PyYAML optional), 41 files analyzed. Commit c8971e0.
-2. **Carlos unchanged:** Still at 37c7cb7.
-3. **Conductor unchanged:** Still at 1fdaebf.
-4. **All semantic.json files now fresh** across all 3 projects.
+Lisa's `.gt/beads/*.json` format is a staging area. Real execution uses `bd create`, `gt convoy create`, `gt sling`.

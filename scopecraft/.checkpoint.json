@@ -1,28 +1,29 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-10T15:30:00Z",
-    "version": "5.0.1",
-    "previous_version": "5.0.0",
+    "timestamp": "2026-02-24T00:00:00Z",
+    "version": "6.0.0",
+    "previous_version": "5.0.1",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
     "data_source": "local filesystem (all 3 projects)",
-    "trigger": "Lisa semantic.json refreshed (commit c8971e0) — resolves G9 staleness. Incremental reconcile: Carlos and Conductor unchanged."
+    "trigger": "Session 2026-02-24: bead schema aligned with real bd Issue type, Ecosystem Position added to all CLAUDE.md files, steveyegge/beads + gastown repos cloned as canonical refs. All 3 projects changed since v5.0.1."
   },
   "projects": {
     "lisa": {
       "path": "~/github/auge2u/lisa3",
       "remote": "https://github.com/auge2u/lisa-helps-ralph-loops",
-      "git_hash": "c8971e0",
+      "git_hash": "361b0b5",
       "status": "found",
-      "source": "local filesystem (2 new commits since v5.0.0: reconcile + discover refresh)",
+      "source": "local filesystem (4 new commits since v5.0.1)",
       "scan_mode": "full",
       "semantic_json": {
         "exists": true,
         "version": "0.3.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-10T15:00:00Z",
-        "stale": false,
+        "stale": true,
+        "stale_reason": "Bead schema changes, CLAUDE.md rewrite, bump-version.sh fix, bd/gt CLI docs not yet reflected",
         "sections": 15,
         "files_analyzed": 41
       },
@@ -37,15 +38,17 @@
     "carlos": {
       "path": "~/github/auge2u/carlos",
       "remote": "https://github.com/auge2u/carlos",
-      "git_hash": "37c7cb7",
+      "git_hash": "df3b763",
       "status": "found",
-      "source": "local filesystem (unchanged since v5.0.0)",
-      "scan_mode": "cached",
+      "source": "local filesystem (1 new commit since v5.0.1 — CLAUDE.md only)",
+      "scan_mode": "incremental",
       "semantic_json": {
         "exists": true,
         "version": "1.2.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-09T18:00:00Z",
+        "stale": false,
+        "stale_reason": "Only CLAUDE.md changed — no code changes affecting semantic accuracy",
         "test_count": 482
       },
       "gates_yaml": {
@@ -53,25 +56,25 @@
         "version": "1.0",
         "gates": 9,
         "stages": 1,
-        "schema_compatible": "lisa v1.0",
-        "new_features": "min/max support on file_count (37c7cb7)"
+        "schema_compatible": "lisa v1.0"
       },
       "alignment": "aligned"
     },
     "conductor": {
       "path": "~/github/habitusnet/conductor",
       "remote": "https://github.com/habitusnet/conductor",
-      "git_hash": "1fdaebf",
+      "git_hash": "80ed6b2",
       "status": "found",
-      "source": "local filesystem (unchanged since v5.0.0)",
-      "scan_mode": "cached",
+      "source": "local filesystem (1 new commit since v5.0.1 — CLAUDE.md only)",
+      "scan_mode": "incremental",
       "semantic_json": {
         "exists": true,
         "version": "1.0.0",
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-09T14:45:00Z",
         "project_status": "ga",
-        "stale": false
+        "stale": false,
+        "stale_reason": "Only CLAUDE.md changed — no code changes affecting semantic accuracy"
       },
       "gates_yaml": {
         "path": "scopecraft/gates.yaml",
@@ -81,15 +84,28 @@
       "alignment": "aligned"
     }
   },
+  "upstream_repos": {
+    "steveyegge/beads": {
+      "local_path": "~/github/steveyegge/beads",
+      "purpose": "Canonical bd Issue schema (internal/types/types.go)",
+      "cloned": "2026-02-24"
+    },
+    "steveyegge/gastown": {
+      "local_path": "~/github/steveyegge/gastown",
+      "purpose": "Architecture reference (docs/overview.md, role taxonomy)",
+      "cloned": "2026-02-24"
+    }
+  },
   "alignment_summary": {
     "total_projects": 3,
     "found": 3,
+    "missing": 0,
     "aligned": 3,
     "mostly_aligned": 0,
     "divergent": 0,
-    "alignments": 26,
+    "alignments": 30,
     "misalignments": 0,
-    "gaps": 1
+    "gaps": 2
   },
   "work_structure": {
     "ecosystem": {
@@ -103,28 +119,6 @@
         {"id": "eco-convoy-002", "name": "Carlos Interface Alignment", "status": "complete", "beads_complete": 2},
         {"id": "eco-convoy-003", "name": "Conductor Ecosystem Integration", "status": "complete", "beads_complete": 3}
       ]
-    },
-    "carlos_project": {
-      "convoy_007": {
-        "total_beads": 5,
-        "beads_complete": 5,
-        "progress": "100%",
-        "status": "COMPLETE"
-      }
-    },
-    "conductor_project": {
-      "total_convoys": 5,
-      "convoys_complete": 5,
-      "total_beads": 22,
-      "beads_complete": 19,
-      "beads_deferred": 3,
-      "convoys": [
-        {"id": "convoy-001", "name": "Dashboard Core MVP", "status": "complete", "beads": 6},
-        {"id": "convoy-002", "name": "E2B Sandbox Hardening", "status": "complete", "beads": 3},
-        {"id": "convoy-003", "name": "Multi-Agent Hardening", "status": "complete", "beads": 4},
-        {"id": "convoy-004", "name": "Multi-Tenancy & Oversight", "status": "complete", "beads": 3},
-        {"id": "convoy-005", "name": "GA Launch Prep", "status": "complete", "beads": 3}
-      ]
     }
   },
   "misalignments": [],
@@ -137,6 +131,15 @@
       "functional_impact": "None — Carlos gt-eco01 registrations work",
       "resolution": "Conductor adds missing categories back in next semantic.json refresh",
       "status": "unchanged"
+    },
+    {
+      "id": "G10",
+      "severity": "low",
+      "description": "Lisa semantic.json stale — last scanned 2026-02-10, significant changes on 2026-02-24: bead schema alignment, CLAUDE.md rewrite, bump-version.sh fix, bd/gt CLI integration docs, upstream repos cloned.",
+      "affects": ["lisa"],
+      "functional_impact": "None — code changes are correct, semantic.json is only used for reconcile cross-referencing",
+      "resolution": "Run /lisa:discover to refresh semantic.json",
+      "status": "new"
     }
   ],
   "resolved": [
@@ -159,20 +162,19 @@
     "resolved_questions": [
       {"id": "SQ8", "question": "Convoy naming convention", "decision": "eco-convoy-NNN prefix", "resolved": "v2.5.0"},
       {"id": "SQ9", "question": "Carlos semantic.json refresh timing", "decision": "Batch later, not urgent", "resolved": "v2.5.0"},
-      {"id": "SQ10", "question": "Conductor bead consumption timing", "decision": "Phase 1 (recommend)", "resolved": "v2.5.0"}
+      {"id": "SQ10", "question": "Conductor bead consumption timing", "decision": "Phase 1 (recommend)", "resolved": "v2.5.0"},
+      {"id": "cq-01", "question": "MCP tool registration format for agent personas", "decision": "Register each persona as separate agent via conductor_request_access()", "resolved": "v3.4.0"},
+      {"id": "cq-03", "question": "Model routing ownership", "decision": "Carlos owns model_router.py, Conductor consumes via metadata.modelTier", "resolved": "v3.4.0"}
     ],
     "open_questions": [
       {"id": "cq-02", "from": "carlos", "to": "conductor", "question": "Is 41% agent context reduction sufficient?", "status": "carlos-acted", "note": "Carlos compressed independently; awaiting Conductor confirmation"}
-    ],
-    "answered_questions": [
-      {"id": "cq-01", "from": "carlos", "to": "conductor", "question": "MCP tool registration format for agent personas", "status": "answered", "decision": "Register each persona as separate agent via conductor_request_access().", "resolved": "v3.4.0", "unblocks": "gt-eco01"},
-      {"id": "cq-03", "from": "carlos", "to": "conductor", "question": "Model routing ownership", "status": "answered", "decision": "Carlos owns model_router.py, Conductor consumes via metadata.modelTier.", "resolved": "v3.4.0", "unblocks": "gt-eco03"}
     ]
   },
   "next_reconcile_triggers": [
-    "Lisa marketplace submission",
+    "Run /lisa:discover to refresh semantic.json (resolve G10)",
     "Conductor resolves G8 (add missing MCP tool categories to semantic.json)",
     "Conductor confirms cq-02 (context budget sufficient?)",
+    "Lisa marketplace submission",
     "Carlos marketplace submission (gt-mkt04)",
     "Conductor consumes Carlos specialist routing (Steps 6-8)",
     "Any plugin version ship",
@@ -182,22 +184,23 @@
     "read_order": [
       "scopecraft/.checkpoint.json (this file)",
       "scopecraft/ALIGNMENT_REPORT.md",
-      ".gt/memory/semantic.json (lisa)",
+      ".gt/memory/semantic.json (lisa — stale, see G10)",
       "~/github/auge2u/carlos/.gt/memory/semantic.json",
       "~/github/habitusnet/conductor/.gt/memory/semantic.json"
     ],
     "key_facts": [
       "Three-plugin ecosystem: Lisa (pipeline), Carlos (specialist), Conductor (orchestration)",
-      "LISA PHASE 4-6 COMPLETE: README, CHANGELOG, validate.py fallback, reconcile standalone/incremental, ecosystem-config-v2, getting started guide, marketplace readiness",
-      "LISA SEMANTIC.JSON REFRESHED: 2026-02-10T15:00, 15 sections, 41 files analyzed, G9 resolved",
-      "CONDUCTOR GA (v1.0.0): 5 convoys complete, 1,374 tests, 24 MCP tools, v1.0.0 tag",
-      "ALL 3 ECOSYSTEM CONVOYS COMPLETE: eco-convoy-001 (Lisa), eco-convoy-002 (Carlos), eco-convoy-003 (Conductor)",
-      "ALL 9 ECOSYSTEM BEADS DONE: no pending ecosystem work items",
-      "ALL SEMANTIC.JSON FILES FRESH: Lisa 2026-02-10, Carlos 2026-02-09, Conductor 2026-02-09",
+      "UPSTREAM GROUNDING (2026-02-24): steveyegge/beads + steveyegge/gastown cloned as canonical refs",
+      "BEAD SCHEMA ALIGNED: priority=int(0-4), acceptance_criteria=string, status=open, issue_type — matches real bd Issue type",
+      "ECOSYSTEM POSITION: All three CLAUDE.md files now have comprehensive stack docs (Gastown→Conductor→Lisa/Carlos)",
+      "BD/GT CLI INTEGRATION: structure/SKILL.md documents bd create, bd ready, bd sync, gt convoy create, gt sling, Propulsion Principle",
+      "BUMP-VERSION.SH FIXED: was pointing at deprecated lisa-loops-memory, now points at plugins/lisa",
+      "G10 (LOW): Lisa semantic.json stale — run /lisa:discover to resolve",
       "G8 (LOW): Conductor semantic.json missing access_control/cost_tracking tool categories",
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
-      "26 alignments, 0 misalignments, 1 LOW gap",
-      "Ecosystem focus: publication and adoption"
+      "30 alignments, 0 misalignments, 2 LOW gaps",
+      "All 3 ecosystem convoys COMPLETE, all 9 ecosystem beads DONE",
+      "Ecosystem focus: grounded in real Gastown/Beads toolchain, shifting to publication and adoption"
     ]
   }
 }
