@@ -17,9 +17,9 @@
     "runtime": "Python 3.10+",
     "primary_dependency": "PyYAML (optional — fallback mode without it)",
     "testing": "pytest (pytest -v, 25 tests)",
-    "validation": "validate.py (834 lines, loads gates.yaml, PyYAML-free fallback mode)",
+    "validation": "validate.py (833 lines, loads gates.yaml, PyYAML-free fallback mode)",
     "output_format": "JSON (.gt/ state files) + Markdown (scopecraft/)",
-    "versioning": "scripts/bump-version.sh (syncs plugin.json + marketplace.json + CHANGELOG.md)"
+    "versioning": "scripts/bump-version.sh (syncs plugins/lisa/.claude-plugin/plugin.json + .claude-plugin/marketplace.json + CHANGELOG.md)"
   },
   "ecosystem_role": {
     "role": "pipeline-and-memory",
@@ -67,17 +67,17 @@
       {"name": "research", "purpose": "Git archaeology, timeline, mission extraction"},
       {"name": "discover", "purpose": "Tech stack detection, semantic memory generation"},
       {"name": "plan", "purpose": "Roadmap generation with templates"},
-      {"name": "structure", "purpose": "Bead extraction and convoy bundling"},
+      {"name": "structure", "purpose": "Bead extraction and convoy bundling (bd/gt CLI integration)"},
       {"name": "reconcile", "purpose": "Cross-project ecosystem alignment and drift detection"}
     ],
     "quality_gates": 31,
     "gate_stages": ["research", "discover", "plan", "structure", "reconcile"],
-    "gate_source": "gates.yaml v1.1 (declarative, single source of truth)"
+    "gate_source": "gates.yaml v1.1 (298 lines, declarative, single source of truth)"
   },
   "validation": {
     "validator": "plugins/lisa/hooks/validate.py",
-    "lines_of_code": 834,
-    "gates_config": "plugins/lisa/gates.yaml (v1.1, 31 gates, 5 stages)",
+    "lines_of_code": 833,
+    "gates_config": "plugins/lisa/gates.yaml (v1.1, 31 gates, 5 stages, 298 lines)",
     "pyyaml_fallback": true,
     "fallback_description": "When PyYAML is not installed, validate.py runs in fallback mode using built-in subset of gates (file_exists, file_count, json_valid, json_field_present, json_field_count). Pattern-based checks skipped with warning.",
     "check_types": ["file_exists", "file_count", "json_valid", "json_field_present", "json_field_count", "pattern_exists", "pattern_count", "cross_reference"],
@@ -94,7 +94,8 @@
     "checkpoint_fields": ["git_hash per project", "remote URL per project", "scan_mode (full/incremental/cached)"],
     "output_templates": 3,
     "quality_gates": 9,
-    "graceful_degradation": "Missing partners produce informational message, not error"
+    "graceful_degradation": "Missing partners produce informational message, not error",
+    "latest_version": "v6.0.0 (2026-02-24) — 30 alignments, 0 misalignments, 2 LOW gaps"
   },
   "pipeline": {
     "stages": [
@@ -104,18 +105,84 @@
       {"number": 3, "name": "structure", "output": ".gt/beads/, .gt/convoys/", "agent": "migrator"},
       {"number": 5, "name": "reconcile", "output": "scopecraft/ (alignment)", "agent": "migrator"}
     ],
+    "note": "Stage 4 is intentionally reserved/skipped",
     "workflows": {
       "migrate": ["discover", "plan", "structure"],
       "rescue": ["research", "discover", "plan", "structure"],
       "ecosystem": ["reconcile"]
     }
   },
+  "bead_schema": {
+    "schema_version": "bead-v1",
+    "canonical_source": "~/github/steveyegge/beads/internal/types/types.go",
+    "aligned_with_real_bd": true,
+    "fields": {
+      "id": "gt-xxxxx (5-char alphanumeric, rig prefix gt-)",
+      "title": "string",
+      "description": "string (why + what)",
+      "design": "string (implementation approach)",
+      "acceptance_criteria": "STRING (newline-separated) — NOT array",
+      "notes": "string (background references)",
+      "issue_type": "feature | bug | task | chore | epic | decision (NOT 'type')",
+      "priority": "INTEGER 0-4 (0=critical, 1=high, 2=medium, 3=low, 4=backlog) — NOT string",
+      "status": "open | in_progress | blocked | deferred | closed (NOT 'pending')",
+      "assignee": "string",
+      "labels": "array",
+      "dependencies": "array of bead IDs"
+    },
+    "metadata": {
+      "complexity": "XS | S | M | L | XL (NOT a top-level bd field)",
+      "epic": "string",
+      "evidence": {"source": "file path", "line": "integer", "extracted": "ISO timestamp"}
+    },
+    "template_path": "plugins/lisa/skills/structure/templates/bead.json"
+  },
+  "convoy_schema": {
+    "schema_version": "convoy-v1",
+    "id_format": "convoy-NNN (3-digit, padded)",
+    "eco_id_format": "eco-convoy-NNN (ecosystem convoys)",
+    "size_rule": "3-7 beads per convoy",
+    "gt_convoy_cmd": "gt convoy create '<name>' <bead-id-1> <bead-id-2> ...",
+    "template_path": "plugins/lisa/skills/structure/templates/convoy.json"
+  },
+  "gastown_toolchain": {
+    "canonical_ref": "~/github/steveyegge/gastown (cloned 2026-02-24)",
+    "architecture_doc": "~/github/steveyegge/gastown/docs/overview.md",
+    "tools": {
+      "bd": "Beads CLI — issue tracking backed by Dolt SQL database (.beads/ dir). Commands: bd create, bd ready, bd update, bd close, bd sync",
+      "bv": "Graph analysis CLI (read-only). Always use --robot-* flags (e.g., --robot-triage), never bare bv",
+      "gt": "Gastown workspace manager — convoys, polecats (ephemeral workers), rigs (roles), git worktrees. Commands: gt convoy create, gt sling, gt convoy status"
+    },
+    "propulsion_principle": "If you find something on your hook, YOU RUN IT. Agents execute immediately when a bead is slotted.",
+    "staging_vs_live": "Lisa's .gt/beads/*.json and .gt/convoys/*.json are staging format. Real execution uses bd create + gt convoy create + gt sling.",
+    "mayor": "Mayor singleton role assigns beads via gt sling <bead-id> <rig>"
+  },
+  "upstream_refs": {
+    "steveyegge/beads": {
+      "local_path": "~/github/steveyegge/beads",
+      "cloned": "2026-02-24",
+      "purpose": "Canonical bd Issue schema (internal/types/types.go)",
+      "key_file": "internal/types/types.go"
+    },
+    "steveyegge/gastown": {
+      "local_path": "~/github/steveyegge/gastown",
+      "cloned": "2026-02-24",
+      "purpose": "Architecture reference (docs/overview.md, role taxonomy, toolchain docs)",
+      "key_file": "docs/overview.md"
+    }
+  },
+  "ecosystem_position": {
+    "stack": "Gastown → Conductor → Lisa/Carlos",
+    "role_in_stack": "Lisa is the pipeline and memory layer. Creates the .gt/ schema, quality gates, and staged pipeline. Carlos is a specialist fixer (peer). Conductor is the orchestration layer above both.",
+    "scopecraft_as_shared_language": "scopecraft/ output is the shared language: Lisa writes it (plan stage), Carlos refines it, Conductor reads it as context bundles",
+    "spin_off_note": "Lisa is a Gastown spin-off — learns from the real bd/gt toolchain but operates standalone as a Claude Code plugin"
+  },
   "documentation": {
     "readme": "README.md (rewritten for v0.3.0, install + commands + output structure + ecosystem)",
     "changelog": "CHANGELOG.md (v0.1.0, v0.2.0, v0.3.0 with added/changed/deprecated/breaking)",
     "getting_started": "docs/GETTING_STARTED.md (install to first output in 15 minutes)",
     "architecture": "docs/ARCHITECTURE_V2.md (5-stage pipeline design)",
-    "claude_md": "CLAUDE.md (development commands, architecture, file relationships)"
+    "claude_md": "CLAUDE.md (development commands, architecture, file relationships, full Ecosystem Position section with stack diagram and role boundary table)"
   },
   "plugin_structure": {
     "active_plugin": "plugins/lisa/ (v0.3.0)",
@@ -125,12 +192,7 @@
     "deprecated_commands": 6,
     "skill_files": 5,
     "template_dirs": 5,
-    "total_plugin_files": 39
-  },
-  "gastown_concepts": {
-    "bead": "Work item with ID gt-xxxxx, acceptance criteria, evidence",
-    "convoy": "Bundle of 3-7 related beads for assignment (eco-convoy-NNN for ecosystem, convoy-NNN for project)",
-    "memory": "Semantic (facts), episodic (decisions), procedural (patterns)"
+    "total_plugin_files": 41
   },
   "personas": [
     {"name": "Solo developer with abandoned projects", "need": "Context recovery and structured work extraction", "priority": 1},
@@ -157,11 +219,11 @@
     },
     "conductor": {
       "provides": ".gt/beads/*.json, .gt/convoys/*.json (structured work items)",
-      "receives": "Task assignment, agent lifecycle management, context rollover"
+      "receives": "Task assignment (conductor_import_beads), agent lifecycle management, context rollover"
     }
   },
   "evidence": {
-    "last_scan": "2026-02-10T15:00:00Z",
+    "last_scan": "2026-02-24T12:00:00Z",
     "files_analyzed": [
       "README.md",
       "CHANGELOG.md",
@@ -186,6 +248,8 @@
       "plugins/lisa/skills/plan/SKILL.md",
       "plugins/lisa/skills/research/SKILL.md",
       "plugins/lisa/skills/structure/SKILL.md",
+      "plugins/lisa/skills/structure/templates/bead.json",
+      "plugins/lisa/skills/structure/templates/convoy.json",
       "plugins/lisa/skills/reconcile/SKILL.md",
       "plugins/lisa/skills/reconcile/checkpoint-schema.json",
       "plugins/lisa/skills/reconcile/templates/ALIGNMENT_REPORT_FORMAT.md",
@@ -200,12 +264,13 @@
       "plugins/lisa-loops-memory/DEPRECATED.md",
       "tests/test_validate_quality_gates.py",
       "scripts/bump-version.sh",
-      "~/.lisa/ecosystem.json",
       "scopecraft/.checkpoint.json",
       "scopecraft/ALIGNMENT_REPORT.md",
-      "scopecraft/PERSPECTIVES.md"
+      "scopecraft/PERSPECTIVES.md",
+      "~/github/steveyegge/beads/internal/types/types.go",
+      "~/github/steveyegge/gastown/docs/overview.md"
     ],
-    "previous_scan": "2026-02-08T19:00:00Z (v0.3.0, 31 gates, pre-Phase-4-6)",
-    "delta_since_previous": "Phase 4-6 implementation: README rewritten, CHANGELOG v0.3.0 added, docs/GETTING_STARTED.md created, validate.py PyYAML fallback mode (834 lines), reconcile SKILL.md standalone/incremental/git-remote modes, checkpoint-schema.json +git_hash/remote/scan_mode, ecosystem.json → v2 schema (remote field), plugin.json +category/keywords/email, DEPRECATED.md for legacy plugin, reconcile v5.0.0 (26 alignments, 0 misalignments, 2 LOW gaps). 4 new commits (00aeade through 62e3fde)."
+    "previous_scan": "2026-02-10T15:00:00Z",
+    "delta_since_previous": "2026-02-24 Gastown grounding session (4 Lisa commits + 6 total ecosystem commits): (1) bump-version.sh fixed — was pointing at deprecated plugins/lisa-loops-memory, now correctly targets plugins/lisa; (2) CLAUDE.md full Ecosystem Position section added — stack diagram (Gastown→Conductor→Lisa/Carlos), role boundaries, interface contracts, context budget principle; (3) bead.json template aligned with real bd Issue type (priority=int 0-4, acceptance_criteria=string NOT array, status=open NOT pending, issue_type NOT type, complexity/evidence moved to metadata); (4) convoy.json got gt_convoy_cmd field; (5) structure/SKILL.md updated with bd/gt CLI integration, Issue Types table, Priority Values table, Propulsion Principle, Live Integration Workflow; (6) ~/github/steveyegge/beads and ~/github/steveyegge/gastown cloned as canonical upstream refs; (7) All 3 CLAUDE.md files now have comprehensive Ecosystem Position sections; (8) Reconcile v6.0.0 completed — 30 alignments, 0 misalignments, 2 LOW gaps (G8 conductor MCP categories, G10 was this stale semantic.json now resolved)."
   }
 }
