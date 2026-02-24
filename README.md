@@ -1,14 +1,43 @@
-# Lisa - Staged Migration System for Gastown
+# Lisa
 
-Lisa is a Claude Code plugin that analyzes projects and structures them for [Gastown](https://github.com/steveyegge/gastown) multi-agent execution. It scans codebases, extracts semantic memory, generates roadmaps, creates structured work items (Beads/Convoys), and reconciles ecosystem state across projects.
+**Give Claude Code a memory before it touches your code.**
 
-## What It Does
+Lisa is a Claude Code plugin that reads your project before acting on it — extracting tech stack, constraints, prior decisions, and open work into structured files that every future Claude session can instantly use. No more re-explaining what the project is. No more "wait, why was this built this way?" No more lost context.
 
-1. **Rescues lost projects** - Reconstructs context from git history and abandoned docs
-2. **Understands your project** - Extracts tech stack, constraints, and personas into semantic memory
-3. **Plans your roadmap** - Generates phased roadmap with epics, risks, and metrics
-4. **Structures work** - Creates Beads (work items) and Convoys (bundles) for Gastown agents
-5. **Reconciles ecosystems** - Cross-validates multiple projects for alignment and drift
+---
+
+## The best way to try it
+
+You know that project you started six months ago and never quite finished? The one with the half-written README, the TODOs in the code, the Slack thread where you worked out the architecture? Open it in Claude Code and run:
+
+```
+/lisa:rescue
+```
+
+Lisa will read your git history like an archaeologist, reconstruct what you were building and why you stopped, understand your tech stack and constraints, generate a fresh roadmap, and create structured work items ready to pick up. In one command, a dormant project becomes a living, organized one — with a memory file that any future Claude session can load in seconds.
+
+---
+
+## What it actually does
+
+Lisa runs a staged pipeline. Each stage produces files that the next stage (and future Claude sessions) can read:
+
+| Stage | Command | What you get |
+|-------|---------|--------------|
+| **0 — Research** | `/lisa:research` | Git archaeology report: original mission, timeline, why it stalled, rescue recommendation |
+| **1 — Discover** | `/lisa:discover` | `.gt/memory/semantic.json` — tech stack, constraints, personas, non-goals |
+| **2 — Plan** | `/lisa:plan` | `scopecraft/` — vision, phased roadmap, epics + user stories, risks, metrics, open questions |
+| **3 — Structure** | `/lisa:structure` | `.gt/beads/` + `.gt/convoys/` — individual work items and bundled assignments |
+| **5 — Reconcile** | `/lisa:reconcile` | Cross-project alignment report — checks multiple repos stay consistent |
+
+Two composite shortcuts:
+
+```
+/lisa:migrate    # Stages 1–3: discover + plan + structure (for active projects)
+/lisa:rescue     # Stages 0–3: full rescue pipeline (for abandoned projects)
+```
+
+---
 
 ## Install
 
@@ -16,48 +45,25 @@ Lisa is a Claude Code plugin that analyzes projects and structures them for [Gas
 /install-plugin auge2u/lisa-helps-ralph-loops
 ```
 
-## Commands
+That's it. No API keys, no database, no cloud. All outputs are local files.
 
-| Command | Stage | Purpose |
-|---------|-------|---------|
-| `/lisa:research` | 0 | Archaeological rescue for abandoned projects |
-| `/lisa:discover` | 1 | Extract semantic memory from project analysis |
-| `/lisa:plan` | 2 | Generate roadmap with epics, risks, metrics |
-| `/lisa:structure` | 3 | Create Beads and Convoys for Gastown |
-| `/lisa:reconcile` | 5 | Cross-project alignment report and checkpoint |
-| `/lisa:migrate` | 1+2+3 | Full pipeline (discover + plan + structure) |
-| `/lisa:rescue` | 0+1+2+3 | Full rescue (research + discover + plan + structure) |
-| `/lisa:status` | - | Show migration progress and quality gate results |
+---
 
-## Quick Start
+## What you get in your repo
 
-```bash
-# Full migration in one command
-/lisa:migrate
-
-# Or run stages individually
-/lisa:discover     # Creates .gt/memory/semantic.json
-/lisa:plan         # Creates scopecraft/ (6 planning files)
-/lisa:structure    # Creates .gt/beads/*.json and .gt/convoys/*.json
-
-# Check progress
-/lisa:status
-```
-
-## Output Structure
+After `/lisa:migrate` or `/lisa:rescue`, your project has:
 
 ```
-project/
+your-project/
 ├── .gt/
-│   ├── research/          # Stage 0: rescue docs (optional)
 │   ├── memory/
-│   │   └── semantic.json  # Stage 1: project facts
+│   │   └── semantic.json      ← everything Claude needs to understand the project
 │   ├── beads/
-│   │   └── gt-*.json      # Stage 3: individual work items
+│   │   └── gt-abc12.json      ← individual work items with acceptance criteria
 │   └── convoys/
-│       └── convoy-*.json  # Stage 3: bundled work assignments
+│       └── convoy-001.json    ← beads grouped for assignment
 └── scopecraft/
-    ├── VISION_AND_STAGE_DEFINITION.md  # Stage 2
+    ├── VISION_AND_STAGE_DEFINITION.md
     ├── ROADMAP.md
     ├── EPICS_AND_STORIES.md
     ├── RISKS_AND_DEPENDENCIES.md
@@ -65,59 +71,49 @@ project/
     └── OPEN_QUESTIONS.md
 ```
 
-## Gastown Concepts
+The `semantic.json` is the key file. Point any future Claude session at it and you skip the 20 minutes of re-orientation. It's a structured summary of what the project is, what it's built with, what constraints exist, and what's been decided — all in a format Claude reads natively.
 
-| Term | Description |
-|------|-------------|
-| **Bead** | Work item with ID `gt-xxxxx`, acceptance criteria, evidence |
-| **Convoy** | Bundle of 3-7 related beads for agent assignment |
-| **Memory** | Semantic (facts), episodic (decisions), procedural (patterns) |
-| **Mayor** | Gastown's primary AI coordinator |
-| **Polecat** | Ephemeral worker agent in Gastown |
+---
 
-## Validation
+## Quality gates
 
-Lisa uses declarative quality gates defined in `gates.yaml` (31 gates across 5 stages).
+Every stage validates its own output against 31 declarative gates before you move on. If something is missing or wrong, you know before the next agent touches it.
 
 ```bash
-# Validate specific stage
 python3 plugins/lisa/hooks/validate.py --stage discover
-python3 plugins/lisa/hooks/validate.py --stage plan
-
-# Validate all stages
 python3 plugins/lisa/hooks/validate.py --stage all
-
-# Output formats
-python3 plugins/lisa/hooks/validate.py --stage plan --format json
-python3 plugins/lisa/hooks/validate.py --stage plan --format markdown
-
-# Validate workflow
-python3 plugins/lisa/hooks/validate.py --workflow migrate
 ```
 
-Requires Python 3.10+ and PyYAML (`pip install pyyaml`). Runs in fallback mode without PyYAML (JSON-only checks).
+No PyYAML? It runs in fallback mode (file and JSON checks). Install PyYAML for full pattern validation.
 
-Exit codes: `0` = pass, `1` = blocker failed, `2` = warning only, `3` = security error.
+---
 
-## Ecosystem
+## Part of a larger ecosystem
 
-Lisa is the root of a three-plugin ecosystem:
+Lisa is the foundation layer of a three-plugin ecosystem:
 
-| Plugin | Role | Status |
-|--------|------|--------|
-| **Lisa** | Pipeline & Memory | Alpha (v0.3.0) |
-| **[Carlos](https://github.com/auge2u/carlos)** | Specialist Fixer | Beta (v1.2.0) |
-| **[Conductor](https://github.com/habitusnet/conductor)** | Orchestration | GA (v1.0.0) |
+| Plugin | What it adds | Status |
+|--------|-------------|--------|
+| **Lisa** (this) | Pipeline, memory, work structure | Alpha v0.3.0 |
+| **[Carlos](https://github.com/auge2u/carlos)** | Specialist analysis: market fit, tech debt, roadmap depth | Beta v1.2.0 |
+| **[Conductor](https://github.com/habitusnet/conductor)** | Multi-agent orchestration and task tracking | GA v1.0.0 |
 
-Each plugin works standalone. The ecosystem is additive -- install one or all three.
+Each plugin works completely standalone. Install one, or all three — the ecosystem is additive. Lisa's outputs (`.gt/` files and `scopecraft/`) are the shared language between them.
 
-Reconcile (`/lisa:reconcile`) reads `~/.lisa/ecosystem.json` to find project paths and cross-validate alignment.
+---
 
-## Version
+## Why this exists
 
-Current: **v0.3.0** (active plugin: `plugins/lisa/`)
+Claude Code is powerful, but every new session starts cold. You re-explain the project, re-establish context, re-decide things that were already decided. Lisa solves the cold-start problem by giving Claude a structured memory of the project that persists across sessions.
 
-See [CHANGELOG.md](CHANGELOG.md) for release history.
+It's especially useful for:
+
+- **Abandoned projects** — reconstruct context and get a clear path to resume
+- **Onboarding** — new contributors (human or AI) get up to speed immediately
+- **Multi-agent workflows** — structured work items that agents can pick up without ambiguity
+- **Long-running projects** — semantic memory keeps Claude oriented as the project grows
+
+---
 
 ## License
 
