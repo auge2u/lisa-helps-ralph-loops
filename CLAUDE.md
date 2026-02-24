@@ -11,7 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-# Run tests (requires: pip install pytest pyyaml)
+# Run tests (requires PyYAML; system Python may lack it — use a venv if needed)
+pip install pytest pyyaml
 pytest tests/ -v
 
 # Run specific test class or method
@@ -51,6 +52,8 @@ The `lisa` plugin uses a 5-stage pipeline. Each stage has corresponding files:
 | 2 | `plan.md` | `plan/SKILL.md` | `migrator.md` | `scopecraft/` |
 | 3 | `structure.md` | `structure/SKILL.md` | `migrator.md` | `.gt/beads/`, `.gt/convoys/` |
 | 5 | `reconcile.md` | `reconcile/SKILL.md` | `migrator.md` | `scopecraft/` (alignment) |
+
+Stage 4 is intentionally reserved/skipped; reconcile is numbered 5 to allow a future stage 4 insertion.
 
 Composite commands run multiple stages sequentially:
 - **`migrate.md`** — Stages 1-3 (discover + plan + structure)

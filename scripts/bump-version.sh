@@ -29,7 +29,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Files to update
-PLUGIN_JSON="$PROJECT_ROOT/plugins/lisa-loops-memory/.claude-plugin/plugin.json"
+PLUGIN_JSON="$PROJECT_ROOT/plugins/lisa/.claude-plugin/plugin.json"
 MARKETPLACE_JSON="$PROJECT_ROOT/.claude-plugin/marketplace.json"
 CHANGELOG="$PROJECT_ROOT/CHANGELOG.md"
 
