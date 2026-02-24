@@ -1,21 +1,21 @@
 {
   "$schema": "reconcile-checkpoint-v1",
   "reconcile": {
-    "timestamp": "2026-02-24T12:30:00Z",
-    "version": "6.0.1",
-    "previous_version": "6.0.0",
+    "timestamp": "2026-02-24T13:00:00Z",
+    "version": "6.0.2",
+    "previous_version": "6.0.1",
     "ecosystem_root": "lisa3",
     "method": "lisa reconcile skill (Stage 5)",
-    "data_source": "local filesystem (Lisa: full rescan; Carlos + Conductor: cached from v6.0.0)",
-    "trigger": "Session 2026-02-24 follow-on: G10 resolved (Lisa semantic.json refreshed via /lisa:discover, b77b730). Reconcile v6.0.0 output committed (94fc94f). Incremental — only Lisa changed."
+    "data_source": "local filesystem (Lisa: full rescan; Carlos + Conductor: cached from v6.0.1)",
+    "trigger": "Session 2026-02-24: README reworked as technical marketing (e8bb1e1) — abandoned project hook, /lisa:rescue entry point, GitHub repo description + topics updated. Incremental — only Lisa changed."
   },
   "projects": {
     "lisa": {
       "path": "~/github/auge2u/lisa3",
       "remote": "https://github.com/auge2u/lisa-helps-ralph-loops",
-      "git_hash": "b77b730",
+      "git_hash": "e8bb1e1",
       "status": "found",
-      "source": "local filesystem (2 new commits since v6.0.0)",
+      "source": "local filesystem (1 new commit since v6.0.1)",
       "scan_mode": "full",
       "semantic_json": {
         "exists": true,
@@ -25,7 +25,7 @@
         "stale": false,
         "sections": 19,
         "files_analyzed": 44,
-        "notable_sections": ["bead_schema", "gastown_toolchain", "upstream_refs", "ecosystem_position"]
+        "notable_since_scan": "README.md reworked as technical marketing (e8bb1e1) — not yet reflected in semantic.json but no semantic accuracy impact"
       },
       "gates_yaml": {
         "path": "plugins/lisa/gates.yaml",
@@ -40,7 +40,7 @@
       "remote": "https://github.com/auge2u/carlos",
       "git_hash": "df3b763",
       "status": "found",
-      "source": "cached from v6.0.0 (no new commits)",
+      "source": "cached from v6.0.1 (no new commits)",
       "scan_mode": "cached",
       "semantic_json": {
         "exists": true,
@@ -48,7 +48,6 @@
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-09T18:00:00Z",
         "stale": false,
-        "stale_reason": "Only CLAUDE.md changed — no code changes affecting semantic accuracy",
         "test_count": 482
       },
       "gates_yaml": {
@@ -65,7 +64,7 @@
       "remote": "https://github.com/habitusnet/conductor",
       "git_hash": "80ed6b2",
       "status": "found",
-      "source": "cached from v6.0.0 (no new commits)",
+      "source": "cached from v6.0.1 (no new commits)",
       "scan_mode": "cached",
       "semantic_json": {
         "exists": true,
@@ -73,8 +72,7 @@
         "schema": "semantic-memory-v1",
         "last_scan": "2026-02-09T14:45:00Z",
         "project_status": "ga",
-        "stale": false,
-        "stale_reason": "Only CLAUDE.md changed — no code changes affecting semantic accuracy"
+        "stale": false
       },
       "gates_yaml": {
         "path": "scopecraft/gates.yaml",
@@ -103,7 +101,7 @@
     "aligned": 3,
     "mostly_aligned": 0,
     "divergent": 0,
-    "alignments": 31,
+    "alignments": 32,
     "misalignments": 0,
     "gaps": 1
   },
@@ -184,13 +182,13 @@
       "UPSTREAM GROUNDING (2026-02-24): steveyegge/beads + steveyegge/gastown cloned as canonical refs",
       "BEAD SCHEMA ALIGNED: priority=int(0-4), acceptance_criteria=string, status=open, issue_type — matches real bd Issue type",
       "ECOSYSTEM POSITION: All three CLAUDE.md files have comprehensive stack docs (Gastown→Conductor→Lisa/Carlos)",
+      "README REWORKED (e8bb1e1): technical marketing tone — abandoned project hook, /lisa:rescue as low-trepidation entry point, GitHub repo description + 8 topics updated",
       "BD/GT CLI INTEGRATION: structure/SKILL.md + semantic.json document bd create, bd ready, bd sync, gt convoy create, gt sling, Propulsion Principle",
-      "BUMP-VERSION.SH FIXED: was pointing at deprecated lisa-loops-memory, now points at plugins/lisa",
       "G8 (LOW): Conductor semantic.json missing access_control/cost_tracking tool categories — only remaining gap",
       "cq-02 still pending: Carlos acted (41% reduction), awaiting Conductor confirmation",
-      "31 alignments, 0 misalignments, 1 LOW gap",
+      "32 alignments, 0 misalignments, 1 LOW gap",
       "All 3 ecosystem convoys COMPLETE, all 9 ecosystem beads DONE",
-      "Ecosystem focus: grounded in real Gastown/Beads toolchain, shifting to publication and adoption"
+      "Ecosystem focus: shifting to publication and adoption"
     ]
   }
 }

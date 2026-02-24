@@ -1,6 +1,6 @@
 # Ecosystem Perspectives
 
-**Generated:** 2026-02-24 (reconcile v6.0.1)
+**Generated:** 2026-02-24 (reconcile v6.0.2)
 **Projects scanned:** 3 attempted, 3 found (Lisa: full rescan; Carlos + Conductor: cached)
 
 ---
@@ -13,16 +13,16 @@
 | Version | 0.3.0 | 1.2.0 | 1.0.0 |
 | Release status | alpha | beta | ga |
 | Schema | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| Last scan | 2026-02-24 (**fresh**) | 2026-02-09 | 2026-02-09 |
+| Last scan | 2026-02-24 (fresh) | 2026-02-09 | 2026-02-09 |
 | Primary language | Python | Python | TypeScript |
-| Git hash | b77b730 | df3b763 | 80ed6b2 |
-| Semantic freshness | FRESH (G10 resolved) | ok | ok |
+| Git hash | e8bb1e1 | df3b763 | 80ed6b2 |
+| Semantic freshness | fresh | ok | ok |
 
 ---
 
 ## Lisa Self-Report
 
-**Source:** `.gt/memory/semantic.json` (scanned 2026-02-24T12:00:00Z — fresh)
+**Source:** `.gt/memory/semantic.json` (scanned 2026-02-24T12:00:00Z)
 
 | Attribute | Value |
 |-----------|-------|
@@ -42,12 +42,9 @@
 
 **Does not own:** Carlos analysis reports, Conductor state
 
-**Gastown toolchain documented in semantic.json:**
-- `bd` CLI: Beads issue tracking (Dolt SQL), `bd create --file=<markdown>`, `bd ready`, `bd update`, `bd close`, `bd sync`
-- `bv` CLI: Graph analysis (read-only, always `--robot-*` flags)
-- `gt` CLI: Workspace manager, `gt convoy create`, `gt sling <bead-id> <rig>`, `gt convoy status`
-- Propulsion Principle: "If you find something on your hook, YOU RUN IT"
-- Upstream refs: `~/github/steveyegge/beads` (canonical Issue schema), `~/github/steveyegge/gastown` (architecture)
+**Notable since last semantic scan (not yet in semantic.json):**
+- README.md reworked as technical marketing (e8bb1e1) — abandoned project hook, /lisa:rescue entry point
+- GitHub repo description + 8 topics updated
 
 ---
 
@@ -71,8 +68,6 @@
 
 **Does not own:** .gt/beads/, .gt/convoys/, conductor state
 
-**Notable since last scan:** CLAUDE.md Ecosystem Position section added (df3b763) — no code changes
-
 ---
 
 ## Conductor Self-Report
@@ -95,7 +90,7 @@
 
 **Does not own:** .gt/ directory schema, scopecraft/ output format, quality gate definitions
 
-**Notable since last scan:** CLAUDE.md Ecosystem Position section added (80ed6b2) — no code changes, G8 (MCP categories) still open
+**Notable since last scan:** G8 (MCP categories) still open — unchanged
 
 ---
 
