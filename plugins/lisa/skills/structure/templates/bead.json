@@ -2,19 +2,23 @@
   "$schema": "bead-v1",
   "id": "gt-xxxxx",
   "title": "",
-  "type": "feature",
-  "complexity": "M",
-  "priority": "medium",
-  "status": "pending",
+  "description": "",
+  "design": "",
+  "acceptance_criteria": "",
+  "notes": "",
+  "issue_type": "task",
+  "priority": 2,
+  "status": "open",
+  "assignee": "",
+  "labels": [],
   "dependencies": [],
-  "acceptance_criteria": [],
-  "evidence": {
-    "source": "",
-    "line": null,
-    "extracted": ""
-  },
   "metadata": {
+    "complexity": "M",
     "epic": null,
-    "labels": []
+    "evidence": {
+      "source": "",
+      "line": null,
+      "extracted": ""
+    }
   }
 }

@@ -76,6 +76,8 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 - **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths and git remotes for reconcile (Stage 5). Schema v2 supports `remote` field for portable identification. Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location. Runs in fallback mode without PyYAML (JSON/file checks only; pattern checks skipped).
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
+- **`~/github/steveyegge/beads`** — Real `bd` source (Go). `internal/types/types.go` is the canonical Issue schema. `cmd/bd/create.go` shows `bd create --file=<markdown>` import path.
+- **`~/github/steveyegge/gastown`** — Real `gt` source (Go). `docs/overview.md` is the primary reference. Role taxonomy: Mayor, Deacon, Witness, Refinery, Crew, Polecats.
 
 ### Command Frontmatter Pattern
 
@@ -91,13 +93,25 @@ stage: 0-3|5               # Pipeline stage number (omitted for composite comman
 
 Composite commands use `workflow:` instead of `stage:` and list multiple skills/agents.
 
-## Gastown Concepts
+## Gastown / Beads Concepts
 
-| Term | Description |
-|------|-------------|
-| **Bead** | Work item with ID `gt-xxxxx`, acceptance criteria, evidence |
-| **Convoy** | Bundle of 3-7 related beads for assignment |
-| **Memory** | Semantic (facts), episodic (decisions), procedural (patterns) |
+Gastown (`gt` CLI) is the multi-agent workspace manager. Beads (`bd` CLI) is its issue tracking system, backed by a Dolt SQL database stored in `.beads/`. Lisa's `.gt/` files are a staging format — real execution happens via `bd` and `gt`.
+
+| Term | Real Implementation | Description |
+|------|--------------------|-|
+| **Bead** | `bd` issue in `.beads/` Dolt DB | Work item: `id`, `title`, `description`, `acceptance_criteria` (string), `priority` (int 0-4), `issue_type`, `labels`, `dependencies` |
+| **Convoy** | `gt convoy create <title> <ids>` | Batch of beads tracked together; polecats are assigned via `gt sling` |
+| **Polecat** | `gt sling <bead> <rig>` | Ephemeral agent worker, Witness-supervised, works on a branch |
+| **Crew** | Persistent worktree | Long-lived agent, pushes directly to main |
+| **Mayor** | `~/gt/mayor/` singleton | Global coordinator; creates convoys, assigns polecats |
+| **Memory** | `.gt/memory/` JSON files | Lisa's staging: semantic (facts), episodic (decisions), procedural (patterns) |
+| **`bd ready`** | CLI command | Lists unblocked issues available to work |
+| **`bd sync`** | CLI command | Commits beads DB changes to git |
+| **`bv --robot-*`** | CLI (read-only) | Graph analysis: `--robot-triage`, `--robot-next`, `--robot-plan` |
+
+**Priority mapping:** 0=critical, 1=high, 2=medium (default), 3=low, 4=backlog
+
+**The Propulsion Principle:** "If you find something on your hook, YOU RUN IT." Agents execute assigned work immediately — Lisa's acceptance criteria and quality gates are what make that safe.
 
 ## Validation
 
@@ -141,7 +155,7 @@ Lisa (pipeline & memory) ←→ Carlos (specialist fixer)
   - Writes beads/convoys          - Called by Conductor for quality routing
 ```
 
-**Gastown** (gastown.dev) is the orchestration system that consumes Lisa's output. The Mayor assigns beads to agents via git-worktree-backed convoys. Lisa's job is to produce well-formed beads and convoys for the Mayor to work with.
+**Gastown** (gastown.dev, `gt` CLI) is the multi-agent workspace manager. It uses git worktrees for persistent agent sandboxes. The Mayor singleton creates convoys (`gt convoy create`) and assigns beads to polecats (`gt sling`). **Beads** (`bd` CLI, `github.com/steveyegge/beads`) is the separate issue-tracking system backed by Dolt SQL — it is what Lisa's `.gt/beads/` JSON files graduate into. Lisa's job is to produce well-formed, `bd`-importable beads and convoy definitions that the Mayor can act on.
 
 **Conductor** is the MCP server between Lisa's file output and agent execution. It ingests Lisa's beads (`conductor_import_beads`), tracks them through the task lifecycle, manages file locks, detects context exhaustion, and routes tasks to the right personality. "Lisa in Conductor" and "Carlos in Conductor" mean Conductor's personality curation can invoke either plugin for the appropriate task — they are the same plugins, not separate implementations.
 

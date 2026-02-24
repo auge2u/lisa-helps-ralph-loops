@@ -62,44 +62,64 @@ Scan for work items in:
 
 ### Bead Schema
 
+Aligned with the real `bd` Issue schema (from `github.com/steveyegge/beads`):
+
 ```json
 {
   "$schema": "bead-v1",
   "id": "gt-abc12",
   "title": "Add user authentication",
-  "type": "feature",
-  "complexity": "L",
-  "priority": "high",
-  "status": "pending",
+  "description": "Implement OAuth2 login flow and session management",
+  "design": "Use Passport.js with Google and GitHub strategies",
+  "acceptance_criteria": "User can sign up with email\nUser can sign in with Google OAuth\nSession persists across page refresh",
+  "notes": "See docs/PRD-auth.md for background",
+  "issue_type": "feature",
+  "priority": 1,
+  "status": "open",
+  "assignee": "",
+  "labels": ["auth", "security"],
   "dependencies": [],
-  "acceptance_criteria": [
-    "User can sign up with email",
-    "User can sign in with Google OAuth",
-    "Session persists across page refresh"
-  ],
-  "evidence": {
-    "source": "docs/PRD-auth.md",
-    "line": 42,
-    "extracted": "2026-01-27T10:00:00Z"
-  },
   "metadata": {
+    "complexity": "L",
     "epic": "User Management",
-    "labels": ["auth", "security"]
+    "evidence": {
+      "source": "docs/PRD-auth.md",
+      "line": 42,
+      "extracted": "2026-01-27T10:00:00Z"
+    }
   }
 }
 ```
 
-### Bead Types
+**Schema notes (from real `bd` types):**
+- `acceptance_criteria` is a **string** (newline-separated), not an array
+- `priority` is an **integer**: 0=critical, 1=high, 2=medium, 3=low, 4=backlog
+- `status` is `open` (not `pending`) — real values: open | in_progress | blocked | deferred | closed
+- `issue_type` maps directly to `bd` types (not `type`)
+- `complexity` and `evidence` live in `metadata` (not top-level `bd` fields)
+
+### Issue Types
 
 | Type | Description | Source Indicators |
 |------|-------------|-------------------|
 | `feature` | New functionality | PRDs, user stories, feature requests |
 | `bug` | Defect fix | FIXME comments, bug issues |
+| `task` | Generic work item | TODO comments, operational tasks |
 | `chore` | Maintenance, refactoring | HACK comments, tech debt |
-| `docs` | Documentation | README updates, API docs |
-| `spike` | Research/investigation | Questions, unknowns |
+| `epic` | Large feature container | Feature areas, milestones |
+| `decision` | Architecture decision | ADRs, design docs |
 
-### Complexity Estimates
+### Priority Values
+
+| Value | Label | Description |
+|-------|-------|-------------|
+| 0 | P0 / critical | Blockers, production issues |
+| 1 | P1 / high | Sprint priorities |
+| 2 | P2 / medium | Normal work (default) |
+| 3 | P3 / low | Nice-to-have |
+| 4 | P4 / backlog | Future consideration |
+
+### Complexity Estimates (metadata only)
 
 | Size | Description | Typical Effort |
 |------|-------------|----------------|
@@ -111,12 +131,8 @@ Scan for work items in:
 
 ### ID Generation
 
-Bead IDs follow Gastown convention: `gt-<5-char-alphanumeric>`
+Bead IDs use the rig prefix + 5-char alphanumeric. For the gastown rig the prefix is `gt-`:
 
-- Use lowercase letters and numbers only
-- Examples: `gt-abc12`, `gt-xyz99`, `gt-m4n5p`
-
-Generate unique IDs:
 ```python
 import random
 import string
@@ -129,10 +145,34 @@ def generate_bead_id():
 
 Every bead must have:
 - [ ] Clear, actionable title
-- [ ] At least 1 acceptance criterion
-- [ ] Evidence linking to source file
-- [ ] Valid complexity estimate (XS/S/M/L/XL)
+- [ ] Substantive description (why + what)
+- [ ] Acceptance criteria (as newline-separated string)
+- [ ] Evidence in metadata linking to source file
+- [ ] Valid complexity in metadata (XS/S/M/L/XL)
 - [ ] Unique ID in `gt-xxxxx` format
+
+### bd CLI Integration
+
+Lisa's `.gt/beads/*.json` files are a staging format. To create real `bd` issues:
+
+```bash
+# Option 1: Import from a markdown file Lisa generates
+bd create --file=.gt/beads/bd-import.md
+
+# Option 2: Create one at a time (for scripting)
+bd create "Add user authentication" \
+  --type=feature --priority=1 \
+  --acceptance="User can sign up with email\nSession persists" \
+  --description="Implement OAuth2 login"
+
+# Check unblocked work
+bd ready
+
+# Claim and complete
+bd update gt-abc12 --status=in_progress
+bd close gt-abc12
+bd sync  # commit beads changes to git
+```
 
 ---
 
@@ -178,12 +218,15 @@ Every bead must have:
   "assigned_to": null,
   "status": "pending",
   "created": "2026-01-27T10:00:00Z",
+  "gt_convoy_cmd": "gt convoy create \"Authentication Sprint\" gt-abc12 gt-def34 gt-ghi56",
   "metadata": {
     "epic": "User Management",
     "estimated_days": 5
   }
 }
 ```
+
+The `gt_convoy_cmd` field is the actual `gt` CLI command to create this convoy in a live Gastown environment. Polecats are assigned via `gt sling <bead-id> <rig>`.
 
 ### ID Generation
 
@@ -259,19 +302,47 @@ python plugins/lisa/hooks/validate.py --stage structure
 
 ## Integration with Gastown
 
-After structure completes, Gastown Mayor can:
+Lisa's `.gt/beads/` and `.gt/convoys/` are **staging directories**. The real Gastown toolchain uses:
 
-1. **Read Memory**: Load `.gt/memory/semantic.json` for project context
-2. **List Beads**: Enumerate `.gt/beads/*.json` for available work
-3. **Assign Convoys**: Create/assign convoys to Polecats
-4. **Track Progress**: Update bead/convoy status as work completes
+- **`bd`** — the beads CLI (issue tracking, Dolt-backed SQL database in `.beads/`)
+- **`bv`** — the graph analysis CLI (read-only, use `bv --robot-triage` not bare `bv`)
+- **`gt`** — the Gastown workspace manager (convoys, polecats, rigs, worktrees)
 
-### Status Transitions
+### Live Integration Workflow
+
+```bash
+# 1. Create real bd issues from Lisa's staging beads
+#    Either run individual bd create commands, or produce a markdown file:
+bd create --file=.gt/beads/bd-import.md
+
+# 2. Create a convoy in Gastown from the bead IDs
+gt convoy create "Authentication Sprint" gt-abc12 gt-def34 gt-ghi56
+
+# 3. Sling work to polecats (ephemeral workers) or crew
+gt sling gt-abc12 <rig>           # assign to a polecat on the rig
+gt convoy status hq-cv-abc        # track convoy progress
+
+# 4. Workers pick up and complete
+bd ready                          # see unblocked work
+bd update gt-abc12 --status=in_progress
+bd close gt-abc12
+bd sync                           # commit beads changes to git
+```
+
+### Real Bead Status Values
 
 ```
-Bead:   pending -> in_progress -> completed | blocked
-Convoy: pending -> assigned -> in_progress -> completed
+open → in_progress → closed
+         ↓
+       blocked
+       deferred
 ```
+
+### The Propulsion Principle
+
+Gastown agents follow: **"If you find something on your hook, YOU RUN IT."**
+When a bead is slotted to a polecat, it executes immediately — no confirmation needed.
+Lisa's quality gates and acceptance criteria are what make that safe to do.
 
 ---
 
