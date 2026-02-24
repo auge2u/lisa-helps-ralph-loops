@@ -1,7 +1,7 @@
 # Ecosystem Perspectives
 
-**Generated:** 2026-02-24 (reconcile v6.0.0)
-**Projects scanned:** 3 attempted, 3 found
+**Generated:** 2026-02-24 (reconcile v6.0.1)
+**Projects scanned:** 3 attempted, 3 found (Lisa: full rescan; Carlos + Conductor: cached)
 
 ---
 
@@ -13,16 +13,16 @@
 | Version | 0.3.0 | 1.2.0 | 1.0.0 |
 | Release status | alpha | beta | ga |
 | Schema | semantic-memory-v1 | semantic-memory-v1 | semantic-memory-v1 |
-| Last scan | 2026-02-10 (**stale**) | 2026-02-09 | 2026-02-09 |
+| Last scan | 2026-02-24 (**fresh**) | 2026-02-09 | 2026-02-09 |
 | Primary language | Python | Python | TypeScript |
-| Git hash | 361b0b5 | df3b763 | 80ed6b2 |
-| Semantic freshness | STALE (G10) | ok | ok |
+| Git hash | b77b730 | df3b763 | 80ed6b2 |
+| Semantic freshness | FRESH (G10 resolved) | ok | ok |
 
 ---
 
 ## Lisa Self-Report
 
-**Source:** `.gt/memory/semantic.json` (scanned 2026-02-10, stale since 2026-02-24 changes)
+**Source:** `.gt/memory/semantic.json` (scanned 2026-02-24T12:00:00Z — fresh)
 
 | Attribute | Value |
 |-----------|-------|
@@ -30,9 +30,11 @@
 | Ecosystem root | Yes |
 | Standalone command | `/lisa:migrate` |
 | Pipeline stages | research(0), discover(1), plan(2), structure(3), reconcile(5) |
-| Quality gates | 31 (gates.yaml v1.1) |
+| Quality gates | 31 (gates.yaml v1.1, 298 lines) |
 | Tests | 25 (pytest, legacy validator) |
-| Validator | validate.py (834 lines, PyYAML fallback) |
+| Validator | validate.py (833 lines, PyYAML fallback) |
+| Semantic sections | 19 |
+| Files analyzed | 44 |
 
 **Reads from:** target project files, carlos/.gt/memory/semantic.json, conductor/.gt/memory/semantic.json, ~/.lisa/ecosystem.json
 
@@ -40,18 +42,18 @@
 
 **Does not own:** Carlos analysis reports, Conductor state
 
-**Notable since last scan (not yet in semantic.json):**
-- bump-version.sh fixed (was pointing at lisa-loops-memory)
-- CLAUDE.md: full Ecosystem Position section added
-- Bead schema: aligned with real bd Issue type (priority int, AC string, issue_type)
-- structure/SKILL.md: bd/bv/gt CLI integration documented
-- ~/github/steveyegge/beads and ~/github/steveyegge/gastown cloned as canonical refs
+**Gastown toolchain documented in semantic.json:**
+- `bd` CLI: Beads issue tracking (Dolt SQL), `bd create --file=<markdown>`, `bd ready`, `bd update`, `bd close`, `bd sync`
+- `bv` CLI: Graph analysis (read-only, always `--robot-*` flags)
+- `gt` CLI: Workspace manager, `gt convoy create`, `gt sling <bead-id> <rig>`, `gt convoy status`
+- Propulsion Principle: "If you find something on your hook, YOU RUN IT"
+- Upstream refs: `~/github/steveyegge/beads` (canonical Issue schema), `~/github/steveyegge/gastown` (architecture)
 
 ---
 
 ## Carlos Self-Report
 
-**Source:** `~/github/auge2u/carlos/.gt/memory/semantic.json` (scanned 2026-02-09)
+**Source:** `~/github/auge2u/carlos/.gt/memory/semantic.json` (scanned 2026-02-09 — cached, unchanged)
 
 | Attribute | Value |
 |-----------|-------|
@@ -75,7 +77,7 @@
 
 ## Conductor Self-Report
 
-**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json` (scanned 2026-02-09)
+**Source:** `~/github/habitusnet/conductor/.gt/memory/semantic.json` (scanned 2026-02-09 — cached, unchanged)
 
 | Attribute | Value |
 |-----------|-------|
@@ -125,7 +127,7 @@
 
 ---
 
-## Upstream Ecosystem Reference (New in v6.0.0)
+## Upstream Ecosystem Reference
 
 | Repo | Purpose | Local path |
 |------|---------|------------|
