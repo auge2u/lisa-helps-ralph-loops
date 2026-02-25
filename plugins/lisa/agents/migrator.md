@@ -176,9 +176,16 @@ Scan in priority order:
   "$schema": "convoy-v1",
   "id": "convoy-001",
   "name": "Authentication Sprint",
-  "description": "Implement core user authentication",
+  "description": "Implement core user authentication features",
   "beads": ["gt-abc12", "gt-def34", "gt-ghi56"],
-  "status": "pending"
+  "assigned_to": null,
+  "status": "pending",
+  "created": "2026-01-27T10:00:00Z",
+  "gt_convoy_cmd": "gt convoy create \"Authentication Sprint\" gt-abc12 gt-def34 gt-ghi56",
+  "metadata": {
+    "epic": "User Management",
+    "estimated_days": 5
+  }
 }
 ```
 
