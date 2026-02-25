@@ -286,7 +286,7 @@ python plugins/lisa/hooks/validate.py --stage structure
 | Gate | Requirement |
 |------|-------------|
 | `beads_extracted` | At least 1 bead created |
-| `beads_have_criteria` | All beads have acceptance_criteria array |
+| `beads_have_criteria` | All beads have acceptance_criteria string |
 | `beads_have_sources` | All beads have evidence.source |
 | `beads_valid_ids` | All IDs match `gt-[a-z0-9]{5}` pattern |
 
