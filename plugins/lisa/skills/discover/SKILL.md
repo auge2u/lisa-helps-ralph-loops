@@ -80,46 +80,13 @@ Scan these locations in priority order:
 
 ## Tech Stack Extraction
 
-### Framework Detection
+Scan package and config files for dependencies, then map to canonical label names:
 
-Look for these patterns in dependencies:
+- **Frameworks:** "Next.js", "React", "Vue.js", "Angular", "Express.js", "Fastify", "Django", "Flask", "FastAPI", "Ruby on Rails", "Gin"
+- **Databases:** "PostgreSQL", "MySQL", "MongoDB", "Redis" — include ORM if present ("Prisma", "Drizzle", "TypeORM")
+- **Auth:** "Firebase Auth", "Auth0", "NextAuth.js", "Clerk", "Supabase Auth", "Passport.js"
 
-| Dependency | Framework |
-|------------|-----------|
-| `next` | Next.js |
-| `react` | React |
-| `vue` | Vue.js |
-| `@angular/core` | Angular |
-| `express` | Express.js |
-| `fastify` | Fastify |
-| `django` | Django |
-| `flask` | Flask |
-| `fastapi` | FastAPI |
-| `rails` | Ruby on Rails |
-| `gin-gonic/gin` | Gin (Go) |
-
-### Database Detection
-
-| Indicator | Database |
-|-----------|----------|
-| `pg`, `postgres` | PostgreSQL |
-| `mysql2` | MySQL |
-| `mongodb`, `mongoose` | MongoDB |
-| `redis` | Redis |
-| `prisma` | Prisma ORM |
-| `drizzle-orm` | Drizzle ORM |
-| `typeorm` | TypeORM |
-
-### Auth Detection
-
-| Indicator | Auth System |
-|-----------|-------------|
-| `firebase-admin` | Firebase Auth |
-| `@auth0/` | Auth0 |
-| `next-auth` | NextAuth.js |
-| `passport` | Passport.js |
-| `clerk` | Clerk |
-| `supabase` | Supabase Auth |
+Use exact names above. If a dependency doesn't match a known canonical name, use the package name as-is.
 
 ## Output: semantic.json
 
