@@ -42,7 +42,8 @@ Two composite shortcuts:
 ## Install
 
 ```
-/install-plugin auge2u/lisa-helps-ralph-loops
+/plugin marketplace add auge2u/lisa-helps-ralph-loops
+/plugin install lisa@lisa-helps-ralph-loops
 ```
 
 That's it. No API keys, no database, no cloud. All outputs are local files.

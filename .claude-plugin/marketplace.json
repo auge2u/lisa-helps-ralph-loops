@@ -1,9 +1,11 @@
 {
   "name": "lisa-helps-ralph-loops",
-  "description": "Migration system that analyzes existing projects and structures them for Gastown multi-agent workspace.",
   "owner": {
     "name": "auge2u",
     "email": "auge2u@gmail.com"
+  },
+  "metadata": {
+    "description": "Give Claude Code a memory before it touches your code. Rescue abandoned projects, extract semantic memory, generate roadmaps, and structure work for multi-agent execution."
   },
   "plugins": [
     {
@@ -23,10 +25,7 @@
       "author": { "name": "auge2u" },
       "source": "./plugins/lisa-loops-memory",
       "category": "productivity",
-      "tags": ["gastown", "migration", "deprecated"],
-      "keywords": ["gastown", "migration", "legacy"],
-      "deprecated": true,
-      "replacement": "lisa"
+      "tags": ["gastown", "migration", "legacy"]
     }
   ]
 }
