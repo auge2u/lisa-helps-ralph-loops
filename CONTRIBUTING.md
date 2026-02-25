@@ -27,7 +27,7 @@ This project follows [Semantic Versioning](https://semver.org/):
 
 Versions are tracked in two files that must stay in sync:
 
-- `plugins/ralph-it-up-roadmap/.claude-plugin/plugin.json`
+- `plugins/lisa/.claude-plugin/plugin.json`
 - `.claude-plugin/marketplace.json`
 
 ### Bumping versions
