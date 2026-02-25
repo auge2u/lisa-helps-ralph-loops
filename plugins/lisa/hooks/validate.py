@@ -792,7 +792,7 @@ def main():
     elif args.format == "markdown":
         print(generate_markdown_report(results))
     else:
-        blockers, warnings = print_results(results, args.verbose)
+        print_results(results, args.verbose)
 
     # Determine exit code
     blockers = sum(1 for r in results if not r.passed and r.severity == "blocker")
