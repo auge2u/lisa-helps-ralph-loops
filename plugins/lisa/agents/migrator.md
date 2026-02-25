@@ -122,32 +122,11 @@ Scan in priority order:
 
 ### Bead Schema
 
-```json
-{
-  "$schema": "bead-v1",
-  "id": "gt-abc12",
-  "title": "Add user authentication",
-  "description": "Implement OAuth2 login flow and session management",
-  "design": "Use Passport.js with Google and GitHub strategies",
-  "acceptance_criteria": "User can sign up with email\nUser can sign in with Google OAuth\nSession persists across page refresh",
-  "notes": "See docs/PRD-auth.md for background",
-  "issue_type": "feature",
-  "priority": 1,
-  "status": "open",
-  "assignee": "",
-  "labels": ["auth", "security"],
-  "dependencies": [],
-  "metadata": {
-    "complexity": "L",
-    "epic": "User Management",
-    "evidence": {
-      "source": "docs/PRD-auth.md",
-      "line": 42,
-      "extracted": "2026-01-27T10:00:00Z"
-    }
-  }
-}
-```
+Full schema: `skills/structure/SKILL.md`. Critical types to get right:
+- `acceptance_criteria`: **string** (newline-separated), not array
+- `priority`: **integer** (0=critical, 1=high, 2=medium, 3=low, 4=backlog), not string
+- `issue_type`: field name (not `type`)
+- `complexity` + `evidence` live in `metadata` (not top-level)
 
 ### ID Generation
 
