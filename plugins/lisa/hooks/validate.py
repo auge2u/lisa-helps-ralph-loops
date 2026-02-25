@@ -40,21 +40,6 @@ except ImportError:
     HAS_YAML = False
 
 
-# Security: Allowed directories for validation
-ALLOWED_BASE_DIRS = {".", ".gt", "scopecraft", "./", "./.gt", "./scopecraft"}
-
-
-def validate_path_security(path: str, cwd: Path) -> Path:
-    """Validate path is within working directory."""
-    resolved = Path(path).resolve()
-    try:
-        resolved.relative_to(cwd)
-        return resolved
-    except ValueError:
-        print(f"Security error: Path '{path}' resolves outside working directory", file=sys.stderr)
-        sys.exit(3)
-
-
 @dataclass
 class GateResult:
     """Result of a quality gate check."""
@@ -67,7 +52,6 @@ class GateResult:
     actual: Optional[Any] = None
     expected: Optional[str] = None
 
-
 @dataclass
 class GatesConfig:
     """Loaded gates configuration."""
@@ -76,14 +60,12 @@ class GatesConfig:
     workflows: dict
     exit_codes: dict
 
-
 class UnifiedValidator:
     """Validates outputs against gates.yaml definitions."""
 
     def __init__(self, base_dir: Path, gates_config: GatesConfig):
         self.base_dir = Path(base_dir)
         self.config = gates_config
-        self.cwd = Path.cwd().resolve()
 
     def validate_stage(self, stage_name: str) -> list[GateResult]:
         """Validate all gates for a specific stage."""
@@ -178,6 +160,7 @@ class UnifiedValidator:
 
     def _check_file_exists(self, gate: dict, stage: str) -> GateResult:
         """Check if file exists."""
+        # TODO: add path traversal check if validate is ever exposed as a service
         file_path = self.base_dir / gate["path"]
         exists = file_path.exists()
 
@@ -553,7 +536,6 @@ class UnifiedValidator:
 
         return value
 
-
 def _build_fallback_config() -> GatesConfig:
     """Build a fallback gates config for when PyYAML is not available.
 
@@ -627,7 +609,6 @@ def _build_fallback_config() -> GatesConfig:
         exit_codes={"pass": 0, "blocker_failed": 1, "warning_failed": 2, "security_error": 3},
     )
 
-
 def load_gates_config(config_path: Path) -> Optional[GatesConfig]:
     """Load gates configuration from YAML file.
 
@@ -655,7 +636,6 @@ def load_gates_config(config_path: Path) -> Optional[GatesConfig]:
         workflows=data.get("workflows", {}),
         exit_codes=data.get("exit_codes", {})
     )
-
 
 def print_results(results: list[GateResult], verbose: bool = False) -> tuple[int, int]:
     """Print validation results and return counts."""
@@ -703,7 +683,6 @@ def print_results(results: list[GateResult], verbose: bool = False) -> tuple[int
 
     return blockers_failed, warnings_failed
 
-
 def generate_json_output(results: list[GateResult]) -> str:
     """Generate JSON output."""
     output = [
@@ -720,7 +699,6 @@ def generate_json_output(results: list[GateResult]) -> str:
         for r in results
     ]
     return json.dumps(output, indent=2)
-
 
 def generate_markdown_report(results: list[GateResult]) -> str:
     """Generate markdown report."""
@@ -756,7 +734,6 @@ def generate_markdown_report(results: list[GateResult]) -> str:
         lines.append("\u2705 Ready to proceed.")
 
     return "\n".join(lines)
-
 
 def main():
     parser = argparse.ArgumentParser(description="Validate Lisa plugin outputs")
@@ -827,7 +804,6 @@ def main():
         sys.exit(2)
     else:
         sys.exit(0)
-
 
 if __name__ == "__main__":
     main()
