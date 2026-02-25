@@ -127,16 +127,24 @@ Scan in priority order:
   "$schema": "bead-v1",
   "id": "gt-abc12",
   "title": "Add user authentication",
-  "type": "feature",
-  "complexity": "L",
-  "priority": "high",
-  "acceptance_criteria": [
-    "User can sign up with email",
-    "User can sign in with Google OAuth"
-  ],
-  "evidence": {
-    "source": "docs/PRD-auth.md",
-    "line": 42
+  "description": "Implement OAuth2 login flow and session management",
+  "design": "Use Passport.js with Google and GitHub strategies",
+  "acceptance_criteria": "User can sign up with email\nUser can sign in with Google OAuth\nSession persists across page refresh",
+  "notes": "See docs/PRD-auth.md for background",
+  "issue_type": "feature",
+  "priority": 1,
+  "status": "open",
+  "assignee": "",
+  "labels": ["auth", "security"],
+  "dependencies": [],
+  "metadata": {
+    "complexity": "L",
+    "epic": "User Management",
+    "evidence": {
+      "source": "docs/PRD-auth.md",
+      "line": 42,
+      "extracted": "2026-01-27T10:00:00Z"
+    }
   }
 }
 ```
