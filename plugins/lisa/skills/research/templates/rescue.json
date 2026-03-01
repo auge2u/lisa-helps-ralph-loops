@@ -11,6 +11,21 @@
     "dormant_days": null,
     "key_milestones": []
   },
+  "open_work": {
+    "branches": [],
+    "total_branches": 0,
+    "note": null,
+    "github_available": false
+  },
+  "backlog_at_abandonment": {
+    "open_issues": [],
+    "open_prs": [],
+    "abandoned_prs": [],
+    "total_open_issues": 0,
+    "total_open_prs": 0,
+    "total_abandoned_prs": 0,
+    "github_available": false
+  },
   "drift": {
     "factors": [],
     "severity": null,
@@ -31,6 +46,8 @@
   "evidence": {
     "files_analyzed": [],
     "commits_reviewed": 0,
+    "branches_analyzed": 0,
+    "issues_reviewed": 0,
     "analysis_date": null
   }
 }

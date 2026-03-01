@@ -53,6 +53,126 @@ git tag -l --sort=-creatordate | head -10
 3. **When did work stop?** - Last commit date
 4. **What were the milestones?** - Tags, releases, major commits
 
+## Phase 1b: Branch Archaeology
+
+Branches are the most reliable signal of abandoned work. Each unmerged branch is a frozen snapshot of intent.
+
+```bash
+# List all remote branches by recency (most recently touched first)
+git branch -r --sort=-committerdate --format='%(committerdate:short) %(refname:short)' | head -30
+
+# For each significant branch, measure divergence from main
+git log main..origin/<branch-name> --oneline | wc -l        # commits ahead
+git diff main...origin/<branch-name> --stat | tail -1       # files changed
+
+# Get the branch's last commit message (captured intent)
+git log origin/<branch-name> -1 --format="%s"
+
+# Show all unmerged remote branches (excluding HEAD/main)
+git branch -r --no-merged main | grep -v "HEAD\|main\|master"
+
+# Full branch summary: name, date, last message
+git for-each-ref --format='%(committerdate:short)|%(refname:short)|%(subject)' \
+  refs/remotes/ --sort=-committerdate | grep -v HEAD | head -20
+```
+
+### Per-Branch Analysis
+
+For each branch with >0 commits ahead of main:
+
+| Field | How to Determine |
+|-------|-----------------|
+| `name` | Branch name without `origin/` prefix |
+| `last_commit_date` | `%(committerdate:short)` from for-each-ref |
+| `commits_ahead` | `git log main..origin/<branch> --oneline \| wc -l` |
+| `description` | Last commit message on branch |
+| `significance` | `high` if >5 commits; `medium` if 2–5; `low` if 1 |
+| `likely_abandoned` | `true` if last commit >90 days ago |
+
+### Output shape for open_work.branches
+
+```json
+[
+  {
+    "name": "feature/user-auth",
+    "last_commit_date": "2024-07-14",
+    "commits_ahead": 23,
+    "description": "Add OAuth2 login with GitHub",
+    "significance": "high",
+    "likely_abandoned": true
+  },
+  {
+    "name": "fix/memory-leak",
+    "last_commit_date": "2024-08-01",
+    "commits_ahead": 3,
+    "description": "Fix heap allocation in worker pool",
+    "significance": "medium",
+    "likely_abandoned": true
+  }
+]
+```
+
+Set `open_work.note` to a one-sentence summary: e.g., `"3 significant branches with 30+ uncommitted changes, largest being user-auth (23 commits)."`
+
+## Phase 1c: Issue / PR Snapshot
+
+Capture the backlog state at the moment of abandonment. GitHub issues and PRs are the highest-fidelity record of what the team intended to build but never finished.
+
+### Availability Check
+
+```bash
+# Test GitHub CLI access before attempting any gh commands
+gh auth status 2>/dev/null && echo "GITHUB_AVAILABLE" || echo "GITHUB_UNAVAILABLE"
+```
+
+If `gh` is unavailable or unauthenticated, set `github_available: false` in both `open_work` and `backlog_at_abandonment` and skip to Phase 2. Do not treat missing GitHub access as an error.
+
+### Open Issues (Backlog at Abandonment)
+
+```bash
+# Capture open issues at time of abandonment
+gh issue list --state open --limit 100 \
+  --json number,title,createdAt,labels,assignees \
+  --jq '.[] | {number, title, createdAt, labels: [.labels[].name]}'
+```
+
+### Open and Abandoned PRs
+
+```bash
+# Open PRs (work in flight)
+gh pr list --state open --limit 50 \
+  --json number,title,createdAt,headRefName \
+  --jq '.[] | {number, title, createdAt, branch: .headRefName}'
+
+# Abandoned PRs = closed without merge
+gh pr list --state closed --limit 100 \
+  --json number,title,closedAt,mergedAt,headRefName \
+  --jq '[.[] | select(.mergedAt == null)] | .[] | {number, title, closedAt, branch: .headRefName}'
+```
+
+### Output shape for backlog_at_abandonment
+
+```json
+{
+  "open_issues": [
+    {"number": 42, "title": "Support SSO login", "created_at": "2024-05-01"},
+    {"number": 67, "title": "Rate limiting for API", "created_at": "2024-07-03"}
+  ],
+  "open_prs": [
+    {"number": 88, "title": "Add retry logic", "branch": "feature/retry", "created_at": "2024-08-10"}
+  ],
+  "abandoned_prs": [
+    {"number": 71, "title": "Refactor DB layer", "branch": "refactor/db", "closed_at": "2024-06-20"}
+  ],
+  "total_open_issues": 14,
+  "total_open_prs": 1,
+  "total_abandoned_prs": 8,
+  "github_available": true
+}
+```
+
+Feed open issues and abandoned PRs directly into the drift analysis (Phase 4) as evidence of scope creep. Feed open PRs into `open_work.branches` cross-reference.
+
 ## Phase 2: Timeline Construction
 
 Build a timeline from git history:
@@ -224,12 +344,48 @@ Is the original mission still relevant to users today?
   "timeline": {
     "inception": "2024-01-15",
     "last_active": "2024-08-22",
-    "dormant_days": 157
+    "dormant_days": 157,
+    "key_milestones": [
+      {"date": "2024-01-15", "event": "Project created", "commit": "abc1234", "significance": "high"},
+      {"date": "2024-03-01", "event": "v1.0 released", "tag": "v1.0.0", "significance": "high"},
+      {"date": "2024-06-15", "event": "Last feature commit", "significance": "medium"}
+    ]
+  },
+  "open_work": {
+    "branches": [
+      {
+        "name": "feature/user-auth",
+        "last_commit_date": "2024-07-14",
+        "commits_ahead": 23,
+        "description": "Add OAuth2 login with GitHub",
+        "significance": "high",
+        "likely_abandoned": true
+      }
+    ],
+    "total_branches": 3,
+    "note": "3 unmerged branches with 30+ uncommitted changes; largest is user-auth (23 commits).",
+    "github_available": true
+  },
+  "backlog_at_abandonment": {
+    "open_issues": [
+      {"number": 42, "title": "Support SSO login", "created_at": "2024-05-01"},
+      {"number": 67, "title": "Rate limiting for API", "created_at": "2024-07-03"}
+    ],
+    "open_prs": [
+      {"number": 88, "title": "Add retry logic", "branch": "feature/retry", "created_at": "2024-08-10"}
+    ],
+    "abandoned_prs": [
+      {"number": 71, "title": "Refactor DB layer", "branch": "refactor/db", "closed_at": "2024-06-20"}
+    ],
+    "total_open_issues": 14,
+    "total_open_prs": 1,
+    "total_abandoned_prs": 8,
+    "github_available": true
   },
   "drift": {
     "factors": ["scope_creep", "team_departure"],
     "severity": "moderate",
-    "analysis": "Project expanded beyond MVP scope without closing core features"
+    "analysis": "Project expanded beyond MVP scope without closing core features; 14 open issues and 3 unmerged branches confirm unfinished work"
   },
   "health": {
     "tests": "partial",
@@ -243,13 +399,16 @@ Is the original mission still relevant to users today?
     "rationale": "Core value proposition remains valid, technical debt is manageable",
     "prerequisites": [
       "Update dependencies to address 3 high-severity vulnerabilities",
-      "Close or archive 5 abandoned feature branches",
+      "Triage 14 open issues — close stale, promote top 5 to beads",
+      "Evaluate feature/user-auth branch (23 commits) for merge or discard",
       "Revise README to reflect current state"
     ]
   },
   "evidence": {
     "files_analyzed": ["README.md", "package.json", "CHANGELOG.md", ".github/"],
     "commits_reviewed": 147,
+    "branches_analyzed": 5,
+    "issues_reviewed": 22,
     "analysis_date": "2026-01-27T10:00:00Z"
   }
 }
@@ -264,6 +423,8 @@ Is the original mission still relevant to users today?
 | `drift_analyzed` | drift.factors has at least 1 factor |
 | `recommendation_made` | recommendation.action is revive/pivot/archive |
 | `evidence_gathered` | evidence.files_analyzed has 3+ entries |
+
+**Note:** `evidence.branches_analyzed` and `evidence.issues_reviewed` are informational — they track depth of investigation but are not gated. Set `branches_analyzed` to the count of branches examined (including merged); set `issues_reviewed` to 0 if GitHub was unavailable.
 
 ## Validation
 
