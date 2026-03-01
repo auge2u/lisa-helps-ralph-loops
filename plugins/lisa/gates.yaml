@@ -126,7 +126,7 @@ stages:
         name: "Risk register has entries (3+)"
         check: pattern_count
         path: "scopecraft/RISKS_AND_DEPENDENCIES.md"
-        pattern: "\\| .+ \\| (Technical|Product|GTM)"
+        pattern: "\\| .+ \\| (?!Type\\b)\\w+"
         min: 3
         severity: blocker
 
@@ -267,7 +267,7 @@ stages:
         check: pattern_exists
         path: "scopecraft/ALIGNMENT_REPORT.md"
         pattern: "^## Misalignments"
-        severity: warning
+        severity: blocker
 
       - id: changes_tracked
         name: "Changes tracked from prior version"
