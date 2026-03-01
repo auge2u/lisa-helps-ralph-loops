@@ -17,14 +17,14 @@ pip install pytest pyyaml
 pytest tests/ -v
 
 # Run specific test class or method
-pytest tests/test_validate_quality_gates.py::TestPathSecurity -v
+pytest tests/test_validate_quality_gates.py::TestPatternCountGate -v
 
 # Validate plugin outputs against quality gates
 python3 plugins/lisa/hooks/validate.py --stage discover
 python3 plugins/lisa/hooks/validate.py --workflow migrate --format json
 python3 plugins/lisa/hooks/validate.py --stage all --format markdown
 
-# Bump version (updates plugin.json + marketplace.json + CHANGELOG.md)
+# Bump version (updates plugin.json + marketplace.json + CHANGELOG.md; requires jq)
 ./scripts/bump-version.sh 0.4.0        # bump only
 ./scripts/bump-version.sh 0.4.0 --tag  # bump + git tag
 ```
@@ -40,7 +40,7 @@ The repo contains two plugins. Only `lisa` is active:
 
 The marketplace registry at `.claude-plugin/marketplace.json` lists both; `lisa-loops-memory` has `"deprecated": true`.
 
-**Note:** The existing tests in `tests/test_validate_quality_gates.py` import from the **legacy** `lisa-loops-memory` validator (`validate_quality_gates.py`), not the current `plugins/lisa/hooks/validate.py`. These are different implementations — the active one uses `gates.yaml` while the legacy one has hardcoded gates.
+**Tests:** `tests/test_validate_quality_gates.py` covers `UnifiedValidator` in `plugins/lisa/hooks/validate.py` (31 tests). The deprecated `lisa-loops-memory` validator has no active tests.
 
 ## Plugin Architecture
 
@@ -123,12 +123,12 @@ Gastown (`gt` CLI) is the multi-agent workspace manager. Beads (`bd` CLI) is its
 Quality gates are defined in `gates.yaml` with these check types:
 - `file_exists`, `file_count` — Check files exist
 - `json_valid`, `json_field_present`, `json_field_count` — Validate JSON structure
-- `pattern_exists`, `pattern_count` — Regex matching in files
-- `cross_reference` — Verify references between files
+- `pattern_exists`, `pattern_count` — Regex matching in files (`pattern_count` requires `min` or `max`; omitting both is a config error)
+- `cross_reference` — Verify references between files (malformed source files fail the gate rather than being silently skipped)
 
 Exit codes: `0`=pass, `1`=blocker, `2`=warning, `3`=security error
 
-`validate.py` enforces path security — all validated paths must resolve within the working directory. Allowed output directories: `.`, `.gt`, `scopecraft`.
+`validate.py` paths are resolved relative to the working directory. `gates.yaml` is developer-controlled and its paths are trusted. Allowed output directories: `.`, `.gt`, `scopecraft`.
 
 ## Adding New Stages/Gates
 
