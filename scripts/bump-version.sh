@@ -66,12 +66,12 @@ update_json_version() {
     local file="$1"
     local new_version="$2"
 
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS sed requires different syntax
-        sed -i '' "s/\"version\": *\"[^\"]*\"/\"version\": \"$new_version\"/g" "$file"
-    else
-        sed -i "s/\"version\": *\"[^\"]*\"/\"version\": \"$new_version\"/g" "$file"
-    fi
+    local tmp
+    tmp=$(jq ".version = \"$new_version\"" "$file") || {
+        echo -e "${RED}Error: jq failed to update $file${NC}"
+        exit 1
+    }
+    echo "$tmp" > "$file"
 }
 
 # Update CHANGELOG.md
