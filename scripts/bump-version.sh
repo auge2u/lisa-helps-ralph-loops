@@ -10,7 +10,7 @@
 #   ./scripts/bump-version.sh 2.0.0 --tag
 #
 # This script updates:
-#   - plugins/lisa-loops-memory/.claude-plugin/plugin.json
+#   - plugins/lisa/.claude-plugin/plugin.json
 #   - .claude-plugin/marketplace.json
 #   - CHANGELOG.md (moves [Unreleased] to new version with today's date)
 #
@@ -77,6 +77,7 @@ update_json_version() {
 # Update CHANGELOG.md
 update_changelog() {
     local new_version="$1"
+    local old_version="$2"
     local today
     today=$(date +%Y-%m-%d)
 
@@ -84,10 +85,10 @@ update_changelog() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$new_version] - $today/" "$CHANGELOG"
         # Update the comparison links at the bottom
-        sed -i '' "s|\[Unreleased\]: \(.*\)/compare/v[^.]*\.[^.]*\.[^.]*\.\.\.HEAD|[Unreleased]: \1/compare/v$new_version...HEAD\n[$new_version]: \1/compare/v$(get_current_version)...v$new_version|" "$CHANGELOG"
+        sed -i '' "s|\[Unreleased\]: \(.*\)/compare/v[^.]*\.[^.]*\.[^.]*\.\.\.HEAD|[Unreleased]: \1/compare/v$new_version...HEAD\n[$new_version]: \1/compare/v$old_version...v$new_version|" "$CHANGELOG"
     else
         sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [$new_version] - $today/" "$CHANGELOG"
-        sed -i "s|\[Unreleased\]: \(.*\)/compare/v[^.]*\.[^.]*\.[^.]*\.\.\.HEAD|[Unreleased]: \1/compare/v$new_version...HEAD\n[$new_version]: \1/compare/v$(get_current_version)...v$new_version|" "$CHANGELOG"
+        sed -i "s|\[Unreleased\]: \(.*\)/compare/v[^.]*\.[^.]*\.[^.]*\.\.\.HEAD|[Unreleased]: \1/compare/v$new_version...HEAD\n[$new_version]: \1/compare/v$old_version...v$new_version|" "$CHANGELOG"
     fi
 }
 
@@ -109,6 +110,11 @@ main() {
     local current_version
     current_version=$(get_current_version)
 
+    # Verify all target files exist before making any changes
+    [[ -f "$PLUGIN_JSON" ]] || { echo -e "${RED}Error: Plugin JSON not found: $PLUGIN_JSON${NC}"; exit 1; }
+    [[ -f "$MARKETPLACE_JSON" ]] || { echo -e "${RED}Error: Marketplace JSON not found: $MARKETPLACE_JSON${NC}"; exit 1; }
+    [[ -f "$CHANGELOG" ]] || { echo -e "${RED}Error: CHANGELOG not found: $CHANGELOG${NC}"; exit 1; }
+
     echo -e "${YELLOW}Bumping version: $current_version -> $new_version${NC}"
     echo ""
 
@@ -124,7 +130,7 @@ main() {
 
     # Update CHANGELOG.md
     echo -n "Updating $CHANGELOG... "
-    update_changelog "$new_version"
+    update_changelog "$new_version" "$current_version"
     echo -e "${GREEN}done${NC}"
 
     echo ""
@@ -151,8 +157,10 @@ main() {
     echo "  2. Commit: git add -A && git commit -m 'Release v$new_version'"
     if [[ "$create_tag" == false ]]; then
         echo "  3. Tag: git tag -a v$new_version -m 'Release v$new_version'"
+        echo "  4. Push: git push && git push --tags"
+    else
+        echo "  3. Push: git push && git push --tags"
     fi
-    echo "  4. Push: git push && git push --tags"
 }
 
 main "$@"

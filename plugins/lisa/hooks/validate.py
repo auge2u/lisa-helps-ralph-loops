@@ -160,7 +160,8 @@ class UnifiedValidator:
 
     def _check_file_exists(self, gate: dict, stage: str) -> GateResult:
         """Check if file exists."""
-        # TODO: add path traversal check if validate is ever exposed as a service
+        # gates.yaml is developer-controlled (checked into the plugin directory),
+        # so paths in it are trusted. No traversal risk for this CLI tool.
         file_path = self.base_dir / gate["path"]
         exists = file_path.exists()
 
@@ -373,7 +374,17 @@ class UnifiedValidator:
                 stage=stage
             )
 
-        regex = re.compile(regex_pattern, re.MULTILINE)
+        try:
+            regex = re.compile(regex_pattern, re.MULTILINE)
+        except re.error as e:
+            return GateResult(
+                gate_id=gate["id"],
+                name=gate["name"],
+                passed=False,
+                severity=gate.get("severity", "blocker"),
+                message=f"Invalid regex pattern: {e}",
+                stage=stage
+            )
         files_with_pattern = 0
 
         for file_path in files:
@@ -425,7 +436,17 @@ class UnifiedValidator:
                 stage=stage
             )
 
-        regex = re.compile(regex_pattern, re.MULTILINE)
+        try:
+            regex = re.compile(regex_pattern, re.MULTILINE)
+        except re.error as e:
+            return GateResult(
+                gate_id=gate["id"],
+                name=gate["name"],
+                passed=False,
+                severity=gate.get("severity", "blocker"),
+                message=f"Invalid regex pattern: {e}",
+                stage=stage
+            )
         total_count = 0
 
         for file_path in files:
@@ -440,6 +461,16 @@ class UnifiedValidator:
         min_count = gate.get("min")
         max_count = gate.get("max")
 
+        if min_count is None and max_count is None:
+            return GateResult(
+                gate_id=gate["id"],
+                name=gate["name"],
+                passed=False,
+                severity=gate.get("severity", "blocker"),
+                message="Gate configuration error: pattern_count requires min or max",
+                stage=stage
+            )
+
         passed = True
         expected_parts = []
 
@@ -453,7 +484,7 @@ class UnifiedValidator:
                 passed = False
             expected_parts.append(f"<= {max_count}")
 
-        expected = " and ".join(expected_parts) if expected_parts else "any"
+        expected = " and ".join(expected_parts)
 
         return GateResult(
             gate_id=gate["id"],
@@ -486,6 +517,7 @@ class UnifiedValidator:
             )
 
         missing_refs = []
+        malformed_files = []
         total_refs = 0
 
         for source_file in source_files:
@@ -508,16 +540,37 @@ class UnifiedValidator:
                     if not target_path.exists():
                         missing_refs.append(ref)
             except (json.JSONDecodeError, IOError):
-                pass
+                malformed_files.append(Path(source_file).name)
+
+        if malformed_files:
+            detail = f"Malformed source files: {malformed_files}"
+            if missing_refs:
+                detail += f"; missing references: {missing_refs}"
+            return GateResult(
+                gate_id=gate["id"],
+                name=gate["name"],
+                passed=False,
+                severity=gate.get("severity", "blocker"),
+                message=detail,
+                stage=stage
+            )
 
         passed = len(missing_refs) == 0
+        if passed:
+            message = f"All {total_refs} references exist"
+        else:
+            shown = missing_refs[:5]
+            extra = len(missing_refs) - len(shown)
+            message = f"Missing references: {shown}"
+            if extra:
+                message += f" and {extra} more"
 
         return GateResult(
             gate_id=gate["id"],
             name=gate["name"],
             passed=passed,
             severity=gate.get("severity", "blocker"),
-            message=f"All {total_refs} references exist" if passed else f"Missing references: {missing_refs[:5]}",
+            message=message,
             stage=stage,
             actual=total_refs - len(missing_refs),
             expected=f"{total_refs}"
@@ -629,6 +682,14 @@ def load_gates_config(config_path: Path) -> Optional[GatesConfig]:
 
     with open(config_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
+
+    if not data:
+        print(f"Error: gates.yaml is empty or invalid: {config_path}", file=sys.stderr)
+        return None
+
+    if not data.get("stages"):
+        print(f"Error: gates.yaml missing required 'stages' section: {config_path}", file=sys.stderr)
+        return None
 
     return GatesConfig(
         version=data.get("version", "1.0"),

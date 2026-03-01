@@ -11,7 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-# Run tests (requires PyYAML; system Python may lack it — use a venv if needed)
+# Run tests (requires PyYAML; system Python may lack it — use a venv)
+python3 -m venv /tmp/lisa-validate-venv && source /tmp/lisa-validate-venv/bin/activate
 pip install pytest pyyaml
 pytest tests/ -v
 
@@ -60,6 +61,8 @@ Composite commands run multiple stages sequentially:
 - **`rescue.md`** — Stages 0-3 (research + discover + plan + structure)
 - **`status.md`** — Detects completed stages and runs their quality gates
 
+`commands/_deprecated/` contains superseded commands (analyze, beads, convoy, roadmap*). Do not edit or invoke these.
+
 ### File Relationships
 
 ```
@@ -76,6 +79,8 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 - **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths and git remotes for reconcile (Stage 5). Schema v2 supports `remote` field for portable identification. Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location. Runs in fallback mode without PyYAML (JSON/file checks only; pattern checks skipped).
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
+- **`plugins/lisa/skills/reconcile/checkpoint-schema.json`** — JSON Schema (draft 2020-12) for `.checkpoint.json`. Machine-readable version of `CHECKPOINT_FORMAT.json` template; used to validate reconcile outputs.
+- **`docs/ARCHITECTURE_V2.md`** — Extended architecture reference for the three-plugin ecosystem. Covers Conductor integration details not in CLAUDE.md.
 - **`~/github/steveyegge/beads`** — Real `bd` source (Go). `internal/types/types.go` is the canonical Issue schema. `cmd/bd/create.go` shows `bd create --file=<markdown>` import path.
 - **`~/github/steveyegge/gastown`** — Real `gt` source (Go). `docs/overview.md` is the primary reference. Role taxonomy: Mayor, Deacon, Witness, Refinery, Crew, Polecats.
 

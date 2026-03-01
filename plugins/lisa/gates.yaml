@@ -6,13 +6,13 @@ version: "1.1"
 
 # Check types:
 # - file_exists: Check if file exists
-# - file_count: Count files matching glob pattern
+# - file_count: Count files matching glob pattern (options: min, max, expect)
 # - json_valid: Validate JSON structure
-# - json_field_present: Check JSON field is not null/empty
-# - json_field_count: Count items in JSON array/object
-# - pattern_exists: Check regex pattern exists in file
-# - pattern_count: Count regex pattern matches (supports min/max)
-# - cross_reference: Verify references between files exist
+# - json_field_present: Check JSON field is not null/empty (options: all_files — apply to every matched file)
+# - json_field_count: Count items in JSON array/object (options: min, max, all_files, count_non_null)
+# - pattern_exists: Check regex pattern exists in file(s) (options: all_files, json_field)
+# - pattern_count: Count regex pattern matches; min or max required (options: min, max)
+# - cross_reference: Verify references between files (source_path, source_field, target_dir, target_pattern)
 
 stages:
   # Stage 0: Research (Archaeological Rescue)
