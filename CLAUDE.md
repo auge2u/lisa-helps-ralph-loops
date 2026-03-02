@@ -16,12 +16,12 @@ python3 -m venv /tmp/lisa-venv && /tmp/lisa-venv/bin/pip install pytest pyyaml
 /tmp/lisa-venv/bin/pytest tests/ -v
 
 # Run specific test class or method
-pytest tests/test_validate_quality_gates.py::TestPatternCountGate -v
+/tmp/lisa-venv/bin/pytest tests/test_validate_quality_gates.py::TestPatternCountGate -v
 
-# Validate plugin outputs against quality gates
-python3 plugins/lisa/hooks/validate.py --stage discover
-python3 plugins/lisa/hooks/validate.py --workflow migrate --format json
-python3 plugins/lisa/hooks/validate.py --stage all --format markdown
+# Validate plugin outputs against quality gates (use venv python for full pattern checks)
+/tmp/lisa-venv/bin/python3 plugins/lisa/hooks/validate.py --stage discover
+/tmp/lisa-venv/bin/python3 plugins/lisa/hooks/validate.py --workflow migrate --format json
+/tmp/lisa-venv/bin/python3 plugins/lisa/hooks/validate.py --stage all --format markdown
 
 # Bump version (updates plugin.json + marketplace.json + CHANGELOG.md; requires jq)
 ./scripts/bump-version.sh 0.4.0        # bump only
@@ -75,6 +75,7 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 ### Key Files
 
 - **`gates.yaml`** — Defines all 31 quality gates across 5 stages (research, discover, plan, structure, reconcile). Edit this to change validation rules. Known: `eco-convoy-002.json` has 2 beads (below `convoy_size_valid` min of 3) — warning only.
+- **`plugins/lisa/skills/research/templates/rescue.json`** — Stage 0 output schema. Extended with `open_work` (branch archaeology: unmerged branches with commits_ahead, significance, likely_abandoned) and `backlog_at_abandonment` (issue/PR snapshot: open_issues[], open_prs[], abandoned_prs[]). Both sections include `github_available` boolean for graceful offline fallback.
 - **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths and git remotes for reconcile (Stage 5). Schema v2 supports `remote` field for portable identification. Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location. Runs in fallback mode without PyYAML (JSON/file checks only; pattern checks skipped).
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
