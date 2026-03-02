@@ -12,9 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Run tests (requires PyYAML; system Python may lack it — use a venv)
-python3 -m venv /tmp/lisa-validate-venv && source /tmp/lisa-validate-venv/bin/activate
-pip install pytest pyyaml
-pytest tests/ -v
+python3 -m venv /tmp/lisa-venv && /tmp/lisa-venv/bin/pip install pytest pyyaml
+/tmp/lisa-venv/bin/pytest tests/ -v
 
 # Run specific test class or method
 pytest tests/test_validate_quality_gates.py::TestPatternCountGate -v
@@ -40,7 +39,7 @@ The repo contains two plugins. Only `lisa` is active:
 
 The marketplace registry at `.claude-plugin/marketplace.json` lists both; `lisa-loops-memory` has `"deprecated": true`.
 
-**Tests:** `tests/test_validate_quality_gates.py` covers `UnifiedValidator` in `plugins/lisa/hooks/validate.py` (31 tests). The deprecated `lisa-loops-memory` validator has no active tests.
+**Tests:** `tests/test_validate_quality_gates.py` covers `UnifiedValidator` in `plugins/lisa/hooks/validate.py` (34 tests). The deprecated `lisa-loops-memory` validator has no active tests.
 
 ## Plugin Architecture
 
@@ -75,7 +74,7 @@ hooks/validate.py → Loads gates.yaml, validates outputs
 
 ### Key Files
 
-- **`gates.yaml`** — Defines all 31 quality gates across 5 stages (research, discover, plan, structure, reconcile). Edit this to change validation rules.
+- **`gates.yaml`** — Defines all 31 quality gates across 5 stages (research, discover, plan, structure, reconcile). Edit this to change validation rules. Known: `eco-convoy-002.json` has 2 beads (below `convoy_size_valid` min of 3) — warning only.
 - **`~/.lisa/ecosystem.json`** — Ecosystem config listing project paths and git remotes for reconcile (Stage 5). Schema v2 supports `remote` field for portable identification. Created manually; schema defined in `skills/reconcile/SKILL.md`.
 - **`validate.py`** — Unified validator. Supports `--stage`, `--workflow`, `--format` flags. Auto-detects `gates.yaml` location. Runs in fallback mode without PyYAML (JSON/file checks only; pattern checks skipped).
 - **`.claude-plugin/marketplace.json`** — Plugin registry. Update version here when releasing (must stay in sync with `plugins/lisa/.claude-plugin/plugin.json`).
@@ -122,7 +121,7 @@ Gastown (`gt` CLI) is the multi-agent workspace manager. Beads (`bd` CLI) is its
 
 Quality gates are defined in `gates.yaml` with these check types:
 - `file_exists`, `file_count` — Check files exist
-- `json_valid`, `json_field_present`, `json_field_count` — Validate JSON structure
+- `json_valid`, `json_field_present`, `json_field_count` — Validate JSON structure (`json_field_count` supports `all_files: true` with glob patterns; each matched file must individually satisfy min/max)
 - `pattern_exists`, `pattern_count` — Regex matching in files (`pattern_count` requires `min` or `max`; omitting both is a config error)
 - `cross_reference` — Verify references between files (malformed source files fail the gate rather than being silently skipped)
 
