@@ -311,6 +311,42 @@ class TestJsonGates:
         })
         assert result.passed is False
 
+    def test_json_field_count_all_files_pass(self, tmp_path):
+        convoys = tmp_path / "convoys"
+        convoys.mkdir()
+        (convoys / "c1.json").write_text('{"beads": ["a", "b", "c"]}', encoding="utf-8")
+        (convoys / "c2.json").write_text('{"beads": ["d", "e", "f", "g"]}', encoding="utf-8")
+        result = run(tmp_path, {
+            "id": "convoy_size", "name": "Convoy size",
+            "check": "json_field_count", "path": "convoys/*.json",
+            "field": "beads", "min": 3, "max": 7,
+            "all_files": True, "severity": "warning",
+        })
+        assert result.passed is True
+
+    def test_json_field_count_all_files_fail(self, tmp_path):
+        convoys = tmp_path / "convoys"
+        convoys.mkdir()
+        (convoys / "c1.json").write_text('{"beads": ["a", "b", "c"]}', encoding="utf-8")
+        (convoys / "c2.json").write_text('{"beads": ["x"]}', encoding="utf-8")
+        result = run(tmp_path, {
+            "id": "convoy_size", "name": "Convoy size",
+            "check": "json_field_count", "path": "convoys/*.json",
+            "field": "beads", "min": 3, "max": 7,
+            "all_files": True, "severity": "warning",
+        })
+        assert result.passed is False
+        assert "c2.json" in result.message
+
+    def test_json_field_count_all_files_no_match(self, tmp_path):
+        result = run(tmp_path, {
+            "id": "convoy_size", "name": "Convoy size",
+            "check": "json_field_count", "path": "convoys/*.json",
+            "field": "beads", "min": 3, "all_files": True, "severity": "warning",
+        })
+        assert result.passed is False
+        assert "no files found" in result.message.lower()
+
 
 # ---------------------------------------------------------------------------
 # cross_reference gate

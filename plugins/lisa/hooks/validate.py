@@ -290,18 +290,89 @@ class UnifiedValidator:
             actual=files_with_field
         )
 
-    def _check_json_field_count(self, gate: dict, stage: str) -> GateResult:
-        """Check JSON field item count against min/max."""
-        file_path = self.base_dir / gate["path"]
-        field_path = gate["field"]
+    def _count_field_value(self, data: dict, field_path: str, count_non_null: bool) -> int:
+        """Return the item count for a JSON field value."""
+        value = self._get_nested_field(data, field_path)
+        if value is None:
+            return 0
+        if isinstance(value, dict):
+            if count_non_null:
+                return sum(1 for v in value.values() if v is not None)
+            return len(value)
+        if isinstance(value, list):
+            return len(value)
+        return 1 if value else 0
 
+    def _check_json_field_count(self, gate: dict, stage: str) -> GateResult:
+        """Check JSON field item count against min/max.
+
+        Supports all_files: true with glob patterns — each matched file must
+        individually satisfy the min/max bounds.
+        """
+        path_pattern = gate["path"]
+        field_path = gate["field"]
+        all_files = gate.get("all_files", False)
+        count_non_null = gate.get("count_non_null", False)
+        min_count = gate.get("min", 0)
+        max_count = gate.get("max")
+
+        expected_parts = [f">= {min_count}"]
+        if max_count is not None:
+            expected_parts.append(f"<= {max_count}")
+        expected = " and ".join(expected_parts)
+
+        def _count_passes(count: int) -> bool:
+            ok = count >= min_count
+            if max_count is not None:
+                ok = ok and count <= max_count
+            return ok
+
+        if all_files:
+            files = glob.glob(str(self.base_dir / path_pattern))
+            if not files:
+                return GateResult(
+                    gate_id=gate["id"],
+                    name=gate["name"],
+                    passed=False,
+                    severity=gate.get("severity", "blocker"),
+                    message=f"No files found matching: {path_pattern}",
+                    stage=stage
+                )
+            failing = []
+            for fp in files:
+                try:
+                    with open(fp, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    count = self._count_field_value(data, field_path, count_non_null)
+                    if not _count_passes(count):
+                        failing.append(f"{Path(fp).name} ({count})")
+                except json.JSONDecodeError:
+                    failing.append(f"{Path(fp).name} (invalid JSON)")
+            passed = len(failing) == 0
+            if passed:
+                message = f"{len(files)}/{len(files)} files have field count {expected}"
+            else:
+                message = f"{len(failing)}/{len(files)} files fail ({', '.join(failing[:3])}{'...' if len(failing) > 3 else ''})"
+            return GateResult(
+                gate_id=gate["id"],
+                name=gate["name"],
+                passed=passed,
+                severity=gate.get("severity", "blocker"),
+                message=message,
+                stage=stage,
+                actual=len(files) - len(failing),
+                expected=expected
+            )
+
+        # Single-file path
+        file_path = self.base_dir / path_pattern
         if not file_path.exists():
             return GateResult(
                 gate_id=gate["id"],
                 name=gate["name"],
                 passed=False,
                 severity=gate.get("severity", "blocker"),
-                message=f"File not found: {gate['path']}",
+                message=f"File not found: {path_pattern}",
                 stage=stage
             )
 
@@ -318,31 +389,8 @@ class UnifiedValidator:
                 stage=stage
             )
 
-        value = self._get_nested_field(data, field_path)
-
-        if value is None:
-            count = 0
-        elif isinstance(value, dict):
-            if gate.get("count_non_null", False):
-                count = sum(1 for v in value.values() if v is not None)
-            else:
-                count = len(value)
-        elif isinstance(value, list):
-            count = len(value)
-        else:
-            count = 1 if value else 0
-
-        min_count = gate.get("min", 0)
-        max_count = gate.get("max")
-
-        passed = count >= min_count
-        expected_parts = [f">= {min_count}"]
-
-        if max_count is not None:
-            passed = passed and count <= max_count
-            expected_parts.append(f"<= {max_count}")
-
-        expected = " and ".join(expected_parts)
+        count = self._count_field_value(data, field_path, count_non_null)
+        passed = _count_passes(count)
 
         return GateResult(
             gate_id=gate["id"],
