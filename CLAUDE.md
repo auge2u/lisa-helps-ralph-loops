@@ -11,9 +11,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-# Run tests (requires PyYAML; system Python may lack it — use a venv)
-python3 -m venv /tmp/lisa-venv && /tmp/lisa-venv/bin/pip install pytest pyyaml
-/tmp/lisa-venv/bin/pytest tests/ -v
+# Install dependencies
+pip install -r requirements.txt -r requirements-dev.txt
+
+# Run tests
+pytest tests/ -v
 
 # Run specific test class or method
 pytest tests/test_validate_quality_gates.py::TestPatternCountGate -v
