@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+      # validate.py exits 1 for blocker gates, 2 for warning-only gates, 3 for
+      # security errors. Warnings (e.g. eco-convoy-002.json's known convoy_size_valid
+      # warning, documented in CLAUDE.md) shouldn't fail CI — only blockers/security should.
+      - name: Run validator (migrate workflow)
+        run: |
+          python3 plugins/lisa/hooks/validate.py --workflow migrate || code=$?
+          code=${code:-0}
+          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
+            exit "$code"
+          fi
+          exit 0
+
+      - name: Run validator (ecosystem workflow)
+        run: |
+          python3 plugins/lisa/hooks/validate.py --workflow ecosystem || code=$?
+          code=${code:-0}
+          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
+            exit "$code"
+          fi
+          exit 0
