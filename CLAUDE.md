@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **lisa-helps-ralph-loops** is a Claude Code plugin that migrates projects to [Gastown](https://github.com/steveyegge/gastown) format. It analyzes codebases, extracts work items as Beads, bundles them into Convoys, and generates `.gt/` directory structure for multi-agent execution.
 
-**Version:** 0.3.0 | **Primary plugin:** `plugins/lisa/`
+**Version:** 0.4.0 | **Primary plugin:** `plugins/lisa/`
 
 ## Development Commands
 
@@ -34,7 +34,7 @@ The repo contains two plugins. Only `lisa` is active:
 
 | Plugin | Status | Path |
 |--------|--------|------|
-| `lisa` | **Active (v0.3.0)** | `plugins/lisa/` |
+| `lisa` | **Active (v0.4.0)** | `plugins/lisa/` |
 | `lisa-loops-memory` | Deprecated (v0.2.0) | `plugins/lisa-loops-memory/` |
 
 The marketplace registry at `.claude-plugin/marketplace.json` lists both; `lisa-loops-memory` has `"deprecated": true`.

@@ -96,6 +96,11 @@ update_changelog() {
     local today
     today=$(date +%Y-%m-%d)
 
+    if grep -q "^## \[$new_version\]" "$CHANGELOG"; then
+        echo -e "${RED}Error: CHANGELOG.md already has a [$new_version] entry${NC}"
+        exit 1
+    fi
+
     # Replace [Unreleased] header with new version and add new Unreleased section
     if [[ "$OSTYPE" == "darwin"* ]]; then
         sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$new_version] - $today/" "$CHANGELOG"
@@ -125,10 +130,17 @@ main() {
     local current_version
     current_version=$(get_current_version)
 
+    if [[ "$new_version" == "$current_version" ]]; then
+        echo -e "${RED}Error: $new_version is already the current version (per $PLUGIN_JSON)${NC}"
+        echo "Re-running the same version would duplicate the CHANGELOG entry. Pick a new version."
+        exit 1
+    fi
+
     # Verify all target files exist before making any changes
     [[ -f "$PLUGIN_JSON" ]] || { echo -e "${RED}Error: Plugin JSON not found: $PLUGIN_JSON${NC}"; exit 1; }
     [[ -f "$MARKETPLACE_JSON" ]] || { echo -e "${RED}Error: Marketplace JSON not found: $MARKETPLACE_JSON${NC}"; exit 1; }
     [[ -f "$CHANGELOG" ]] || { echo -e "${RED}Error: CHANGELOG not found: $CHANGELOG${NC}"; exit 1; }
+    command -v jq >/dev/null 2>&1 || { echo -e "${RED}Error: jq is required but not found on PATH${NC}"; exit 1; }
 
     echo -e "${YELLOW}Bumping version: $current_version -> $new_version${NC}"
     echo ""
@@ -147,6 +159,19 @@ main() {
     echo -n "Updating $CHANGELOG... "
     update_changelog "$new_version" "$current_version"
     echo -e "${GREEN}done${NC}"
+
+    # Verify plugin.json and marketplace.json agree on the lisa plugin's version.
+    # This is the exact invariant a prior bug in update_json_version() silently broke.
+    local plugin_json_version marketplace_lisa_version
+    plugin_json_version=$(jq -r '.version' "$PLUGIN_JSON")
+    marketplace_lisa_version=$(jq -r '.plugins[] | select(.name == "lisa") | .version' "$MARKETPLACE_JSON")
+    if [[ "$plugin_json_version" != "$new_version" ]] || [[ "$marketplace_lisa_version" != "$new_version" ]]; then
+        echo -e "${RED}Error: version sync check failed${NC}"
+        echo "  plugin.json version:              $plugin_json_version"
+        echo "  marketplace.json lisa entry:      $marketplace_lisa_version"
+        echo "  expected:                          $new_version"
+        exit 1
+    fi
 
     echo ""
     echo -e "${GREEN}Version bumped to $new_version${NC}"

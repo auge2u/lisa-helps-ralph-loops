@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0] - 2026-09-06
 
+### Fixed
+- `bump-version.sh` now updates the `lisa` plugin entry inside `marketplace.json`'s `plugins[]` array instead of writing a stray top-level `version` field, keeping it in sync with `plugin.json` as documented in `CONTRIBUTING.md`
+- `bump-version.sh` now verifies `plugin.json` and `marketplace.json` agree on the `lisa` version after writing, and requires `jq` up front with a clear error instead of a raw command-not-found
+- `bump-version.sh` refuses to re-run against the version already recorded in `plugin.json`, and refuses if `CHANGELOG.md` already has an entry for the target version — previously a repeat run silently duplicated the CHANGELOG header
+
 ## [0.3.0] - 2026-02-10
 
 ### Added
