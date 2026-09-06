@@ -211,3 +211,10 @@ Versions must stay in sync across two files:
 - `.claude-plugin/marketplace.json`
 
 Use `./scripts/bump-version.sh <version>` to update both automatically.
+
+## Docs
+
+- **`README.md`** — Install instructions and stage-by-stage output table; `/lisa:rescue` is pitched as the entry point for abandoned projects.
+- **`docs/GETTING_STARTED.md`** — User-facing walkthrough of the pipeline.
+- **`docs/ARCHITECTURE_V2.md`** — Extended three-plugin ecosystem reference (see Ecosystem Position above).
+- **`CONTRIBUTING.md`** — Contribution guidelines.
