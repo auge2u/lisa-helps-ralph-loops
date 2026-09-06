@@ -33,8 +33,23 @@ jobs:
       - name: Run tests
         run: pytest tests/ -v
 
+      # validate.py exits 1 for blocker gates, 2 for warning-only gates, 3 for
+      # security errors. Warnings (e.g. eco-convoy-002.json's known convoy_size_valid
+      # warning, documented in CLAUDE.md) shouldn't fail CI — only blockers/security should.
       - name: Run validator (migrate workflow)
-        run: python3 plugins/lisa/hooks/validate.py --workflow migrate
+        run: |
+          python3 plugins/lisa/hooks/validate.py --workflow migrate || code=$?
+          code=${code:-0}
+          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
+            exit "$code"
+          fi
+          exit 0
 
       - name: Run validator (ecosystem workflow)
-        run: python3 plugins/lisa/hooks/validate.py --workflow ecosystem
+        run: |
+          python3 plugins/lisa/hooks/validate.py --workflow ecosystem || code=$?
+          code=${code:-0}
+          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
+            exit "$code"
+          fi
+          exit 0
