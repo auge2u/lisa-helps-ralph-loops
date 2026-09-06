@@ -67,7 +67,22 @@ update_json_version() {
     local new_version="$2"
 
     local tmp
-    tmp=$(jq ".version = \"$new_version\"" "$file") || {
+    tmp=$(jq --indent 2 ".version = \"$new_version\"" "$file") || {
+        echo -e "${RED}Error: jq failed to update $file${NC}"
+        exit 1
+    }
+    echo "$tmp" > "$file"
+}
+
+# Update the "lisa" plugin entry's version inside marketplace.json's plugins[] array
+update_marketplace_version() {
+    local file="$1"
+    local new_version="$2"
+
+    local tmp
+    tmp=$(jq --indent 2 --arg v "$new_version" \
+        '.plugins |= map(if .name == "lisa" then .version = $v else . end)' \
+        "$file") || {
         echo -e "${RED}Error: jq failed to update $file${NC}"
         exit 1
     }
@@ -125,7 +140,7 @@ main() {
 
     # Update marketplace.json
     echo -n "Updating $MARKETPLACE_JSON... "
-    update_json_version "$MARKETPLACE_JSON" "$new_version"
+    update_marketplace_version "$MARKETPLACE_JSON" "$new_version"
     echo -e "${GREEN}done${NC}"
 
     # Update CHANGELOG.md

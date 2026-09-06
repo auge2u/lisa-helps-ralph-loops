@@ -11,21 +11,50 @@
     {
       "name": "lisa",
       "description": "Staged migration system for Gastown. Research lost context, discover project facts, plan roadmaps, and structure work items for multi-agent execution.",
-      "version": "0.3.0",
-      "author": { "name": "auge2u" },
+      "version": "0.4.0",
+      "author": {
+        "name": "auge2u"
+      },
       "source": "./plugins/lisa",
       "category": "productivity",
-      "tags": ["gastown", "migration", "multi-agent", "beads", "convoys", "memory", "roadmap", "rescue"],
-      "keywords": ["gastown", "migration", "beads", "convoys", "multi-agent", "mayor", "polecat", "research", "discover", "plan", "structure"]
+      "tags": [
+        "gastown",
+        "migration",
+        "multi-agent",
+        "beads",
+        "convoys",
+        "memory",
+        "roadmap",
+        "rescue"
+      ],
+      "keywords": [
+        "gastown",
+        "migration",
+        "beads",
+        "convoys",
+        "multi-agent",
+        "mayor",
+        "polecat",
+        "research",
+        "discover",
+        "plan",
+        "structure"
+      ]
     },
     {
       "name": "lisa-loops-memory",
       "description": "[DEPRECATED - Use 'lisa' plugin instead] Legacy plugin for Gastown migration.",
       "version": "0.2.0",
-      "author": { "name": "auge2u" },
+      "author": {
+        "name": "auge2u"
+      },
       "source": "./plugins/lisa-loops-memory",
       "category": "productivity",
-      "tags": ["gastown", "migration", "legacy"]
+      "tags": [
+        "gastown",
+        "migration",
+        "legacy"
+      ]
     }
   ]
 }
