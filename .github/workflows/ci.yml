@@ -40,16 +40,16 @@ jobs:
         run: |
           python3 plugins/lisa/hooks/validate.py --workflow migrate || code=$?
           code=${code:-0}
-          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
-            exit "$code"
+          if [ "$code" -eq 0 ] || [ "$code" -eq 2 ]; then
+            exit 0
           fi
-          exit 0
+          exit "$code"
 
       - name: Run validator (ecosystem workflow)
         run: |
           python3 plugins/lisa/hooks/validate.py --workflow ecosystem || code=$?
           code=${code:-0}
-          if [ "$code" -eq 1 ] || [ "$code" -eq 3 ]; then
-            exit "$code"
+          if [ "$code" -eq 0 ] || [ "$code" -eq 2 ]; then
+            exit 0
           fi
-          exit 0
+          exit "$code"

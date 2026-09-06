@@ -136,6 +136,14 @@ main() {
         exit 1
     fi
 
+    # Check this before any file is written: catching it inside update_changelog()
+    # (which runs last) would leave plugin.json/marketplace.json already bumped
+    # to new_version while CHANGELOG.md is rejected — a partially-applied release.
+    if grep -q "^## \[$new_version\]" "$CHANGELOG" 2>/dev/null; then
+        echo -e "${RED}Error: CHANGELOG.md already has a [$new_version] entry${NC}"
+        exit 1
+    fi
+
     # Verify all target files exist before making any changes
     [[ -f "$PLUGIN_JSON" ]] || { echo -e "${RED}Error: Plugin JSON not found: $PLUGIN_JSON${NC}"; exit 1; }
     [[ -f "$MARKETPLACE_JSON" ]] || { echo -e "${RED}Error: Marketplace JSON not found: $MARKETPLACE_JSON${NC}"; exit 1; }
